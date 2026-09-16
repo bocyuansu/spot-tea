@@ -5,6 +5,7 @@ import AuthButton from "@/features/auth/components/AuthButton";
 import { createAuth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { cn } from "@/lib/utils";
+import MobileMenu from "@/components/layout/MobileMenu";
 
 // products?category=xxx
 const links = [
@@ -37,14 +38,14 @@ export default async function Navbar() {
     <nav className="sticky top-0 z-50 w-full bg-white/80 backdrop-blur border-b">
       <div
         className={cn(
-          "flex items-center mx-auto gap-2 p-4",
+          "flex justify-between items-center mx-auto gap-2 p-4",
           "sm:gap-4 sm:px-0 sm:max-w-xl",
           "md:max-w-2xl md:gap-8",
           "lg:max-w-3xl xl:max-w-7xl",
         )}
       >
         {/* LEFT */}
-        <Link href="/" className="hidden sm:flex items-center">
+        <Link href="/" className="flex items-center">
           <Image
             src="/assets/spot-tea.jpg"
             alt="Spot Tea logo"
@@ -53,7 +54,8 @@ export default async function Navbar() {
             className="w-16 h-16 md:w-25 md:h-25"
           />
         </Link>
-        <ul className="flex">
+        {/* CENTER */}
+        <ul className="hidden md:flex">
           {links.map((link) => (
             <li key={link.label}>
               <ActiveLink
@@ -67,9 +69,10 @@ export default async function Navbar() {
           ))}
         </ul>
         {/* RIGHT */}
-        <div className="flex items-center ml-auto">
+        <div className="hidden md:flex items-center">
           <AuthButton initialSession={session} />
         </div>
+        <MobileMenu links={links} />
       </div>
     </nav>
   );
