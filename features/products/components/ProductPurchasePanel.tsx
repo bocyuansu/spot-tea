@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { Minus, Plus, ShoppingCart } from "lucide-react";
-import { cn } from "cn";
+import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/toast";
 import { formatPriceTWD } from "@/lib/format";
@@ -23,20 +23,22 @@ export default function ProductPurchasePanel({
   productName,
   variants,
 }: ProductPurchasePanelProps) {
+  // 尋找有存貨的商品規格
   const firstAvailable =
     variants.find((variant) => variant.stock > 0) ?? variants[0];
+  // 選擇有存貨的商品規格
   const [selectedVariantId, setSelectedVariantId] = useState(
     firstAvailable?.id,
   );
   const [quantity, setQuantity] = useState(1);
-
+  // 選中的商品規格
   const selectedVariant = useMemo(
     () => variants.find((variant) => variant.id === selectedVariantId),
     [variants, selectedVariantId],
   );
-
+  // 判斷選中的商品規格是否賣完
   const isSoldOut = !selectedVariant || selectedVariant.stock <= 0;
-
+  // 沒有可以購買的規格
   if (variants.length === 0) {
     return <p className="text-muted-foreground">此商品目前無可購買規格</p>;
   }
@@ -53,6 +55,7 @@ export default function ProductPurchasePanel({
     );
   };
 
+  // 目前只是展示，還沒實作
   const handleAddToCart = () => {
     if (!selectedVariant || isSoldOut) return;
 
@@ -76,6 +79,7 @@ export default function ProductPurchasePanel({
               <button
                 key={variant.id}
                 type="button"
+                aria-label="選擇茶葉重量(公克)"
                 disabled={soldOut}
                 onClick={() => handleSelectVariant(variant)}
                 className={cn(
@@ -86,9 +90,7 @@ export default function ProductPurchasePanel({
                   soldOut && "cursor-not-allowed opacity-50",
                 )}
               >
-                <span className="font-medium">
-                  {getVariantLabel(variant)}
-                </span>
+                <span className="font-medium">{getVariantLabel(variant)}</span>
                 <span className="text-xs text-muted-foreground">
                   {formatPriceTWD(variant.price)}
                   {soldOut && "．已售完"}
@@ -105,6 +107,7 @@ export default function ProductPurchasePanel({
           <Button
             type="button"
             variant="outline"
+            aria-label="減少商品數量"
             size="icon-sm"
             disabled={isSoldOut || quantity <= 1}
             onClick={() => handleQuantityChange(-1)}
@@ -115,11 +118,10 @@ export default function ProductPurchasePanel({
           <Button
             type="button"
             variant="outline"
+            aria-label="增加商品數量"
             size="icon-sm"
             disabled={
-              isSoldOut ||
-              !selectedVariant ||
-              quantity >= selectedVariant.stock
+              isSoldOut || !selectedVariant || quantity >= selectedVariant.stock
             }
             onClick={() => handleQuantityChange(1)}
           >

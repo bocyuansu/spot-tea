@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { Leaf } from "lucide-react";
-import { cn } from "cn";
+import { cn } from "@/lib/utils";
 
 type ProductGalleryProps = {
   images: string[];

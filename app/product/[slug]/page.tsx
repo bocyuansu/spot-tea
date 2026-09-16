@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { MOCK_PRODUCTS } from "@/app/products/page";
-import ProductGallery from "@/components/ProductGallery";
-import ProductPurchasePanel from "@/components/ProductPurchasePanel";
+import { MOCK_PRODUCTS } from "@/features/products/mock-data";
+import ProductGallery from "@/features/products/components/ProductGallery";
+import ProductPurchasePanel from "@/features/products/components/ProductPurchasePanel";
 import { formatPriceTWD } from "@/lib/format";
 
 type ProductPageProps = {
@@ -46,19 +46,17 @@ export default async function ProductPage({ params }: ProductPageProps) {
       <ProductGallery images={product.images ?? []} alt={product.name} />
 
       <div className="flex flex-col gap-4">
-        <div>
+        <div className="flex flex-col gap-1">
+          <h1 className="font-heading text-2xl md:text-3xl">{product.name}</h1>
           {product.category && (
-            <span className="text-xs text-muted-foreground">
+            <span className="text-sm text-muted-foreground">
               種類：{product.category.name}
             </span>
           )}
-          <h1 className="font-heading text-2xl md:text-3xl">
-            {product.name}
-          </h1>
           {product.origin && (
-            <p className="mt-1 text-sm text-muted-foreground">
+            <span className="text-sm text-muted-foreground">
               產地：{product.origin}
-            </p>
+            </span>
           )}
         </div>
 

@@ -48,14 +48,14 @@ export default function ProductCard({ product }: ProductCardProps) {
             種類：{product.category.name}
           </span>
         )}
-        <h3 className="font-heading text-base leading-snug font-medium">
-          {product.name}
-        </h3>
         {product.origin && (
           <p className="text-xs text-muted-foreground">
             產地：{product.origin}
           </p>
         )}
+        <h2 className="font-heading text-base leading-snug font-medium">
+          {product.name}
+        </h2>
         <p className="mt-1 text-sm font-semibold text-primary">
           {minPrice === null
             ? "價格洽詢"
