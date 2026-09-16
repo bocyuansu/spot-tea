@@ -1,11 +1,22 @@
-node_modules
-.env*
-.next
-next-env.d.ts
-/dist/
-.vinext/
-.wrangler/
+# 重度依賴與套件目錄 (Dependencies)
+node_modules/
 
+# 敏感資訊與環境變數 (Environment variables)
+.env*
 .dev.vars*
 !.dev.vars.example
 !.env.example
+
+# Next.js 框架產生的編譯與快取檔案 (Next.js build & cache)
+.next/
+next-env.d.ts
+
+# Cloudflare Wrangler 開發工具暫存檔 (Cloudflare Wrangler)
+.wrangler/
+
+# 專案打包與輸出目錄 (Build outputs)
+/dist/
+.vinext/
+
+# TypeScript 編譯狀態快取 (TypeScript build info)
+*.tsbuildinfo

@@ -3,46 +3,51 @@
  * https://developers.cloudflare.com/workers/wrangler/configuration/
  */
 {
-	"$schema": "node_modules/wrangler/config-schema.json",
-	"name": "spot-tea",
-	"compatibility_date": "2026-09-12",
-	"main": "vinext/server/fetch-handler",
-	"assets": {
-		"directory": "dist/client",
-		"not_found_handling": "none",
-		"binding": "ASSETS"
-	},
-	"cache": {
-		"enabled": true
-	},
-	"images": {
-		"binding": "IMAGES"
-	},
-	"observability": {
-		"enabled": true
-	},
-	"upload_source_maps": true
-	/**
-	 * Smart Placement
-	 * https://developers.cloudflare.com/workers/configuration/smart-placement/#smart-placement
-	 */
-	// "placement": {  "mode": "smart" }
-	/**
-	 * Bindings
-	 * Bindings allow your Worker to interact with resources on the Cloudflare Developer Platform, including
-	 * databases, object storage, AI inference, real-time communication and more.
-	 * https://developers.cloudflare.com/workers/runtime-apis/bindings/
-	 */
-	/**
-	 * Environment Variables
-	 * https://developers.cloudflare.com/workers/wrangler/configuration/#environment-variables
-	 * Note: Use secrets to store sensitive data.
-	 * https://developers.cloudflare.com/workers/configuration/secrets/
-	 */
-	// "vars": {  "MY_VARIABLE": "production_value" }
-	/**
-	 * Service Bindings (communicate between multiple Workers)
-	 * https://developers.cloudflare.com/workers/wrangler/configuration/#service-bindings
-	 */
-	// "services": [  {   "binding": "MY_SERVICE",   "service": "my-service"  } ]
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "main": "vinext/server/fetch-handler",
+  "name": "spot-tea",
+  "compatibility_flags": ["nodejs_compat"],
+  "compatibility_date": "2026-09-12",
+  "hyperdrive": [
+    {
+      "binding": "HYPERDRIVE",
+      "id": "847832acbec9471abc1926ef38c8a458",
+    },
+    {
+      "binding": "HYPERDRIVE_FRESH",
+      "id": "f51f3f41ba01405a99f966e46fb9543b",
+    },
+  ],
+  "assets": {
+    "directory": "dist/client",
+    "not_found_handling": "none",
+    "binding": "ASSETS",
+  },
+  "cache": {
+    "enabled": true,
+  },
+  "images": {
+    "binding": "IMAGES",
+  },
+  "observability": {
+    "enabled": true,
+  },
+  "upload_source_maps": true,
+  /**
+   * Smart Placement 啟用後，Cloudflare 會嘗試把 Worker 放到比較靠近後端服務的位置
+   * https://developers.cloudflare.com/workers/configuration/smart-placement/#smart-placement
+   */
+  // "placement": {  "mode": "smart" }
+  /**
+   * 環境變數
+   * https://developers.cloudflare.com/workers/wrangler/configuration/#environment-variables
+   * Note: Use secrets to store sensitive data.
+   * https://developers.cloudflare.com/workers/configuration/secrets/
+   */
+  // "vars": {  "MY_VARIABLE": "production_value" }
+  /**
+   * Service Bindings (communicate between multiple Workers)
+   * https://developers.cloudflare.com/workers/wrangler/configuration/#service-bindings
+   */
+  // "services": [  {   "binding": "MY_SERVICE",   "service": "my-service"  } ]
 }
