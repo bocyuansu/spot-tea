@@ -12,11 +12,12 @@ This project was created with create-vinext-app.
    ```
 
 3. Replace `<your-hyperdrive-id-here>` in `wrangler.jsonc` with the returned Hyperdrive ID.
-4. Generate and apply the initial Drizzle migration:
+4. Generate and apply the initial Drizzle migration, then load the starter catalogue:
 
    ```sh
    pnpm db:generate
    pnpm db:migrate
+   pnpm db:seed
    ```
 
 5. Refresh the Cloudflare binding types and run the app:
@@ -36,4 +37,5 @@ Hyperdrive manages connection pooling in production. The Worker creates a short-
 - `pnpm run deploy` deploys the Cloudflare Worker.
 - `pnpm run db:generate` generates SQL migrations from `db/schema.ts`.
 - `pnpm run db:migrate` applies pending migrations using `DATABASE_URL`.
+- `pnpm run db:seed` upserts the categories, products, and variants in `db/seed-data.ts`. It is idempotent, so it is safe to re-run.
 - `pnpm run cf-typegen` refreshes the Cloudflare binding types.

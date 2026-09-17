@@ -16,6 +16,21 @@ export async function listPublishedProducts(categorySlug?: string) {
   });
 }
 
+export async function getPublishedProductBySlug(slug: string) {
+  const db = getDatabase();
+
+  return db.query.product.findFirst({
+    where: {
+      slug,
+      status: 'published',
+    },
+    with: {
+      category: true,
+      variants: true,
+    },
+  });
+}
+
 export async function listCategories() {
   const db = getDatabase();
 
