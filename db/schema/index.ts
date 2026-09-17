@@ -1,3 +1,6 @@
 export * from './auth';
-export * from './shop';
-export * from './relations';
+export * from './product';
+export * from './cart';
+export * from './order';
+
+export * from '@/db/relations';

@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "@base-ui/react": "^1.8.0",
+    "@better-auth/drizzle-adapter": "^1.7.5",
     "@hookform/resolvers": "^5.9.1",
     "@vinext/cloudflare": "latest",
     "better-auth": "^1.7.4",

@@ -1,7 +1,7 @@
 import { Client } from 'pg';
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { env } from 'cloudflare:workers';
-import { relations } from '@/db/schema';
+import { relations } from '@/db/relations';
 
 export const getDatabase = async (mode: 'cached' | 'fresh' = 'cached') => {
   // 根據 mode 選擇對應的 Hyperdrive 連線字串
