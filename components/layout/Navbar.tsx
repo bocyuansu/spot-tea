@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import ActiveLink from "@/components/ActiveLink";
+import ActiveLink from "@/components/common/ActiveLink";
 import AuthButton from "@/features/auth/components/AuthButton";
 import { createAuth } from "@/lib/auth";
 import { headers } from "next/headers";
@@ -74,7 +74,7 @@ export default async function Navbar() {
           <CartBadge />
           <AuthButton initialSession={session} />
         </div>
-        <div className="flex items-center">
+        <div className="flex items-center md:hidden">
           <MobileMenu links={links} />
         </div>
       </div>

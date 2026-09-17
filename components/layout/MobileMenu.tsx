@@ -31,7 +31,7 @@ export default function MobileMenu({ links }: MobileMenuProps) {
   }, [isOpen]);
 
   return (
-    <div className="md:hidden">
+    <div>
       <Button
         variant="link"
         aria-label="切換選單"
