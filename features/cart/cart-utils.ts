@@ -31,16 +31,26 @@ export function updateCartItemQuantity(
   variantId: string,
   quantity: number,
 ): CartItem[] {
+  const target = items.find((cartItem) => cartItem.variantId === variantId);
+
+  // 結果不會改變時回傳原陣列，讓 CartProvider 的 memo 與 localStorage 寫入整段跳過
+  if (!target) return items;
+
+  const nextQuantity = clampQuantity(quantity, target.stock);
+
+  if (nextQuantity === target.quantity) return items;
+
   return items
     .map((cartItem) =>
-      cartItem.variantId === variantId
-        ? { ...cartItem, quantity: clampQuantity(quantity, cartItem.stock) }
-        : cartItem,
+      cartItem.variantId === variantId ? { ...cartItem, quantity: nextQuantity } : cartItem,
     )
     .filter((cartItem) => cartItem.quantity > 0);
 }
 
 export function removeCartItem(items: CartItem[], variantId: string): CartItem[] {
+  // 同上：購物車裡沒有這個規格時不製造新陣列
+  if (!items.some((cartItem) => cartItem.variantId === variantId)) return items;
+
   return items.filter((cartItem) => cartItem.variantId !== variantId);
 }
 
