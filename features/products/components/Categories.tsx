@@ -1,19 +1,16 @@
-import Link from "next/link";
-import { buttonVariants } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
-import type { ProductWithDetails } from "@/db/queries/products";
+import Link from 'next/link';
+import { buttonVariants } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+import type { ProductWithDetails } from '@/db/queries/products';
 
-type Category = NonNullable<ProductWithDetails["category"]>;
+type Category = NonNullable<ProductWithDetails['category']>;
 
 type CategoriesProps = {
   categories: Category[];
   activeCategorySlug?: string;
 };
 
-export default function Categories({
-  categories,
-  activeCategorySlug,
-}: CategoriesProps) {
+export default function Categories({ categories, activeCategorySlug }: CategoriesProps) {
   if (categories.length === 0) return null;
 
   return (
@@ -22,10 +19,10 @@ export default function Categories({
         href="/products"
         className={cn(
           buttonVariants({
-            variant: activeCategorySlug ? "outline" : "default",
-            size: "sm",
+            variant: activeCategorySlug ? 'outline' : 'default',
+            size: 'sm',
           }),
-          "rounded-full",
+          'rounded-full',
         )}
       >
         全部
@@ -36,11 +33,10 @@ export default function Categories({
           href={`/products?category=${category.slug}`}
           className={cn(
             buttonVariants({
-              variant:
-                activeCategorySlug === category.slug ? "default" : "outline",
-              size: "sm",
+              variant: activeCategorySlug === category.slug ? 'default' : 'outline',
+              size: 'sm',
             }),
-            "rounded-full",
+            'rounded-full',
           )}
         >
           {category.name}

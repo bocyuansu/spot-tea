@@ -1,24 +1,24 @@
-"use client";
+'use client';
 
 /* UI */
-import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { toast } from "@/components/ui/toast";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Loader2 } from "lucide-react";
+import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { toast } from '@/components/ui/toast';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Loader2 } from 'lucide-react';
 /* React Hook Form */
-import { Controller, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { loginSchema } from "@/features/auth/schemas/login";
+import { Controller, useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { loginSchema } from '@/features/auth/schemas/login';
 /* Better Auth */
-import { authClient } from "@/lib/auth-client";
-import { getErrorMessage } from "@/lib/auth-errors";
+import { authClient } from '@/lib/auth-client';
+import { getErrorMessage } from '@/lib/auth-errors';
 /* Nextjs */
-import { useTransition } from "react";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
+import { useTransition } from 'react';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 export default function LoginForm() {
   const [isPending, startTransition] = useTransition();
@@ -27,8 +27,8 @@ export default function LoginForm() {
   const form = useForm({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      email: "",
-      password: "",
+      email: '',
+      password: '',
     },
   });
 
@@ -42,19 +42,19 @@ export default function LoginForm() {
             form.reset();
 
             toast.add({
-              type: "success",
-              description: "登入成功 !",
+              type: 'success',
+              description: '登入成功 !',
             });
 
-            router.push("/");
+            router.push('/');
           },
           onError: (ctx) => {
             // console.error(ctx.error);
-            const errorMessage = getErrorMessage(ctx.error.code, "zh");
+            const errorMessage = getErrorMessage(ctx.error.code, 'zh');
             toast.add({
-              type: "error",
+              type: 'error',
               description: errorMessage,
-              priority: "high",
+              priority: 'high',
             });
           },
         },

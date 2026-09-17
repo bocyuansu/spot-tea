@@ -1,13 +1,6 @@
-"use client";
+'use client';
 
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import {
   CART_STORAGE_KEY,
   addCartItem,
@@ -17,8 +10,8 @@ import {
   removeCartItem,
   updateCartItemQuantity,
   writeStoredCart,
-} from "@/features/cart/cart-utils";
-import type { CartItem } from "@/features/cart/schemas/cart";
+} from '@/features/cart/cart-utils';
+import type { CartItem } from '@/features/cart/schemas/cart';
 
 type CartContextValue = {
   items: CartItem[];
@@ -33,11 +26,7 @@ type CartContextValue = {
 
 const CartContext = createContext<CartContextValue | null>(null);
 
-export default function CartProvider({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function CartProvider({ children }: { children: React.ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
   const [isHydrated, setIsHydrated] = useState(false);
 
@@ -57,8 +46,8 @@ export default function CartProvider({
       if (event.key !== CART_STORAGE_KEY) return;
       setItems(readStoredCart());
     }
-    window.addEventListener("storage", handleStorage);
-    return () => window.removeEventListener("storage", handleStorage);
+    window.addEventListener('storage', handleStorage);
+    return () => window.removeEventListener('storage', handleStorage);
   }, []);
 
   const addItem = useCallback((item: CartItem) => {
@@ -96,7 +85,7 @@ export function useCart() {
   const context = useContext(CartContext);
 
   if (!context) {
-    throw new Error("useCart 必須在 CartProvider 內使用");
+    throw new Error('useCart 必須在 CartProvider 內使用');
   }
 
   return context;

@@ -1,9 +1,9 @@
-import Image from "next/image";
-import Link from "next/link";
-import { Leaf } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
-import { formatPriceTWD } from "@/lib/format";
-import type { ProductWithDetails } from "@/db/queries/products";
+import Image from 'next/image';
+import Link from 'next/link';
+import { Leaf } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
+import { formatPriceTWD } from '@/lib/format';
+import type { ProductWithDetails } from '@/db/queries/products';
 
 type ProductCardProps = {
   product: ProductWithDetails;
@@ -44,21 +44,13 @@ export default function ProductCard({ product }: ProductCardProps) {
       </div>
       <CardContent className="flex flex-col gap-1">
         {product.category && (
-          <span className="text-xs text-muted-foreground">
-            種類：{product.category.name}
-          </span>
+          <span className="text-xs text-muted-foreground">種類：{product.category.name}</span>
         )}
-        {product.origin && (
-          <p className="text-xs text-muted-foreground">
-            產地：{product.origin}
-          </p>
-        )}
-        <h2 className="font-heading text-base leading-snug font-medium">
-          {product.name}
-        </h2>
+        {product.origin && <p className="text-xs text-muted-foreground">產地：{product.origin}</p>}
+        <h2 className="font-heading text-base leading-snug font-medium">{product.name}</h2>
         <p className="mt-1 text-sm font-semibold text-primary">
           {minPrice === null
-            ? "價格洽詢"
+            ? '價格洽詢'
             : minPrice === maxPrice
               ? formatPriceTWD(minPrice)
               : `${formatPriceTWD(minPrice)} 起`}

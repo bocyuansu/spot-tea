@@ -1,35 +1,31 @@
-import { nextCookies } from "better-auth/next-js";
-import { admin } from "better-auth/plugins";
-import { betterAuth } from "better-auth/minimal";
-import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { getDatabase } from "@/db/client";
-import * as schema from "@/db/schema";
+import { nextCookies } from 'better-auth/next-js';
+import { admin } from 'better-auth/plugins';
+import { betterAuth } from 'better-auth/minimal';
+import { drizzleAdapter } from 'better-auth/adapters/drizzle';
+import { getDatabase } from '@/db/client';
+import * as schema from '@/db/schema';
 
 export function createAuth() {
   const db = getDatabase();
 
   return betterAuth({
     database: drizzleAdapter(db, {
-      provider: "pg",
+      provider: 'pg',
       schema,
     }),
     emailAndPassword: {
       enabled: true,
     },
     baseURL: {
-      allowedHosts: [
-        "localhost:3000",
-        "localhost:8787",
-        "spot-tea.cyuan.workers.dev",
-      ],
-      protocol: "auto",
+      allowedHosts: ['localhost:3000', 'localhost:8787', 'spot-tea.cyuan.workers.dev'],
+      protocol: 'auto',
     },
     advanced: {
       trustedProxyHeaders: true,
     },
     plugins: [
       admin({
-        defaultRole: "customer",
+        defaultRole: 'customer',
       }),
       nextCookies(),
     ], // 確保 nextCookies 是陣列的最後一個 plugin

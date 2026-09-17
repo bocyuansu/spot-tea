@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from 'zod';
 
 // 購物車目前存在 localStorage，資料可能被竄改或版本不符，讀取時一律驗證
 export const cartItemSchema = z.object({

@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import Image from "next/image";
-import { Leaf } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { useState } from 'react';
+import Image from 'next/image';
+import { Leaf } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 type ProductGalleryProps = {
   images: string[];
@@ -42,8 +42,8 @@ export default function ProductGallery({ images, alt }: ProductGalleryProps) {
               onClick={() => setSelectedIndex(index)}
               aria-label={`檢視第 ${index + 1} 張圖片`}
               className={cn(
-                "relative size-16 shrink-0 overflow-hidden rounded-lg bg-muted ring-1 ring-foreground/10",
-                index === selectedIndex && "ring-2 ring-primary",
+                'relative size-16 shrink-0 overflow-hidden rounded-lg bg-muted ring-1 ring-foreground/10',
+                index === selectedIndex && 'ring-2 ring-primary',
               )}
             >
               <Image

@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { Minus, Plus } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { Minus, Plus } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 
 type QuantityStepperProps = {
   value: number;
@@ -27,7 +27,7 @@ export default function QuantityStepper({
   };
 
   return (
-    <div className={cn("flex items-center gap-3", className)}>
+    <div className={cn('flex items-center gap-3', className)}>
       <Button
         type="button"
         variant="outline"

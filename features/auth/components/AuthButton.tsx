@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import { User } from "lucide-react";
-import { LogOut } from "lucide-react";
-import { toast } from "@/components/ui/toast";
-import { Button } from "@/components/ui/button";
-import { authClient } from "@/lib/auth-client";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
+import { User } from 'lucide-react';
+import { LogOut } from 'lucide-react';
+import { toast } from '@/components/ui/toast';
+import { Button } from '@/components/ui/button';
+import { authClient } from '@/lib/auth-client';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 type AuthButtonProps = {
   initialSession: typeof authClient.$Infer.Session | null;
@@ -43,17 +43,17 @@ export function LogoutButton() {
       fetchOptions: {
         onSuccess: () => {
           toast.add({
-            type: "success",
-            description: "登出成功 !",
+            type: 'success',
+            description: '登出成功 !',
           });
           router.refresh();
         },
         onError: ({ error }) => {
           console.error(error.error.message);
           toast.add({
-            type: "error",
+            type: 'error',
             description: error.error.message,
-            priority: "high",
+            priority: 'high',
           });
         },
       },

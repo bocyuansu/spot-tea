@@ -1,11 +1,7 @@
-import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import Link from 'next/link';
+import { ArrowLeft } from 'lucide-react';
 
-export default function ProductLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function ProductLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex flex-col gap-6">
       <Link

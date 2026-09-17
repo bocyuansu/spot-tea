@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { Menu, X } from "lucide-react";
-import { useEffect, useState } from "react";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { Menu, X } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 
 type Link = {
   href: string;
@@ -21,12 +21,12 @@ export default function MobileMenu({ links }: MobileMenuProps) {
   // 打開選單時，禁止背景捲動
   useEffect(() => {
     if (isOpen) {
-      document.body.style.overflow = "hidden";
+      document.body.style.overflow = 'hidden';
     } else {
-      document.body.style.overflow = "";
+      document.body.style.overflow = '';
     }
     return () => {
-      document.body.style.overflow = "";
+      document.body.style.overflow = '';
     };
   }, [isOpen]);
 
@@ -43,8 +43,8 @@ export default function MobileMenu({ links }: MobileMenuProps) {
 
       <ul
         className={cn(
-          "md:hidden h-screen fixed top-full left-0 w-full bg-primary p-4 space-y-4 flex flex-col items-center z-10 shadow-lg transition-transform duration-300 ease-in-out",
-          isOpen ? "translate-x-0" : "-translate-x-full",
+          'md:hidden h-screen fixed top-full left-0 w-full bg-primary p-4 space-y-4 flex flex-col items-center z-10 shadow-lg transition-transform duration-300 ease-in-out',
+          isOpen ? 'translate-x-0' : '-translate-x-full',
         )}
       >
         {links.map((link) => (

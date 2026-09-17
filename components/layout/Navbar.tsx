@@ -1,30 +1,30 @@
-import Image from "next/image";
-import Link from "next/link";
-import ActiveLink from "@/components/common/ActiveLink";
-import AuthButton from "@/features/auth/components/AuthButton";
-import { createAuth } from "@/lib/auth";
-import { headers } from "next/headers";
-import { cn } from "@/lib/utils";
-import MobileMenu from "@/components/layout/MobileMenu";
-import CartBadge from "@/features/cart/components/CartBadge";
+import Image from 'next/image';
+import Link from 'next/link';
+import ActiveLink from '@/components/common/ActiveLink';
+import AuthButton from '@/features/auth/components/AuthButton';
+import { createAuth } from '@/lib/auth';
+import { headers } from 'next/headers';
+import { cn } from '@/lib/utils';
+import MobileMenu from '@/components/layout/MobileMenu';
+import CartBadge from '@/features/cart/components/CartBadge';
 
 // products?category=xxx
 const links = [
   {
-    href: "/products",
-    label: "所有商品",
+    href: '/products',
+    label: '所有商品',
   },
   {
-    href: "/brand-story",
-    label: "品牌故事",
+    href: '/brand-story',
+    label: '品牌故事',
   },
   {
-    href: "/store-location",
-    label: "門市資訊",
+    href: '/store-location',
+    label: '門市資訊',
   },
   {
-    href: "/notices",
-    label: "重要公告",
+    href: '/notices',
+    label: '重要公告',
   },
 ];
 
@@ -39,10 +39,10 @@ export default async function Navbar() {
     <nav className="sticky top-0 z-50 w-full bg-white/80 backdrop-blur border-b">
       <div
         className={cn(
-          "flex justify-between items-center mx-auto gap-2 p-4",
-          "sm:gap-4 sm:px-0 sm:max-w-xl",
-          "md:max-w-2xl md:gap-8",
-          "lg:max-w-3xl xl:max-w-7xl",
+          'flex justify-between items-center mx-auto gap-2 p-4',
+          'sm:gap-4 sm:px-0 sm:max-w-xl',
+          'md:max-w-2xl md:gap-8',
+          'lg:max-w-3xl xl:max-w-7xl',
         )}
       >
         {/* LEFT */}

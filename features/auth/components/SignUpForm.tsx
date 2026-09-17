@@ -1,20 +1,20 @@
-"use client";
+'use client';
 
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { useTransition } from "react";
-import { useRouter } from "next/navigation";
-import { Controller, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { signUpSchema } from "@/features/auth/schemas/signup";
-import { z } from "zod";
-import { authClient } from "@/lib/auth-client";
-import { Loader2 } from "lucide-react";
-import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
-import { toast } from "@/components/ui/toast";
-import Link from "next/link";
-import { getErrorMessage } from "@/lib/auth-errors";
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { useTransition } from 'react';
+import { useRouter } from 'next/navigation';
+import { Controller, useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { signUpSchema } from '@/features/auth/schemas/signup';
+import { z } from 'zod';
+import { authClient } from '@/lib/auth-client';
+import { Loader2 } from 'lucide-react';
+import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field';
+import { toast } from '@/components/ui/toast';
+import Link from 'next/link';
+import { getErrorMessage } from '@/lib/auth-errors';
 
 export default function SignUpForm() {
   const [isPending, startTransition] = useTransition();
@@ -23,9 +23,9 @@ export default function SignUpForm() {
   const form = useForm({
     resolver: zodResolver(signUpSchema),
     defaultValues: {
-      email: "",
-      name: "",
-      password: "",
+      email: '',
+      name: '',
+      password: '',
     },
   });
 
@@ -38,18 +38,18 @@ export default function SignUpForm() {
         fetchOptions: {
           onSuccess: () => {
             toast.add({
-              type: "success",
-              description: "註冊成功 !",
+              type: 'success',
+              description: '註冊成功 !',
             });
-            router.push("/login");
+            router.push('/login');
           },
           onError: (ctx) => {
             // console.error(ctx.error);
-            const errorMessage = getErrorMessage(ctx.error.code, "zh");
+            const errorMessage = getErrorMessage(ctx.error.code, 'zh');
             toast.add({
-              type: "error",
+              type: 'error',
               description: errorMessage,
-              priority: "high",
+              priority: 'high',
             });
           },
         },

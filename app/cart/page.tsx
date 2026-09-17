@@ -1,9 +1,9 @@
-import type { Metadata } from "next";
-import CartView from "@/features/cart/components/CartView";
+import type { Metadata } from 'next';
+import CartView from '@/features/cart/components/CartView';
 
 export const metadata: Metadata = {
-  title: "購物車",
-  description: "找茶 購物車",
+  title: '購物車',
+  description: '找茶 購物車',
 };
 
 export default function CartPage() {
