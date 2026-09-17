@@ -29,7 +29,7 @@ const links = [
 ];
 
 export default async function Navbar() {
-  const auth = createAuth();
+  const auth = await createAuth();
 
   const session = await auth.api.getSession({
     headers: await headers(),

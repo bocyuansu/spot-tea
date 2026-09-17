@@ -5,8 +5,8 @@ import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import { getDatabase } from '@/db/client';
 import * as schema from '@/db/schema';
 
-export function createAuth() {
-  const db = getDatabase();
+export async function createAuth() {
+  const db = await getDatabase();
 
   return betterAuth({
     database: drizzleAdapter(db, {

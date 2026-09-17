@@ -1,7 +1,7 @@
 import { getDatabase } from '@/db/client';
 
 export async function listPublishedProducts(categorySlug?: string) {
-  const db = getDatabase();
+  const db = await getDatabase();
 
   return db.query.product.findMany({
     where: {
@@ -17,7 +17,7 @@ export async function listPublishedProducts(categorySlug?: string) {
 }
 
 export async function getPublishedProductBySlug(slug: string) {
-  const db = getDatabase();
+  const db = await getDatabase();
 
   return db.query.product.findFirst({
     where: {
@@ -32,7 +32,7 @@ export async function getPublishedProductBySlug(slug: string) {
 }
 
 export async function listCategories() {
-  const db = getDatabase();
+  const db = await getDatabase();
 
   return db.query.category.findMany({
     orderBy: { name: 'asc' },
