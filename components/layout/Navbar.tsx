@@ -6,6 +6,7 @@ import { createAuth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { cn } from "@/lib/utils";
 import MobileMenu from "@/components/layout/MobileMenu";
+import CartBadge from "@/features/cart/components/CartBadge";
 
 // products?category=xxx
 const links = [
@@ -69,10 +70,13 @@ export default async function Navbar() {
           ))}
         </ul>
         {/* RIGHT */}
-        <div className="hidden md:flex items-center">
+        <div className="hidden md:flex gap-2 items-center">
+          <CartBadge />
           <AuthButton initialSession={session} />
         </div>
-        <MobileMenu links={links} />
+        <div className="flex items-center">
+          <MobileMenu links={links} />
+        </div>
       </div>
     </nav>
   );

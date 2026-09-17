@@ -52,12 +52,22 @@ export default function MobileMenu({ links }: MobileMenuProps) {
             <Link
               href={link.href}
               className="flex-1 text-white hover:text-green-500"
-              onClick={() => setIsOpen(!isOpen)}
+              onClick={() => setIsOpen(false)}
             >
               {link.label}
             </Link>
           </li>
         ))}
+
+        <li className="w-full flex text-center">
+          <Link
+            href="/cart"
+            className="flex-1 text-white hover:text-green-500"
+            onClick={() => setIsOpen(false)}
+          >
+            購物車
+          </Link>
+        </li>
       </ul>
     </div>
   );

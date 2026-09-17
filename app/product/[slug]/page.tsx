@@ -75,7 +75,10 @@ export default async function ProductPage({ params }: ProductPageProps) {
         )}
 
         <ProductPurchasePanel
+          productId={product.id}
           productName={product.name}
+          productSlug={product.slug}
+          productImage={product.images?.[0] ?? null}
           variants={product.variants}
         />
       </div>

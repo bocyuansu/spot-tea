@@ -5,6 +5,7 @@ import Footer from "@/components/layout/Footer";
 import { Noto_Serif } from "next/font/google";
 import { cn } from "@/lib/utils";
 import { Toaster } from "@/components/ui/toast";
+import CartProvider from "@/features/cart/components/CartProvider";
 
 const notoSerif = Noto_Serif({ subsets: ["latin"], variable: "--font-serif" });
 
@@ -24,12 +25,14 @@ export default function RootLayout({
   return (
     <html lang="zh-Hant-TW" className={cn("font-serif", notoSerif.variable)}>
       <body>
-        <Navbar />
-        <main className="mx-auto p-4 sm:px-0 sm:max-w-xl md:max-w-2xl lg:max-w-3xl xl:max-w-7xl">
-          {children}
-        </main>
-        <Footer />
-        <Toaster />
+        <CartProvider>
+          <Navbar />
+          <main className="mx-auto p-4 sm:px-0 sm:max-w-xl md:max-w-2xl lg:max-w-3xl xl:max-w-7xl">
+            {children}
+          </main>
+          <Footer />
+          <Toaster />
+        </CartProvider>
       </body>
     </html>
   );
