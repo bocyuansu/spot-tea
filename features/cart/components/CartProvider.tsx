@@ -1,16 +1,24 @@
 "use client";
 
-import { createContext, useCallback, useContext, useMemo } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import {
   CART_STORAGE_KEY,
   addCartItem,
   getCartCount,
   getCartSubtotal,
+  readStoredCart,
   removeCartItem,
   updateCartItemQuantity,
+  writeStoredCart,
 } from "@/features/cart/cart-utils";
 import type { CartItem } from "@/features/cart/schemas/cart";
-import { useLocalStorage } from "@/hooks/useLocalStorage";
 
 type CartContextValue = {
   items: CartItem[];
@@ -30,10 +38,28 @@ export default function CartProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const [items, setItems, isHydrated] = useLocalStorage<CartItem[]>(
-    CART_STORAGE_KEY,
-    [],
-  );
+  const [items, setItems] = useState<CartItem[]>([]);
+  const [isHydrated, setIsHydrated] = useState(false);
+
+  useEffect(() => {
+    setItems(readStoredCart());
+    setIsHydrated(true);
+  }, []);
+
+  useEffect(() => {
+    if (!isHydrated) return;
+
+    writeStoredCart(items);
+  }, [items, isHydrated]);
+
+  useEffect(() => {
+    function handleStorage(event: StorageEvent) {
+      if (event.key !== CART_STORAGE_KEY) return;
+      setItems(readStoredCart());
+    }
+    window.addEventListener("storage", handleStorage);
+    return () => window.removeEventListener("storage", handleStorage);
+  }, []);
 
   const addItem = useCallback((item: CartItem) => {
     setItems((prev) => addCartItem(prev, item));

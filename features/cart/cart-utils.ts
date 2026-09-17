@@ -1,6 +1,6 @@
-import { cartItemsSchema, type CartItem } from "./schemas/cart";
+import { cartItemsSchema, type CartItem } from './schemas/cart';
 
-export const CART_STORAGE_KEY = "spot-tea-cart";
+export const CART_STORAGE_KEY = 'spot-tea-cart';
 
 // 數量至少 1 件，且不得超過庫存；庫存為 0 時回傳 0，由呼叫端決定移除
 export function clampQuantity(quantity: number, stock: number) {
@@ -52,23 +52,32 @@ export function getCartSubtotal(items: CartItem[]) {
   return items.reduce((total, cartItem) => total + cartItem.price * cartItem.quantity, 0);
 }
 
-export function readStoredCart(): CartItem[] {
-  if (typeof window === "undefined") return [];
+// localStorage 的內容可能被竄改或是舊版格式，一律驗證後才放行
+export function parseStoredCart(raw: string | null): CartItem[] {
+  if (!raw) return [];
 
   try {
-    const raw = window.localStorage.getItem(CART_STORAGE_KEY);
-    if (!raw) return [];
-
     const parsed = cartItemsSchema.safeParse(JSON.parse(raw));
     return parsed.success ? parsed.data : [];
   } catch {
-    // 資料損毀或無法存取 localStorage 時，以空購物車繼續
+    // 資料損毀時，以空購物車繼續
+    return [];
+  }
+}
+
+export function readStoredCart(): CartItem[] {
+  if (typeof window === 'undefined') return [];
+
+  try {
+    return parseStoredCart(window.localStorage.getItem(CART_STORAGE_KEY));
+  } catch {
+    // 無痕模式或瀏覽器設定擋掉 localStorage 時忽略
     return [];
   }
 }
 
 export function writeStoredCart(items: CartItem[]) {
-  if (typeof window === "undefined") return;
+  if (typeof window === 'undefined') return;
 
   try {
     window.localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(items));
