@@ -1,14 +1,11 @@
-'use client';
-
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 export default function NotFound() {
-  const router = useRouter();
-
-  useEffect(() => {
-    router.replace('/');
-  }, [router]);
-
-  return null;
+  return (
+    <div>
+      <h1>404</h1>
+      <p>找不到此頁面</p>
+      <Link href="/">回首頁</Link>
+    </div>
+  );
 }
