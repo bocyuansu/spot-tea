@@ -1,10 +1,10 @@
-import { sql } from 'drizzle-orm';
+import { eq, sql } from 'drizzle-orm';
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { config } from 'dotenv';
 import { Client } from 'pg';
 
-import { seedCategories, seedProducts } from './seed-data';
-import { category, product, productVariant } from './schema';
+import { seedCategories, seedOrderUserEmail, seedOrders, seedProducts } from './seed-data';
+import { category, order, orderItem, product, productVariant, user } from './schema';
 
 // 加入 override: true 強制覆蓋已經被外部工具注入的環境變數
 config({ path: '.env.local', override: true });
@@ -87,8 +87,99 @@ const main = async () => {
         });
     }
 
+    const [orderUser] = await db
+      .select({ id: user.id })
+      .from(user)
+      .where(eq(user.email, seedOrderUserEmail));
+
+    let seededOrderCount = 0;
+
+    // 使用者是註冊出來的、不歸 seed 管，所以找不到人時只跳過訂單，不讓整個 seed 失敗
+    if (!orderUser) {
+      console.warn(`找不到使用者 ${seedOrderUserEmail}，已跳過訂單 seed`);
+    } else {
+      // 訂單要記下單當時的品名與售價，所以先把商品規格的快照資料撈出來
+      const variantRows = await db
+        .select({
+          id: productVariant.id,
+          sku: productVariant.sku,
+          price: productVariant.price,
+          label: productVariant.label,
+          weightGrams: productVariant.weightGrams,
+          productName: product.name,
+        })
+        .from(productVariant)
+        .innerJoin(product, eq(product.id, productVariant.productId));
+
+      const variantBySku = new Map(variantRows.map((row) => [row.sku, row]));
+
+      for (const seedOrder of seedOrders) {
+        const items = seedOrder.items.map((item) => {
+          const variant = variantBySku.get(item.sku);
+
+          if (!variant) {
+            throw new Error(`找不到規格 ${item.sku}，請確認 seed 資料`);
+          }
+
+          return {
+            productVariantId: variant.id,
+            productName: variant.productName,
+            variantName: variant.label ?? `${variant.weightGrams}g`,
+            unitPrice: variant.price,
+            quantity: item.quantity,
+            subtotal: variant.price * item.quantity,
+          };
+        });
+
+        const subtotalAmount = items.reduce((sum, item) => sum + item.subtotal, 0);
+
+        const [insertedOrder] = await db
+          .insert(order)
+          .values({
+            orderNumber: seedOrder.orderNumber,
+            userId: orderUser.id,
+            status: seedOrder.status,
+            paymentStatus: seedOrder.paymentStatus,
+            paymentProvider: seedOrder.paymentProvider,
+            paymentTransactionId: seedOrder.paymentTransactionId,
+            subtotalAmount,
+            shippingFee: seedOrder.shippingFee,
+            totalAmount: subtotalAmount + seedOrder.shippingFee,
+            shippingAddress: seedOrder.shippingAddress,
+            note: seedOrder.note,
+            createdAt: seedOrder.createdAt,
+          })
+          .onConflictDoUpdate({
+            target: order.orderNumber,
+            set: {
+              userId: orderUser.id,
+              status: seedOrder.status,
+              paymentStatus: seedOrder.paymentStatus,
+              paymentProvider: seedOrder.paymentProvider,
+              paymentTransactionId: seedOrder.paymentTransactionId,
+              subtotalAmount,
+              shippingFee: seedOrder.shippingFee,
+              totalAmount: subtotalAmount + seedOrder.shippingFee,
+              shippingAddress: seedOrder.shippingAddress,
+              note: seedOrder.note,
+              createdAt: seedOrder.createdAt,
+              updatedAt: new Date(),
+            },
+          })
+          .returning({ id: order.id });
+
+        // 訂單明細沒有自然鍵可以 upsert，重跑時整批換掉最單純
+        await db.delete(orderItem).where(eq(orderItem.orderId, insertedOrder.id));
+        await db
+          .insert(orderItem)
+          .values(items.map((item) => ({ orderId: insertedOrder.id, ...item })));
+
+        seededOrderCount += 1;
+      }
+    }
+
     console.log(
-      `Seed completed: ${seedCategories.length} categories, ${seedProducts.length} products`,
+      `Seed completed: ${seedCategories.length} categories, ${seedProducts.length} products, ${seededOrderCount} orders`,
     );
   } catch (error) {
     console.error('Error during seed:', error);

@@ -25,7 +25,7 @@ const CartItemRow = memo(function CartItemRow({
     <Card size="sm">
       <CardContent className="flex gap-3">
         <Link
-          href={`/product/${item.productSlug}`}
+          href={`/products/${item.productSlug}`}
           className="relative size-20 shrink-0 overflow-hidden rounded-lg bg-muted"
         >
           {item.image ? (
@@ -47,7 +47,7 @@ const CartItemRow = memo(function CartItemRow({
           <div className="flex items-start justify-between gap-2">
             <div className="flex min-w-0 flex-col">
               <Link
-                href={`/product/${item.productSlug}`}
+                href={`/products/${item.productSlug}`}
                 className="truncate font-medium hover:text-primary"
               >
                 {item.productName}

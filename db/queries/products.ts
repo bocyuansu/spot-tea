@@ -16,7 +16,7 @@ export async function listPublishedProducts(categorySlug?: string) {
   });
 }
 
-// 在 product/[slug]/page.tsx 會在 generateMetadata 和 Page 呼叫
+// 在 products/[slug]/page.tsx 會在 generateMetadata 和 Page 呼叫
 export async function getPublishedProductBySlug(slug: string) {
   const db = await getDatabase();
 

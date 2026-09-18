@@ -1,7 +1,5 @@
 import './globals.css';
 import type { Metadata } from 'next';
-import Navbar from '@/components/layout/Navbar';
-import Footer from '@/components/layout/Footer';
 import { Noto_Serif } from 'next/font/google';
 import { cn } from '@/lib/utils';
 import { Toaster } from '@/components/ui/toast';
@@ -19,16 +17,13 @@ export const metadata: Metadata = {
   manifest: '/manifest.json',
 };
 
+// 導覽列與 Footer 交給各 route group 的 layout，這裡只留全站共用的外殼。
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="zh-Hant-TW" className={cn('font-serif', notoSerif.variable)}>
       <body>
         <CartProvider>
-          <Navbar />
-          <main className="mx-auto p-4 sm:px-0 sm:max-w-xl md:max-w-2xl lg:max-w-3xl xl:max-w-7xl">
-            {children}
-          </main>
-          <Footer />
+          {children}
           <Toaster />
         </CartProvider>
       </body>
