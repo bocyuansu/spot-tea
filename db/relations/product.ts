@@ -1,11 +1,6 @@
 import { defineRelationsPart } from 'drizzle-orm';
 
-import * as productSchema from '@/db/schema/product';
-import * as cartSchema from '@/db/schema/cart';
-import * as orderSchema from '@/db/schema/order';
-
-// cartItem 與 orderItem 只是 productVariant 關聯的對向表格，它們自己的關聯在 cart.ts／order.ts
-const schema = { ...productSchema, ...cartSchema, ...orderSchema };
+import * as schema from '@/db/schema';
 
 export const productRelations = defineRelationsPart(schema, (r) => ({
   category: {
@@ -15,6 +10,7 @@ export const productRelations = defineRelationsPart(schema, (r) => ({
     }),
   },
   product: {
+    // categoryId 是 onDelete: 'set null' 的可空欄位，所以不加 optional: false
     category: r.one.category({
       from: r.product.categoryId,
       to: r.category.id,
@@ -28,6 +24,7 @@ export const productRelations = defineRelationsPart(schema, (r) => ({
     product: r.one.product({
       from: r.productVariant.productId,
       to: r.product.id,
+      optional: false,
     }),
     cartItems: r.many.cartItem({
       from: r.productVariant.id,

@@ -1,17 +1,13 @@
 import { defineRelationsPart } from 'drizzle-orm';
 
-import * as orderSchema from '@/db/schema/order';
-import * as authSchema from '@/db/schema/auth';
-import * as productSchema from '@/db/schema/product';
-
-// user 與 productVariant 只是對向表格，它們自己的關聯在 auth.ts／product.ts
-const schema = { ...orderSchema, ...authSchema, ...productSchema };
+import * as schema from '@/db/schema';
 
 export const orderRelations = defineRelationsPart(schema, (r) => ({
   order: {
     user: r.one.user({
       from: r.order.userId,
       to: r.user.id,
+      optional: false,
     }),
     items: r.many.orderItem({
       from: r.order.id,
@@ -22,6 +18,13 @@ export const orderRelations = defineRelationsPart(schema, (r) => ({
     order: r.one.order({
       from: r.orderItem.orderId,
       to: r.order.id,
+      optional: false,
+    }),
+    // productVariantId 是 onDelete: 'set null' 的可空欄位，商品被刪除後會變成 null，
+    // 所以這裡刻意不加 optional: false，維持 productVariant | null
+    productVariant: r.one.productVariant({
+      from: r.orderItem.productVariantId,
+      to: r.productVariant.id,
     }),
   },
 }));

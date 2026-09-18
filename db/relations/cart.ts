@@ -1,17 +1,13 @@
 import { defineRelationsPart } from 'drizzle-orm';
 
-import * as cartSchema from '@/db/schema/cart';
-import * as authSchema from '@/db/schema/auth';
-import * as productSchema from '@/db/schema/product';
-
-// user 與 productVariant 只是對向表格，它們自己的關聯在 auth.ts／product.ts
-const schema = { ...cartSchema, ...authSchema, ...productSchema };
+import * as schema from '@/db/schema';
 
 export const cartRelations = defineRelationsPart(schema, (r) => ({
   cart: {
     user: r.one.user({
       from: r.cart.userId,
       to: r.user.id,
+      optional: false,
     }),
     items: r.many.cartItem({
       from: r.cart.id,
@@ -22,10 +18,12 @@ export const cartRelations = defineRelationsPart(schema, (r) => ({
     cart: r.one.cart({
       from: r.cartItem.cartId,
       to: r.cart.id,
+      optional: false,
     }),
     productVariant: r.one.productVariant({
       from: r.cartItem.productVariantId,
       to: r.productVariant.id,
+      optional: false,
     }),
   },
 }));

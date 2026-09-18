@@ -11,7 +11,8 @@ import { betterAuth } from 'better-auth/minimal';
 import { admin } from 'better-auth/plugins';
 import { drizzleAdapter } from '@better-auth/drizzle-adapter/relations-v2';
 import { drizzle } from 'drizzle-orm/node-postgres';
-import * as schema from '../db/schema';
+import * as schema from '@/db/schema';
+import { relations } from '@/db/relations';
 
 // 加入 override: true 強制覆蓋已經被外部工具注入的環境變數
 config({ path: '.env.local', override: true });
@@ -24,7 +25,7 @@ if (!connectionString) {
 }
 
 // generate 只需要 schema，不會真的建立連線
-const db = drizzle(connectionString, { relations: schema.relations });
+const db = drizzle(connectionString, { relations });
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
