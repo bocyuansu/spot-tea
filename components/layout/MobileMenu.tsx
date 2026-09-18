@@ -13,9 +13,10 @@ type Link = {
 
 type MobileMenuProps = {
   links: Link[];
+  isLoggedIn: boolean;
 };
 
-export default function MobileMenu({ links }: MobileMenuProps) {
+export default function MobileMenu({ links, isLoggedIn }: MobileMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   // 打開選單時，禁止背景捲動
@@ -68,6 +69,18 @@ export default function MobileMenu({ links }: MobileMenuProps) {
             購物車
           </Link>
         </li>
+
+        {isLoggedIn && (
+          <li className="w-full flex text-center">
+            <Link
+              href="/user"
+              className="flex-1 text-white hover:text-green-500"
+              onClick={() => setIsOpen(false)}
+            >
+              會員中心
+            </Link>
+          </li>
+        )}
       </ul>
     </div>
   );

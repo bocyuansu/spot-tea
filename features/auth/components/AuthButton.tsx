@@ -18,9 +18,29 @@ export default function AuthButton({ initialSession }: AuthButtonProps) {
   const { data, isPending, isRefetching } = authClient.useSession();
   const session = isPending && !isRefetching ? initialSession : data;
 
-  if (session) return <LogoutButton />;
+  if (session) {
+    return (
+      <>
+        <MemberLink />
+        <LogoutButton />
+      </>
+    );
+  }
 
   return <LoginButton />;
+}
+
+export function MemberLink() {
+  return (
+    <Link
+      href="/user"
+      aria-label="會員中心"
+      className="flex gap-1 items-center text-xs sm:text-sm md:text-base hover:text-primary"
+    >
+      <User className="size-5 md:size-6" />
+      <span className="hidden lg:inline">會員中心</span>
+    </Link>
+  );
 }
 // text-xs p-1 sm:text-sm sm:px-2 md:text-base md:px-3 md:py-2
 export function LoginButton() {

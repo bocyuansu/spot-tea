@@ -27,6 +27,30 @@ const errorCodes = {
     en: 'You Have been banned',
     zh: '使用者已被禁用 !',
   },
+  INVALID_PASSWORD: {
+    en: 'Invalid password',
+    zh: '目前的密碼錯誤 !',
+  },
+  PASSWORD_TOO_SHORT: {
+    en: 'Password too short',
+    zh: '密碼長度太短 !',
+  },
+  PASSWORD_TOO_LONG: {
+    en: 'Password too long',
+    zh: '密碼長度太長 !',
+  },
+  CREDENTIAL_ACCOUNT_NOT_FOUND: {
+    en: 'Credential account not found',
+    zh: '此帳號沒有設定密碼 !',
+  },
+  FAILED_TO_UPDATE_USER: {
+    en: 'Failed to update user',
+    zh: '更新會員資料失敗 !',
+  },
+  SESSION_EXPIRED: {
+    en: 'Session expired. Re-authenticate to perform this action.',
+    zh: '登入已過期，請重新登入 !',
+  },
 } satisfies ErrorTypes;
 
 export const getErrorMessage = (code: string, lang: 'en' | 'zh') => {

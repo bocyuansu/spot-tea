@@ -15,16 +15,8 @@ const links = [
     label: '所有商品',
   },
   {
-    href: '/brand-story',
-    label: '品牌故事',
-  },
-  {
     href: '/store-location',
     label: '門市資訊',
-  },
-  {
-    href: '/notices',
-    label: '重要公告',
   },
 ];
 
@@ -36,7 +28,7 @@ export default async function Navbar() {
   });
 
   return (
-    <nav className="sticky top-0 z-50 w-full bg-white/80 backdrop-blur border-b">
+    <nav className="sticky top-0 z-50 w-full bg-white/80 backdrop-blur shadow-xs">
       <div
         className={cn(
           'flex justify-between items-center mx-auto gap-2 p-4',
@@ -75,7 +67,7 @@ export default async function Navbar() {
           <AuthButton initialSession={session} />
         </div>
         <div className="flex items-center md:hidden">
-          <MobileMenu links={links} />
+          <MobileMenu links={links} isLoggedIn={!!session} />
         </div>
       </div>
     </nav>
