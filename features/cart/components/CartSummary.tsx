@@ -4,14 +4,11 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { toast } from '@/components/ui/toast';
 import { formatPriceTWD } from '@/lib/format';
+import { useCart } from '@/features/cart/components/CartProvider';
 
-type CartSummaryProps = {
-  totalQuantity: number;
-  subtotal: number;
-  onClear: () => void;
-};
+export default function CartSummary() {
+  const { totalQuantity, subtotal, clearCart } = useCart();
 
-export default function CartSummary({ totalQuantity, subtotal, onClear }: CartSummaryProps) {
   return (
     <Card className="lg:sticky lg:top-28">
       <CardContent className="flex flex-col gap-3">
@@ -41,7 +38,7 @@ export default function CartSummary({ totalQuantity, subtotal, onClear }: CartSu
         >
           前往結帳
         </Button>
-        <Button type="button" variant="ghost" size="sm" onClick={onClear}>
+        <Button type="button" variant="ghost" size="sm" onClick={clearCart}>
           清空購物車
         </Button>
       </CardContent>
