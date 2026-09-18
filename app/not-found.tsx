@@ -1,8 +1,5 @@
 import Link from 'next/link';
 import { buttonVariants } from '@/components/ui/button';
-import SiteChrome from '@/components/layout/SiteChrome';
-
-// not-found.tsx 不吃 metadata 匯出，標題會沿用 layout.tsx 的預設值。
 
 const links = [
   {

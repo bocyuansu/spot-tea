@@ -18,6 +18,12 @@
       "id": "f51f3f41ba01405a99f966e46fb9543b",
     },
   ],
+  "kv_namespaces": [
+    {
+      "binding": "VINEXT_KV_CACHE",
+      "id": "f6a58e7a8f414593a25d23e918f6d371",
+    },
+  ],
   "assets": {
     "directory": "dist/client",
     "not_found_handling": "none",
