@@ -1,5 +1,6 @@
 'use client';
 
+import { memo } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Leaf, Trash2 } from 'lucide-react';
@@ -11,11 +12,15 @@ import { formatPriceTWD } from '@/lib/format';
 
 type CartItemRowProps = {
   item: CartItem;
-  onQuantityChange: (quantity: number) => void;
-  onRemove: () => void;
+  onQuantityChange: (variantId: string, quantity: number) => void;
+  onRemove: (variantId: string) => void;
 };
 
-export default function CartItemRow({ item, onQuantityChange, onRemove }: CartItemRowProps) {
+const CartItemRow = memo(function CartItemRow({
+  item,
+  onQuantityChange,
+  onRemove,
+}: CartItemRowProps) {
   return (
     <Card size="sm">
       <CardContent className="flex gap-3">
@@ -57,14 +62,18 @@ export default function CartItemRow({ item, onQuantityChange, onRemove }: CartIt
               variant="ghost"
               size="icon-sm"
               aria-label={`移除 ${item.productName}`}
-              onClick={onRemove}
+              onClick={() => onRemove(item.variantId)}
             >
               <Trash2 className="size-4" />
             </Button>
           </div>
 
           <div className="flex items-center justify-between gap-2">
-            <QuantityStepper value={item.quantity} max={item.stock} onChange={onQuantityChange} />
+            <QuantityStepper
+              value={item.quantity}
+              max={item.stock}
+              onChange={(quantity) => onQuantityChange(item.variantId, quantity)}
+            />
             <span className="font-semibold text-primary">
               {formatPriceTWD(item.price * item.quantity)}
             </span>
@@ -73,4 +82,6 @@ export default function CartItemRow({ item, onQuantityChange, onRemove }: CartIt
       </CardContent>
     </Card>
   );
-}
+});
+
+export default CartItemRow;

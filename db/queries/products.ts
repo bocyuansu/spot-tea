@@ -1,5 +1,4 @@
 import { getDatabase } from '@/db/client';
-import { cache } from 'react';
 
 export async function listPublishedProducts(categorySlug?: string) {
   const db = await getDatabase();
@@ -18,7 +17,7 @@ export async function listPublishedProducts(categorySlug?: string) {
 }
 
 // 在 product/[slug]/page.tsx 會在 generateMetadata 和 Page 呼叫
-export const getPublishedProductBySlug = cache(async (slug: string) => {
+export async function getPublishedProductBySlug(slug: string) {
   const db = await getDatabase();
 
   return db.query.product.findFirst({
@@ -31,7 +30,7 @@ export const getPublishedProductBySlug = cache(async (slug: string) => {
       variants: true,
     },
   });
-});
+}
 
 export async function listCategories() {
   const db = await getDatabase();

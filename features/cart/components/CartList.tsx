@@ -1,8 +1,16 @@
+import { useCallback } from 'react';
 import CartItemRow from './CartItemRow';
 import { useCart } from './CartProvider';
 
 export default function CartList() {
   const { items, updateQuantity, removeItem } = useCart();
+
+  const handleQuantityChange = useCallback(
+    (variantId: string, quantity: number) => updateQuantity(variantId, quantity),
+    [],
+  );
+
+  const handleRemove = useCallback((variantId: string) => removeItem(variantId), []);
 
   return (
     <ul className="flex flex-col gap-3">
@@ -10,8 +18,8 @@ export default function CartList() {
         <li key={item.variantId}>
           <CartItemRow
             item={item}
-            onQuantityChange={(quantity) => updateQuantity(item.variantId, quantity)}
-            onRemove={() => removeItem(item.variantId)}
+            onQuantityChange={handleQuantityChange}
+            onRemove={handleRemove}
           />
         </li>
       ))}
