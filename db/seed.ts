@@ -2,8 +2,9 @@ import { sql } from 'drizzle-orm';
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { config } from 'dotenv';
 import { Client } from 'pg';
-import { category, product, productVariant } from './schema/shop';
+
 import { seedCategories, seedProducts } from './seed-data';
+import { category, product, productVariant } from './schema';
 
 // 加入 override: true 強制覆蓋已經被外部工具注入的環境變數
 config({ path: '.env.local', override: true });

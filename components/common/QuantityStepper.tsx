@@ -23,7 +23,8 @@ export default function QuantityStepper({
   className,
 }: QuantityStepperProps) {
   const emitChange = (next: number) => {
-    onChange(Math.min(Math.max(next, min), max));
+    const clamp = Math.min(Math.max(next, min), max);
+    onChange(clamp);
   };
 
   return (
