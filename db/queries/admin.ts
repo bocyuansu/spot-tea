@@ -85,6 +85,33 @@ export async function listAdminUsers() {
   }));
 }
 
+// 後台的商品編輯頁；和 listAdminProducts 一樣不過濾 status
+export async function getAdminProductById(id: string) {
+  const db = await getDatabase('fresh');
+
+  return db.query.product.findFirst({
+    where: { id },
+    with: {
+      variants: { orderBy: { weightGrams: 'asc' } },
+    },
+  });
+}
+
+// 商品表單的分類下拉選單；前台的 listCategories 有快取，後台要看到剛新增的分類
+export async function listAdminCategories() {
+  const db = await getDatabase('fresh');
+
+  return db.query.category.findMany({ orderBy: { name: 'asc' } });
+}
+
+export async function getAdminUserById(id: string) {
+  const db = await getDatabase('fresh');
+
+  return db.query.user.findFirst({ where: { id } });
+}
+
 export type AdminOverview = Awaited<ReturnType<typeof getAdminOverview>>;
 export type AdminProduct = Awaited<ReturnType<typeof listAdminProducts>>[number];
 export type AdminUser = Awaited<ReturnType<typeof listAdminUsers>>[number];
+export type AdminCategory = Awaited<ReturnType<typeof listAdminCategories>>[number];
+export type AdminProductDetail = NonNullable<Awaited<ReturnType<typeof getAdminProductById>>>;

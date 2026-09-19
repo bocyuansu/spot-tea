@@ -1,4 +1,6 @@
+import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import {
   Table,
@@ -9,6 +11,8 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { productStatusLabels } from '@/features/products/product-status';
+import { Pencil } from 'lucide-react';
+import AdminProductDeleteButton from '@/features/admin/components/AdminProductDeleteButton';
 import { formatPriceTWD } from '@/lib/format';
 import type { AdminProduct } from '@/db/queries/admin';
 
@@ -38,7 +42,10 @@ export default function AdminProductTable({ products }: AdminProductTableProps) 
   if (products.length === 0) {
     return (
       <div className="flex min-h-64 flex-col items-center justify-center gap-2 text-center text-muted-foreground">
-        <p>資料庫裡還沒有任何商品，請先執行 pnpm db:seed</p>
+        <p>資料庫裡還沒有任何商品</p>
+        <Button render={<Link href="/admin/products/new" />} nativeButton={false}>
+          新增第一項商品
+        </Button>
       </div>
     );
   }
@@ -55,6 +62,7 @@ export default function AdminProductTable({ products }: AdminProductTableProps) 
               <TableHead className="text-right">規格</TableHead>
               <TableHead className="text-right">價格</TableHead>
               <TableHead className="text-right">總庫存</TableHead>
+              <TableHead className="w-24 text-right">操作</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -88,6 +96,20 @@ export default function AdminProductTable({ products }: AdminProductTableProps) 
                     className={totalStock === 0 ? 'text-right text-destructive' : 'text-right'}
                   >
                     {totalStock}
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex justify-end gap-1">
+                      <Button
+                        render={<Link href={`/admin/products/${product.id}`} />}
+                        nativeButton={false}
+                        variant="ghost"
+                        size="icon"
+                        aria-label={`編輯 ${product.name}`}
+                      >
+                        <Pencil className="size-4" />
+                      </Button>
+                      <AdminProductDeleteButton productId={product.id} productName={product.name} />
+                    </div>
                   </TableCell>
                 </TableRow>
               );

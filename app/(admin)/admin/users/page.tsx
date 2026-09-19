@@ -1,4 +1,9 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
+import { headers } from 'next/headers';
+import { Plus } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { createAuth } from '@/lib/auth';
 import { listAdminUsers } from '@/db/queries/admin';
 import AdminUserTable from '@/features/admin/components/AdminUserTable';
 
@@ -7,16 +12,28 @@ export const metadata: Metadata = {
 };
 
 export default async function AdminUsersPage() {
-  const users = await listAdminUsers();
+  const auth = await createAuth();
+
+  const [users, session] = await Promise.all([
+    listAdminUsers(),
+    auth.api.getSession({ headers: await headers() }),
+  ]);
 
   return (
     <div className="flex flex-col gap-6">
-      <div>
-        <h1 className="font-heading text-3xl md:text-4xl">使用者管理</h1>
-        <p className="mt-1 text-muted-foreground">共 {users.length} 位會員</p>
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <h1 className="font-heading text-3xl md:text-4xl">使用者管理</h1>
+          <p className="mt-1 text-muted-foreground">共 {users.length} 位會員</p>
+        </div>
+
+        <Button render={<Link href="/admin/users/new" />} nativeButton={false}>
+          <Plus className="size-4" />
+          <span>新增會員</span>
+        </Button>
       </div>
 
-      <AdminUserTable users={users} />
+      <AdminUserTable users={users} currentUserId={session?.user.id ?? ''} />
     </div>
   );
 }

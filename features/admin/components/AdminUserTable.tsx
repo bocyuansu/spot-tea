@@ -1,4 +1,6 @@
+import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import {
   Table,
@@ -8,6 +10,8 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { Pencil } from 'lucide-react';
+import AdminUserDeleteButton from '@/features/admin/components/AdminUserDeleteButton';
 import { formatDateTW } from '@/lib/format';
 import type { AdminUser } from '@/db/queries/admin';
 
@@ -17,11 +21,20 @@ const roleLabels: Record<string, string> = {
   customer: '一般會員',
 };
 
+// order.userId 沒設 onDelete，有訂單的會員在資料庫層就刪不掉，先在 UI 擋下來
+function deleteDisabledReason(user: AdminUser, currentUserId: string) {
+  if (user.id === currentUserId) return '不能刪除自己的帳號';
+  if (user.orderCount > 0) return '這位會員已有訂單紀錄，無法刪除';
+  return undefined;
+}
+
 type AdminUserTableProps = {
   users: AdminUser[];
+  // 用來擋住「刪除自己」這件事
+  currentUserId: string;
 };
 
-export default function AdminUserTable({ users }: AdminUserTableProps) {
+export default function AdminUserTable({ users, currentUserId }: AdminUserTableProps) {
   if (users.length === 0) {
     return (
       <div className="flex min-h-64 flex-col items-center justify-center gap-2 text-center text-muted-foreground">
@@ -41,6 +54,7 @@ export default function AdminUserTable({ users }: AdminUserTableProps) {
               <TableHead>狀態</TableHead>
               <TableHead className="text-right">訂單數</TableHead>
               <TableHead className="text-right">加入日期</TableHead>
+              <TableHead className="w-24 text-right">操作</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -67,6 +81,24 @@ export default function AdminUserTable({ users }: AdminUserTableProps) {
                 <TableCell className="text-right">{user.orderCount}</TableCell>
                 <TableCell className="text-right text-muted-foreground">
                   {formatDateTW(user.createdAt)}
+                </TableCell>
+                <TableCell>
+                  <div className="flex justify-end gap-1">
+                    <Button
+                      render={<Link href={`/admin/users/${user.id}`} />}
+                      nativeButton={false}
+                      variant="ghost"
+                      size="icon"
+                      aria-label={`編輯 ${user.name}`}
+                    >
+                      <Pencil className="size-4" />
+                    </Button>
+                    <AdminUserDeleteButton
+                      userId={user.id}
+                      userName={user.name}
+                      disabledReason={deleteDisabledReason(user, currentUserId)}
+                    />
+                  </div>
                 </TableCell>
               </TableRow>
             ))}

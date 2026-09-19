@@ -5,6 +5,7 @@ import { drizzleAdapter } from '@better-auth/drizzle-adapter/relations-v2';
 import { getDatabase } from '@/db/client';
 import * as schema from '@/db/schema';
 import { hashPassword, verifyPassword } from '@/lib/password';
+import { adminRoles } from '@/lib/permissions';
 import { waitUntil } from 'cloudflare:workers';
 
 export async function createAuth() {
@@ -33,6 +34,7 @@ export async function createAuth() {
     plugins: [
       admin({
         defaultRole: 'customer',
+        roles: adminRoles,
       }),
       nextCookies(),
     ], // 確保 nextCookies 是陣列的最後一個 plugin
