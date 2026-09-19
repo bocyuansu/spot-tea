@@ -1,6 +1,6 @@
 'use client';
 
-import { Menu, ShoppingCart, User, X } from 'lucide-react';
+import { LayoutDashboard, Menu, ShoppingCart, User, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
@@ -14,9 +14,10 @@ type Link = {
 type MobileMenuProps = {
   links: Link[];
   isLoggedIn: boolean;
+  isAdmin: boolean;
 };
 
-export default function MobileMenu({ links, isLoggedIn }: MobileMenuProps) {
+export default function MobileMenu({ links, isLoggedIn, isAdmin }: MobileMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   // 打開選單時，禁止背景捲動
@@ -83,6 +84,20 @@ export default function MobileMenu({ links, isLoggedIn }: MobileMenuProps) {
             >
               <User className="size-5" />
               <span>會員中心</span>
+            </Link>
+          </li>
+        )}
+
+        {isAdmin && (
+          <li className="w-full flex text-center">
+            <Link
+              href="/admin/dashboard"
+              prefetch={false}
+              className="flex-1 flex gap-1 justify-center items-center text-white hover:text-green-500"
+              onClick={() => setIsOpen(false)}
+            >
+              <LayoutDashboard className="size-5" />
+              <span>管理員後台</span>
             </Link>
           </li>
         )}

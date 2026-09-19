@@ -7,6 +7,7 @@ import { headers } from 'next/headers';
 import { cn } from '@/lib/utils';
 import MobileMenu from '@/components/layout/MobileMenu';
 import CartBadge from '@/features/cart/components/CartBadge';
+import DashboardLink from '@/features/admin/shared/components/DashboardLink';
 
 // products?category=xxx
 const links = [
@@ -26,6 +27,8 @@ export default async function Navbar() {
   const session = await auth.api.getSession({
     headers: await headers(),
   });
+
+  const isAdmin = session?.user.role === 'admin';
 
   return (
     <nav className="sticky top-0 z-50 w-full bg-white/80 backdrop-blur shadow-xs">
@@ -63,12 +66,13 @@ export default async function Navbar() {
         </ul>
         {/* RIGHT */}
         <div className="hidden md:flex gap-3 items-center">
+          {isAdmin && <DashboardLink />}
           <CartBadge />
           <AuthButton initialSession={session} />
         </div>
         <div className="flex items-center md:hidden">
           <AuthButton initialSession={session} />
-          <MobileMenu links={links} isLoggedIn={!!session} />
+          <MobileMenu links={links} isLoggedIn={!!session} isAdmin={isAdmin} />
         </div>
       </div>
     </nav>
