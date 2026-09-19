@@ -11,10 +11,10 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { productStatusLabels } from '@/features/products/product-status';
-import { Pencil } from 'lucide-react';
-import AdminProductDeleteButton from '@/features/admin/components/AdminProductDeleteButton';
+
 import { formatPriceTWD } from '@/lib/format';
 import type { AdminProduct } from '@/db/queries/admin';
+import AdminProductMenu from './AdminProductMenu';
 
 const statusVariants: Record<AdminProduct['status'], 'default' | 'secondary' | 'outline'> = {
   published: 'default',
@@ -98,18 +98,7 @@ export default function AdminProductTable({ products }: AdminProductTableProps) 
                     {totalStock}
                   </TableCell>
                   <TableCell>
-                    <div className="flex justify-end gap-1">
-                      <Button
-                        render={<Link href={`/admin/products/${product.id}`} />}
-                        nativeButton={false}
-                        variant="ghost"
-                        size="icon"
-                        aria-label={`編輯 ${product.name}`}
-                      >
-                        <Pencil className="size-4" />
-                      </Button>
-                      <AdminProductDeleteButton productId={product.id} productName={product.name} />
-                    </div>
+                    <AdminProductMenu productId={product.id} productName={product.name} />
                   </TableCell>
                 </TableRow>
               );

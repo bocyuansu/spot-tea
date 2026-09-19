@@ -9,25 +9,26 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
-import { Button } from '@/components/ui/button';
 import { toast } from '@/components/ui/toast';
-import { Loader2, Trash2 } from 'lucide-react';
-import { useState, useTransition } from 'react';
+import { Loader2 } from 'lucide-react';
+import { useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { deleteProduct } from '@/features/admin/actions/products';
 
-type AdminProductDeleteButtonProps = {
+type AdminProductDeleteDialogProps = {
   productId: string;
   productName: string;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
 };
 
-export default function AdminProductDeleteButton({
+export default function AdminProductDeleteDialog({
   productId,
   productName,
-}: AdminProductDeleteButtonProps) {
-  const [open, setOpen] = useState(false);
+  open,
+  onOpenChange,
+}: AdminProductDeleteDialogProps) {
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
 
@@ -40,19 +41,14 @@ export default function AdminProductDeleteButton({
         return;
       }
 
-      setOpen(false);
+      onOpenChange(false);
       toast.add({ type: 'success', description: '商品已刪除 !' });
       router.refresh();
     });
   }
 
   return (
-    <AlertDialog open={open} onOpenChange={setOpen}>
-      <AlertDialogTrigger
-        render={<Button variant="ghost" size="icon" aria-label={`刪除 ${productName}`} />}
-      >
-        <Trash2 className="size-4" />
-      </AlertDialogTrigger>
+    <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>確定要刪除「{productName}」嗎 ?</AlertDialogTitle>
