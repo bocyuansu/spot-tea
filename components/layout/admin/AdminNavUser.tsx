@@ -1,7 +1,10 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import { IconDotsVertical, IconLogout } from '@tabler/icons-react';
 
+import { authClient } from '@/lib/auth-client';
+import { toast } from '@/components/ui/toast';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   DropdownMenu,
@@ -39,7 +42,31 @@ function getInitials(name: string) {
 
 export function AdminNavUser({ user }: { user: AdminUserSummary }) {
   const { isMobile } = useSidebar();
+  const router = useRouter();
   const initials = getInitials(user.name);
+
+  // 登出後留在後台也看不到東西，直接帶去登入頁
+  async function handleLogout() {
+    await authClient.signOut({
+      fetchOptions: {
+        onSuccess: () => {
+          toast.add({
+            type: 'success',
+            description: '登出成功 !',
+          });
+          router.push('/login');
+        },
+        onError: ({ error }) => {
+          console.error(error.error.message);
+          toast.add({
+            type: 'error',
+            description: error.error.message,
+            priority: 'high',
+          });
+        },
+      },
+    });
+  }
 
   return (
     <SidebarMenu>
@@ -84,9 +111,9 @@ export function AdminNavUser({ user }: { user: AdminUserSummary }) {
               </DropdownMenuLabel>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={handleLogout}>
               <IconLogout />
-              Log out
+              登出
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

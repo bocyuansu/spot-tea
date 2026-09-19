@@ -17,17 +17,17 @@ import { AdminNavUser, type AdminUserSummary } from './AdminNavUser';
 
 const navMain = [
   {
-    title: 'Dashboard',
+    title: '儀表板',
     url: '/admin/dashboard',
     icon: IconDashboard,
   },
   {
-    title: 'Products',
+    title: '商品管理',
     url: '/admin/products',
     icon: IconLeaf,
   },
   {
-    title: 'Users',
+    title: '使用者管理',
     url: '/admin/users',
     icon: IconUsers,
   },
