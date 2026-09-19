@@ -21,6 +21,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import {
   emptyProductVariant,
   productFormSchema,
+  UNCATEGORIZED,
   type ProductFormValues,
 } from '@/features/admin/schemas/product';
 /* Server actions */
@@ -30,8 +31,6 @@ import { productStatusLabels } from '@/features/products/product-status';
 import { useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import type { AdminCategory, AdminProductDetail } from '@/db/queries/admin';
-
-const UNCATEGORIZED = '';
 
 function toFormValues(product: AdminProductDetail | undefined): ProductFormValues {
   if (!product) {

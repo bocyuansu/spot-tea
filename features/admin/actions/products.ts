@@ -6,7 +6,11 @@ import { and, eq, notInArray } from 'drizzle-orm';
 import { getDatabase } from '@/db/client';
 import { product, productVariant } from '@/db/schema';
 import { createAuth } from '@/lib/auth';
-import { productFormSchema, type ProductFormValues } from '@/features/admin/schemas/product';
+import {
+  productFormSchema,
+  UNCATEGORIZED,
+  type ProductFormValues,
+} from '@/features/admin/schemas/product';
 
 export type ActionResult = { ok: true } | { ok: false; message: string };
 
@@ -26,8 +30,7 @@ function toProductColumns(values: ProductFormValues) {
   return {
     name: values.name,
     slug: values.slug,
-    // 下拉選單的「未分類」是空字串，資料庫存 null
-    categoryId: values.categoryId || null,
+    categoryId: values.categoryId === UNCATEGORIZED ? null : values.categoryId,
     status: values.status,
     origin: values.origin || null,
     description: values.description || null,

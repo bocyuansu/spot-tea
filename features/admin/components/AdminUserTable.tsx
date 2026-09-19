@@ -1,6 +1,4 @@
-import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import {
   Table,
@@ -10,8 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Pencil } from 'lucide-react';
-import AdminUserDeleteButton from '@/features/admin/components/AdminUserDeleteButton';
+import AdminUserMenu from '@/features/admin/components/AdminUserMenu';
 import { formatDateTW } from '@/lib/format';
 import type { AdminUser } from '@/db/queries/admin';
 
@@ -83,22 +80,11 @@ export default function AdminUserTable({ users, currentUserId }: AdminUserTableP
                   {formatDateTW(user.createdAt)}
                 </TableCell>
                 <TableCell>
-                  <div className="flex justify-end gap-1">
-                    <Button
-                      render={<Link href={`/admin/users/${user.id}`} />}
-                      nativeButton={false}
-                      variant="ghost"
-                      size="icon"
-                      aria-label={`編輯 ${user.name}`}
-                    >
-                      <Pencil className="size-4" />
-                    </Button>
-                    <AdminUserDeleteButton
-                      userId={user.id}
-                      userName={user.name}
-                      disabledReason={deleteDisabledReason(user, currentUserId)}
-                    />
-                  </div>
+                  <AdminUserMenu
+                    userId={user.id}
+                    userName={user.name}
+                    disabledReason={deleteDisabledReason(user, currentUserId)}
+                  />
                 </TableCell>
               </TableRow>
             ))}

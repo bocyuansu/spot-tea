@@ -9,45 +9,29 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
-import { Button } from '@/components/ui/button';
 import { toast } from '@/components/ui/toast';
-import { Loader2, Trash2 } from 'lucide-react';
-import { useState, useTransition } from 'react';
+import { Loader2 } from 'lucide-react';
+import { useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { authClient } from '@/lib/auth-client';
 import { getErrorMessage } from '@/lib/auth-errors';
 
-type AdminUserDeleteButtonProps = {
+type AdminUserDeleteDialogProps = {
   userId: string;
   userName: string;
-  // 有訂單的會員刪不掉（order.userId 是財務紀錄，沒設 onDelete），自己也不能刪自己
-  disabledReason?: string;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
 };
 
-export default function AdminUserDeleteButton({
+export default function AdminUserDeleteDialog({
   userId,
   userName,
-  disabledReason,
-}: AdminUserDeleteButtonProps) {
-  const [open, setOpen] = useState(false);
+  open,
+  onOpenChange,
+}: AdminUserDeleteDialogProps) {
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
-
-  if (disabledReason) {
-    return (
-      <Button
-        variant="ghost"
-        size="icon"
-        disabled
-        aria-label={disabledReason}
-        title={disabledReason}
-      >
-        <Trash2 className="size-4" />
-      </Button>
-    );
-  }
 
   function onConfirm() {
     startTransition(async () => {
@@ -62,19 +46,14 @@ export default function AdminUserDeleteButton({
         return;
       }
 
-      setOpen(false);
+      onOpenChange(false);
       toast.add({ type: 'success', description: '會員已刪除 !' });
       router.refresh();
     });
   }
 
   return (
-    <AlertDialog open={open} onOpenChange={setOpen}>
-      <AlertDialogTrigger
-        render={<Button variant="ghost" size="icon" aria-label={`刪除 ${userName}`} />}
-      >
-        <Trash2 className="size-4" />
-      </AlertDialogTrigger>
+    <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>確定要刪除「{userName}」嗎 ?</AlertDialogTitle>

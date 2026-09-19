@@ -13,6 +13,9 @@ export const productVariantSchema = z.object({
   stock: requiredNumber('請輸入庫存 !').int().min(0, '庫存不得小於 0 !'),
 });
 
+// 下拉選單的「未分類」用空字串，對應資料庫的 null
+export const UNCATEGORIZED = '';
+
 export const productFormSchema = z.object({
   name: z.string().min(1, '請輸入商品名稱 !').max(60, '商品名稱不得超過 60 個字 !'),
   slug: z
@@ -20,7 +23,7 @@ export const productFormSchema = z.object({
     .min(1, '請輸入網址代稱 !')
     .max(60, '網址代稱不得超過 60 個字 !')
     .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, '網址代稱只能使用小寫英文、數字與連字號 !'),
-  // 空字串代表未分類，對應資料庫的 null
+  // 可以是 UNCATEGORIZED
   categoryId: z.string(),
   status: z.enum(['draft', 'published', 'archived']),
   origin: z.string().max(30, '產地不得超過 30 個字 !'),
