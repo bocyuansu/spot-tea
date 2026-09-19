@@ -110,8 +110,34 @@ export async function getAdminUserById(id: string) {
   return db.query.user.findFirst({ where: { id } });
 }
 
+export async function listAdminOrders() {
+  const db = await getDatabase('fresh');
+
+  return db.query.order.findMany({
+    with: {
+      user: { columns: { name: true, email: true } },
+    },
+    orderBy: { createdAt: 'desc' },
+  });
+}
+
+// 後台的訂單明細頁；訂單列表不需要 items，只有這裡才一併撈出來
+export async function getAdminOrderById(id: string) {
+  const db = await getDatabase('fresh');
+
+  return db.query.order.findFirst({
+    where: { id },
+    with: {
+      user: { columns: { id: true, name: true, email: true } },
+      items: true,
+    },
+  });
+}
+
 export type AdminOverview = Awaited<ReturnType<typeof getAdminOverview>>;
 export type AdminProduct = Awaited<ReturnType<typeof listAdminProducts>>[number];
 export type AdminUser = Awaited<ReturnType<typeof listAdminUsers>>[number];
 export type AdminCategory = Awaited<ReturnType<typeof listAdminCategories>>[number];
 export type AdminProductDetail = NonNullable<Awaited<ReturnType<typeof getAdminProductById>>>;
+export type AdminOrder = Awaited<ReturnType<typeof listAdminOrders>>[number];
+export type AdminOrderDetail = NonNullable<Awaited<ReturnType<typeof getAdminOrderById>>>;

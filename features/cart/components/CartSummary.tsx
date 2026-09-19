@@ -1,13 +1,19 @@
 'use client';
 
+import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { toast } from '@/components/ui/toast';
+import { Separator } from '@/components/ui/separator';
 import { formatPriceTWD } from '@/lib/format';
 import { useCart } from '@/features/cart/components/CartProvider';
+import { calculateShippingFee, getAmountToFreeShipping } from '@/features/orders/shipping';
 
 export default function CartSummary() {
   const { totalQuantity, subtotal, clearCart } = useCart();
+
+  // 結帳頁與建單的 server action 都用同一個函式算運費，三邊不會各算一套
+  const shippingFee = calculateShippingFee(subtotal);
+  const amountToFreeShipping = getAmountToFreeShipping(subtotal);
 
   return (
     <Card className="lg:sticky lg:top-28">
@@ -17,24 +23,34 @@ export default function CartSummary() {
           <span>商品數量</span>
           <span>{totalQuantity} 件</span>
         </div>
-        <div className="flex items-center justify-between">
-          <span className="text-sm text-muted-foreground">小計</span>
-          <span className="text-xl font-semibold text-primary">{formatPriceTWD(subtotal)}</span>
+        <div className="flex items-center justify-between text-sm text-muted-foreground">
+          <span>小計</span>
+          <span>{formatPriceTWD(subtotal)}</span>
         </div>
-        <p className="text-xs text-muted-foreground">運費將於結帳時計算</p>
+        <div className="flex items-center justify-between text-sm text-muted-foreground">
+          <span>運費</span>
+          <span>{shippingFee === 0 ? '免運' : formatPriceTWD(shippingFee)}</span>
+        </div>
 
-        {/* TODO: 接上真正的結帳流程後改這裡 */}
+        <Separator />
+
+        <div className="flex items-center justify-between">
+          <span className="text-sm text-muted-foreground">合計</span>
+          <span className="text-xl font-semibold text-primary">
+            {formatPriceTWD(subtotal + shippingFee)}
+          </span>
+        </div>
+        {amountToFreeShipping > 0 && (
+          <p className="text-xs text-muted-foreground">
+            再買 {formatPriceTWD(amountToFreeShipping)} 就免運
+          </p>
+        )}
+
         <Button
-          type="button"
+          render={<Link href="/checkout" />}
+          nativeButton={false}
           size="lg"
           className="w-full"
-          onClick={() =>
-            toast.add({
-              type: 'info',
-              title: '結帳功能開發中',
-              description: '付款流程即將上線，敬請期待！',
-            })
-          }
         >
           前往結帳
         </Button>
