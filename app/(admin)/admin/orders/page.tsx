@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
-import { listAdminOrders } from '@/db/queries/admin';
-import AdminOrderTable from '@/features/admin/components/AdminOrderTable';
+import { listAdminOrders } from '@/db/queries/admin/orders';
+import OrderTable from '@/features/admin/orders/components/OrderTable';
 
 export const metadata: Metadata = {
   title: '訂單管理',
@@ -16,7 +16,7 @@ export default async function AdminOrdersPage() {
         <p className="mt-1 text-muted-foreground">共 {orders.length} 筆訂單</p>
       </div>
 
-      <AdminOrderTable orders={orders} />
+      <OrderTable orders={orders} />
     </div>
   );
 }

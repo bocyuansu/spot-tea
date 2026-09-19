@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
 import { headers } from 'next/headers';
 import { notFound } from 'next/navigation';
-import { getAdminUserById } from '@/db/queries/admin';
-import AdminUserEditForm from '@/features/admin/components/AdminUserEditForm';
+import { getAdminUserById } from '@/db/queries/admin/users';
+import UserEditForm from '@/features/admin/users/components/UserEditForm';
 import { createAuth } from '@/lib/auth';
 
 export const metadata: Metadata = {
@@ -32,7 +32,7 @@ export default async function AdminUserEditPage({ params }: AdminUserEditPagePro
         <p className="mt-1 text-muted-foreground">{user.email}</p>
       </div>
 
-      <AdminUserEditForm user={user} isSelf={session?.user.id === user.id} />
+      <UserEditForm user={user} isSelf={session?.user.id === user.id} />
     </div>
   );
 }

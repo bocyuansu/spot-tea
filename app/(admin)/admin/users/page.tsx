@@ -4,8 +4,8 @@ import { headers } from 'next/headers';
 import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { createAuth } from '@/lib/auth';
-import { listAdminUsers } from '@/db/queries/admin';
-import AdminUserTable from '@/features/admin/components/AdminUserTable';
+import { listAdminUsers } from '@/db/queries/admin/users';
+import UserTable from '@/features/admin/users/components/UserTable';
 
 export const metadata: Metadata = {
   title: '使用者管理',
@@ -33,7 +33,7 @@ export default async function AdminUsersPage() {
         </Button>
       </div>
 
-      <AdminUserTable users={users} currentUserId={session?.user.id ?? ''} />
+      <UserTable users={users} currentUserId={session?.user.id ?? ''} />
     </div>
   );
 }

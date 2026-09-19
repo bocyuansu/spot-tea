@@ -2,8 +2,8 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { listAdminProducts } from '@/db/queries/admin';
-import AdminProductTable from '@/features/admin/components/AdminProductTable';
+import { listAdminProducts } from '@/db/queries/admin/products';
+import ProductTable from '@/features/admin/products/components/ProductTable';
 
 export const metadata: Metadata = {
   title: '商品管理',
@@ -28,7 +28,7 @@ export default async function AdminProductsPage() {
         </Button>
       </div>
 
-      <AdminProductTable products={products} />
+      <ProductTable products={products} />
     </div>
   );
 }

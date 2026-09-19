@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { getAdminOrderById } from '@/db/queries/admin';
-import AdminOrderDetail from '@/features/admin/components/AdminOrderDetail';
-import AdminOrderStatusForm from '@/features/admin/components/AdminOrderStatusForm';
+import { getAdminOrderById } from '@/db/queries/admin/orders';
+import OrderDetail from '@/features/admin/orders/components/OrderDetail';
+import OrderStatusForm from '@/features/admin/orders/components/OrderStatusForm';
 import { formatDateTW } from '@/lib/format';
 
 export const metadata: Metadata = {
@@ -28,8 +28,8 @@ export default async function AdminOrderDetailPage({ params }: AdminOrderDetailP
       </div>
 
       <div className="grid gap-6 xl:grid-cols-[2fr_1fr] xl:items-start">
-        <AdminOrderDetail order={order} />
-        <AdminOrderStatusForm order={order} />
+        <OrderDetail order={order} />
+        <OrderStatusForm order={order} />
       </div>
     </div>
   );

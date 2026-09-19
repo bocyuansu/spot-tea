@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
-import { listAdminCategories } from '@/db/queries/admin';
-import AdminProductForm from '@/features/admin/components/AdminProductForm';
+import { listAdminCategories } from '@/db/queries/admin/products';
+import ProductForm from '@/features/admin/products/components/ProductForm';
 
 export const metadata: Metadata = {
   title: '新增商品',
@@ -16,7 +16,7 @@ export default async function AdminProductCreatePage() {
         <p className="mt-1 text-muted-foreground">建立商品資料與至少一個規格</p>
       </div>
 
-      <AdminProductForm categories={categories} />
+      <ProductForm categories={categories} />
     </div>
   );
 }

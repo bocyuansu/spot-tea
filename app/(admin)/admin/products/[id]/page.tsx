@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { getAdminProductById, listAdminCategories } from '@/db/queries/admin';
-import AdminProductForm from '@/features/admin/components/AdminProductForm';
+import { getAdminProductById, listAdminCategories } from '@/db/queries/admin/products';
+import ProductForm from '@/features/admin/products/components/ProductForm';
 
 export const metadata: Metadata = {
   title: '編輯商品',
@@ -25,7 +25,7 @@ export default async function AdminProductEditPage({ params }: AdminProductEditP
         <p className="mt-1 text-muted-foreground">{product.name}</p>
       </div>
 
-      <AdminProductForm categories={categories} product={product} />
+      <ProductForm categories={categories} product={product} />
     </div>
   );
 }

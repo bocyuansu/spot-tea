@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
-import { getAdminOverview } from '@/db/queries/admin';
-import AdminStatCards from '@/features/admin/components/AdminStatCards';
-import AdminRecentOrders from '@/features/admin/components/AdminRecentOrders';
-import AdminLowStock from '@/features/admin/components/AdminLowStock';
+import { getAdminOverview } from '@/db/queries/admin/overview';
+import StatCards from '@/features/admin/dashboard/components/StatCards';
+import RecentOrders from '@/features/admin/dashboard/components/RecentOrders';
+import LowStock from '@/features/admin/dashboard/components/LowStock';
 
 export const metadata: Metadata = {
   title: '後台儀表板',
@@ -18,11 +18,11 @@ export default async function AdminDashboardPage() {
         <p className="mt-1 text-muted-foreground">營運概況一覽</p>
       </div>
 
-      <AdminStatCards overview={overview} />
+      <StatCards overview={overview} />
 
       <div className="grid gap-6 xl:grid-cols-[2fr_1fr] xl:items-start">
-        <AdminRecentOrders orders={overview.recentOrders} />
-        <AdminLowStock variants={overview.lowStockVariants} />
+        <RecentOrders orders={overview.recentOrders} />
+        <LowStock variants={overview.lowStockVariants} />
       </div>
     </div>
   );

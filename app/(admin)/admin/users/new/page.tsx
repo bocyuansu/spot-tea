@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import AdminUserCreateForm from '@/features/admin/components/AdminUserCreateForm';
+import UserCreateForm from '@/features/admin/users/components/UserCreateForm';
 
 export const metadata: Metadata = {
   title: '新增會員',
@@ -13,7 +13,7 @@ export default function AdminUserCreatePage() {
         <p className="mt-1 text-muted-foreground">直接建立一個已經可以登入的帳號</p>
       </div>
 
-      <AdminUserCreateForm />
+      <UserCreateForm />
     </div>
   );
 }
