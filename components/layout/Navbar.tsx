@@ -63,10 +63,11 @@ export default async function Navbar() {
         </ul>
         {/* RIGHT */}
         <div className="hidden md:flex gap-2 items-center">
-          <CartBadge />
           <AuthButton initialSession={session} />
+          <CartBadge />
         </div>
         <div className="flex items-center md:hidden">
+          <AuthButton initialSession={session} />
           <MobileMenu links={links} isLoggedIn={!!session} />
         </div>
       </div>

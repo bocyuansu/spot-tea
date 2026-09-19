@@ -35,10 +35,10 @@ export function MemberLink() {
     <Link
       href="/user"
       aria-label="會員中心"
-      className="flex gap-1 items-center text-xs sm:text-sm md:text-base hover:text-primary"
+      className="hidden md:flex gap-1 items-center text-xs sm:text-sm md:text-base hover:text-primary"
     >
       <User className="size-5 md:size-6" />
-      <span className="hidden lg:inline">會員中心</span>
+      {/* <span className="hidden lg:inline">會員中心</span> */}
     </Link>
   );
 }

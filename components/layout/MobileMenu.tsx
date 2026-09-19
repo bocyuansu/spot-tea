@@ -1,6 +1,6 @@
 'use client';
 
-import { Menu, X } from 'lucide-react';
+import { Menu, ShoppingCart, User, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
@@ -63,9 +63,10 @@ export default function MobileMenu({ links, isLoggedIn }: MobileMenuProps) {
         <li className="w-full flex text-center">
           <Link
             href="/cart"
-            className="flex-1 text-white hover:text-green-500"
+            className="flex-1 flex gap-1 justify-center items-center text-white hover:text-green-500"
             onClick={() => setIsOpen(false)}
           >
+            <ShoppingCart className="size-5" />
             購物車
           </Link>
         </li>
@@ -74,10 +75,11 @@ export default function MobileMenu({ links, isLoggedIn }: MobileMenuProps) {
           <li className="w-full flex text-center">
             <Link
               href="/user"
-              className="flex-1 text-white hover:text-green-500"
+              className="flex-1 flex gap-1 justify-center items-center text-white hover:text-green-500"
               onClick={() => setIsOpen(false)}
             >
-              會員中心
+              <User className="size-5" />
+              <span>會員中心</span>
             </Link>
           </li>
         )}

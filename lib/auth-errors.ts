@@ -21,7 +21,11 @@ const errorCodes = {
   },
   INVALID_EMAIL_OR_PASSWORD: {
     en: 'Invalid email or password',
-    zh: '電子信箱或密碼錯誤 !',
+    zh: '信箱或密碼錯誤 !',
+  },
+  USER_NOT_FOUND: {
+    en: 'User does not exist',
+    zh: '使用者不存在 !',
   },
   BANNED_USER: {
     en: 'You Have been banned',
