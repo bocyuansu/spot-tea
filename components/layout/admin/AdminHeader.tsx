@@ -7,7 +7,7 @@ export function AdminHeader() {
       <div className="flex w-full items-center gap-1 px-4 lg:gap-2 lg:px-6">
         <SidebarTrigger className="-ml-1" />
         <Separator orientation="vertical" className="mx-2" />
-        <h1 className="text-base font-medium">Dashboard</h1>
+        <h1 className="text-base font-medium">後台管理</h1>
       </div>
     </header>
   );

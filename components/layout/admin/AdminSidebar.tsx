@@ -1,14 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import {
-  IconBrandProducthunt,
-  IconDashboard,
-  IconInnerShadowTop,
-  IconLeaf,
-  IconListDetails,
-  IconUsers,
-} from '@tabler/icons-react';
+import { IconDashboard, IconLeaf, IconUsers } from '@tabler/icons-react';
 
 import {
   Sidebar,
@@ -20,34 +13,31 @@ import {
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { AdminNavMain } from './AdminNavMain';
-import { AdminNavUser } from './AdminNavUser';
+import { AdminNavUser, type AdminUserSummary } from './AdminNavUser';
 
-const data = {
-  user: {
-    name: 'shadcn',
-    email: 'm@example.com',
-    avatar: '/avatars/shadcn.jpg',
+const navMain = [
+  {
+    title: 'Dashboard',
+    url: '/admin/dashboard',
+    icon: IconDashboard,
   },
-  navMain: [
-    {
-      title: 'Dashboard',
-      url: '/admin/dashboard',
-      icon: IconDashboard,
-    },
-    {
-      title: 'Products',
-      url: '/admin/products',
-      icon: IconLeaf,
-    },
-    {
-      title: 'Users',
-      url: '/admin/users',
-      icon: IconUsers,
-    },
-  ],
+  {
+    title: 'Products',
+    url: '/admin/products',
+    icon: IconLeaf,
+  },
+  {
+    title: 'Users',
+    url: '/admin/users',
+    icon: IconUsers,
+  },
+];
+
+type AdminSidebarProps = React.ComponentProps<typeof Sidebar> & {
+  user: AdminUserSummary;
 };
 
-export function AdminSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+export function AdminSidebar({ user, ...props }: AdminSidebarProps) {
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
@@ -62,11 +52,11 @@ export function AdminSidebar({ ...props }: React.ComponentProps<typeof Sidebar>)
       </SidebarHeader>
 
       <SidebarContent>
-        <AdminNavMain links={data.navMain} />
+        <AdminNavMain links={navMain} />
       </SidebarContent>
 
       <SidebarFooter>
-        <AdminNavUser user={data.user} />
+        <AdminNavUser user={user} />
       </SidebarFooter>
     </Sidebar>
   );

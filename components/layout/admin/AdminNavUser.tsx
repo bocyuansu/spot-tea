@@ -1,12 +1,6 @@
 'use client';
 
-import {
-  IconCreditCard,
-  IconDotsVertical,
-  IconLogout,
-  IconNotification,
-  IconUserCircle,
-} from '@tabler/icons-react';
+import { IconDotsVertical, IconLogout } from '@tabler/icons-react';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
@@ -25,16 +19,27 @@ import {
   useSidebar,
 } from '@/components/ui/sidebar';
 
-export function AdminNavUser({
-  user,
-}: {
-  user: {
-    name: string;
-    email: string;
-    avatar: string;
-  };
-}) {
+// 側邊欄只需要顯示用的欄位，不必把整個 better-auth 的 user 型別拉進來
+export type AdminUserSummary = {
+  name: string;
+  email: string;
+  image?: string | null;
+};
+
+// 沒有上傳頭像時改用姓名縮寫：有空白的取首末字的第一個字母，其餘取前兩個字
+function getInitials(name: string) {
+  const parts = name.trim().split(/\s+/);
+
+  if (parts.length > 1) {
+    return `${parts[0][0]}${parts[parts.length - 1][0]}`.toUpperCase();
+  }
+
+  return name.slice(0, 2).toUpperCase();
+}
+
+export function AdminNavUser({ user }: { user: AdminUserSummary }) {
   const { isMobile } = useSidebar();
+  const initials = getInitials(user.name);
 
   return (
     <SidebarMenu>
@@ -49,8 +54,8 @@ export function AdminNavUser({
             }
           >
             <Avatar className="h-8 w-8 rounded-lg grayscale">
-              <AvatarImage src={user.avatar} alt={user.name} />
-              <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+              {user.image && <AvatarImage src={user.image} alt={user.name} />}
+              <AvatarFallback className="rounded-lg">{initials}</AvatarFallback>
             </Avatar>
             <div className="grid flex-1 text-left text-sm leading-tight">
               <span className="truncate font-medium">{user.name}</span>
@@ -68,8 +73,8 @@ export function AdminNavUser({
               <DropdownMenuLabel className="p-0 font-normal">
                 <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                   <Avatar className="h-8 w-8 rounded-lg">
-                    <AvatarImage src={user.avatar} alt={user.name} />
-                    <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                    {user.image && <AvatarImage src={user.image} alt={user.name} />}
+                    <AvatarFallback className="rounded-lg">{initials}</AvatarFallback>
                   </Avatar>
                   <div className="grid flex-1 text-left text-sm leading-tight">
                     <span className="truncate font-medium">{user.name}</span>
