@@ -30,7 +30,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ];
 
   // 動態頁面：已上架的商品（listPublishedProducts 本身有 unstable_cache，不會每次請求都打 DB）
-  const products = await listPublishedProducts();
+  // 空字串代表不限分類，和 /products 沒帶 query 時共用同一份快取
+  const products = await listPublishedProducts('');
   const productRoutes: MetadataRoute.Sitemap = products.map((product) => ({
     url: `${baseUrl}/products/${product.slug}`,
     lastModified: product.updatedAt,

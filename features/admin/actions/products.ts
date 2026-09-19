@@ -22,11 +22,6 @@ async function isAdmin() {
   return session?.user.role === 'admin';
 }
 
-// 前台的商品查詢掛在 products 這個 tag 上；在 server action 裡用 updateTag 立即失效
-function revalidateStorefront() {
-  updateTag('products');
-}
-
 function toProductColumns(values: ProductFormValues) {
   return {
     name: values.name,
@@ -78,7 +73,9 @@ export async function createProduct(values: ProductFormValues): Promise<ActionRe
     return { ok: false, message: '新增失敗，網址代稱或 SKU 可能已經被使用 !' };
   }
 
-  revalidateStorefront();
+  // 前台列表與單一商品查詢共用 products 這個 tag，一次就能清掉兩邊。
+  // 新增也要清：這個 slug 先前可能被訪問過，那次的「查無商品」已經被快取住了。
+  updateTag('products');
 
   return { ok: true };
 }
@@ -123,7 +120,8 @@ export async function updateProduct(id: string, values: ProductFormValues): Prom
     return { ok: false, message: '更新失敗，網址代稱或 SKU 可能已經被使用 !' };
   }
 
-  revalidateStorefront();
+  // 可能改到 slug 或 status，舊網址那份快取也會失真
+  updateTag('products');
 
   return { ok: true };
 }
@@ -140,7 +138,8 @@ export async function deleteProduct(id: string): Promise<ActionResult> {
     return { ok: false, message: '刪除失敗，請稍後再試 !' };
   }
 
-  revalidateStorefront();
+  // 不清的話商品頁還會繼續渲染已經刪掉的商品
+  updateTag('products');
 
   return { ok: true };
 }

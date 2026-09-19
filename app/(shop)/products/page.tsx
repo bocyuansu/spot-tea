@@ -13,11 +13,11 @@ type ProductsPageProps = {
 };
 
 export default async function ProductsPage({ searchParams }: ProductsPageProps) {
-  const { category: activeCategorySlug } = await searchParams;
+  const { category } = await searchParams;
 
   const [categories, products] = await Promise.all([
     listCategories(),
-    listPublishedProducts(activeCategorySlug),
+    listPublishedProducts(category ?? ''),
   ]);
 
   return (
@@ -27,9 +27,9 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
         <p className="mt-1 text-muted-foreground">探索台灣四大茶區的嚴選好茶</p>
       </div>
 
-      <Categories categories={categories} activeCategorySlug={activeCategorySlug} />
+      <Categories categories={categories} activeCategorySlug={category} />
 
-      <ProductList products={products} activeCategorySlug={activeCategorySlug} />
+      <ProductList products={products} activeCategorySlug={category} />
     </div>
   );
 }
