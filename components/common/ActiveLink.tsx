@@ -23,6 +23,7 @@ export default function ActiveLink({
   return (
     <Link
       href={href}
+      prefetch={false}
       className={cn(
         'text-xs p-1 sm:text-sm sm:px-2 md:text-base md:px-3 md:py-2',
         className,

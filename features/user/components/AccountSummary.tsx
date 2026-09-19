@@ -3,8 +3,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { formatDateTW } from '@/lib/format';
 import type { authClient } from '@/lib/auth-client';
 
-// admin plugin 的 defaultRole 是 customer，舊資料仍可能沒有角色
-const roleLabels: Record<string, string> = {
+const roleLabels = {
   admin: '管理員',
   customer: '一般會員',
 };
@@ -25,7 +24,7 @@ export default function AccountSummary({ user }: AccountSummaryProps) {
           <div className="flex flex-wrap items-center gap-2">
             <h2 className="font-heading text-xl">{user.name}</h2>
             <span className="rounded-full bg-primary/10 px-2 py-0.5 text-xs text-primary">
-              {roleLabels[user.role ?? ''] ?? '一般會員'}
+              {roleLabels[user.role as 'admin' | 'customer']}
             </span>
           </div>
           <p className="flex items-center gap-1.5 text-sm text-muted-foreground">

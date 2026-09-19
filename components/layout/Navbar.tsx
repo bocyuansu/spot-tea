@@ -38,7 +38,7 @@ export default async function Navbar() {
         )}
       >
         {/* LEFT */}
-        <Link href="/" className="flex items-center">
+        <Link href="/" prefetch={false} className="flex items-center">
           <Image
             src="/assets/spot-tea.jpg"
             alt="Spot Tea logo"

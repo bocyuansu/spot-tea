@@ -10,6 +10,7 @@ export default function CartBadge() {
   return (
     <Link
       href="/cart"
+      prefetch={false}
       className="relative hover:text-primary"
       aria-label={`購物車，${totalQuantity} 件商品`}
     >

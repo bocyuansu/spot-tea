@@ -52,6 +52,7 @@ export default function MobileMenu({ links, isLoggedIn }: MobileMenuProps) {
           <li key={link.label} className="w-full flex text-center">
             <Link
               href={link.href}
+              prefetch={false}
               className="flex-1 text-white hover:text-green-500"
               onClick={() => setIsOpen(false)}
             >
@@ -63,6 +64,7 @@ export default function MobileMenu({ links, isLoggedIn }: MobileMenuProps) {
         <li className="w-full flex text-center">
           <Link
             href="/cart"
+            prefetch={false}
             className="flex-1 flex gap-1 justify-center items-center text-white hover:text-green-500"
             onClick={() => setIsOpen(false)}
           >
@@ -75,6 +77,7 @@ export default function MobileMenu({ links, isLoggedIn }: MobileMenuProps) {
           <li className="w-full flex text-center">
             <Link
               href="/user"
+              prefetch={false}
               className="flex-1 flex gap-1 justify-center items-center text-white hover:text-green-500"
               onClick={() => setIsOpen(false)}
             >

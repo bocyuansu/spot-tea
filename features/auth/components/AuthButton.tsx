@@ -35,6 +35,7 @@ export function MemberLink() {
     <Link
       href="/user"
       aria-label="會員中心"
+      prefetch={false}
       className="hidden gap-1 md:flex md:gap-0 items-center text-xs sm:text-sm md:text-base hover:text-primary"
     >
       <User className="size-5 md:size-6" />
@@ -47,6 +48,7 @@ export function LoginButton() {
   return (
     <Link
       href="/login"
+      prefetch={false}
       className="flex gap-1 items-center text-xs sm:text-sm md:text-base hover:text-primary"
     >
       <User className="size-5 md:size-6" />
