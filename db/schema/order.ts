@@ -2,16 +2,17 @@ import { pgTable, text, timestamp, index, integer, jsonb, pgEnum } from 'drizzle
 import { user } from './auth';
 import { productVariant } from './product';
 
+// 訂單狀態只描述「貨與流程」走到哪裡，錢的部分一律看 paymentStatus，
+// 兩者互不重複：已出貨但還沒收到貨款，就是 shipped + unpaid。
 export const orderStatusEnum = pgEnum('order_status', [
-  'pending_payment',
-  'paid',
+  'pending',
   'processing',
   'shipped',
   'completed',
   'cancelled',
-  'refunded',
 ]);
 
+// 付款狀態只描述「錢」的去向，包含退款
 export const paymentStatusEnum = pgEnum('payment_status', ['unpaid', 'paid', 'failed', 'refunded']);
 
 export const order = pgTable(
@@ -26,7 +27,7 @@ export const order = pgTable(
     userId: text('user_id')
       .notNull()
       .references(() => user.id),
-    status: orderStatusEnum('status').default('pending_payment').notNull(),
+    status: orderStatusEnum('status').default('pending').notNull(),
     paymentStatus: paymentStatusEnum('payment_status').default('unpaid').notNull(),
     paymentProvider: text('payment_provider'),
     paymentTransactionId: text('payment_transaction_id'),

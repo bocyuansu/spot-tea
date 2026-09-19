@@ -84,7 +84,7 @@ export default function ProductTable({ products }: ProductTableProps) {
                     {product.category?.name ?? '未分類'}
                   </TableCell>
                   <TableCell>
-                    <Badge variant={statusVariants[product.status]}>
+                    <Badge variant={product.status === 'published' ? 'default' : 'outline'}>
                       {productStatusLabels[product.status]}
                     </Badge>
                   </TableCell>

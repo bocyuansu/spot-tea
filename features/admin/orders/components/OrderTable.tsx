@@ -11,30 +11,13 @@ import {
 import {
   getPaymentMethodLabel,
   orderStatusLabels,
+  orderStatusVariants,
   paymentStatusLabels,
+  paymentStatusVariants,
 } from '@/features/orders/order-status';
 import { formatDateTW, formatPriceTWD } from '@/lib/format';
 import OrderMenu from '@/features/admin/orders/components/OrderMenu';
 import type { AdminOrder } from '@/db/queries/admin/orders';
-
-type BadgeVariant = 'default' | 'secondary' | 'outline' | 'destructive';
-
-const statusVariants: Record<AdminOrder['status'], BadgeVariant> = {
-  pending_payment: 'secondary',
-  paid: 'default',
-  processing: 'secondary',
-  shipped: 'secondary',
-  completed: 'default',
-  cancelled: 'destructive',
-  refunded: 'destructive',
-};
-
-const paymentStatusVariants: Record<AdminOrder['paymentStatus'], BadgeVariant> = {
-  unpaid: 'outline',
-  paid: 'default',
-  failed: 'destructive',
-  refunded: 'destructive',
-};
 
 type OrderTableProps = {
   orders: AdminOrder[];
@@ -76,7 +59,7 @@ export default function OrderTable({ orders }: OrderTableProps) {
                   </div>
                 </TableCell>
                 <TableCell>
-                  <Badge variant={statusVariants[order.status]}>
+                  <Badge variant={orderStatusVariants[order.status]}>
                     {orderStatusLabels[order.status]}
                   </Badge>
                 </TableCell>

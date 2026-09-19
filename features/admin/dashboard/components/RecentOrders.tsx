@@ -8,7 +8,12 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { orderStatusLabels } from '@/features/orders/order-status';
+import {
+  orderStatusLabels,
+  orderStatusVariants,
+  paymentStatusLabels,
+  paymentStatusVariants,
+} from '@/features/orders/order-status';
 import { formatDateTW, formatPriceTWD } from '@/lib/format';
 import type { AdminOverview } from '@/db/queries/admin/overview';
 
@@ -31,7 +36,8 @@ export default function RecentOrders({ orders }: RecentOrdersProps) {
               <TableRow>
                 <TableHead>訂單編號</TableHead>
                 <TableHead>會員</TableHead>
-                <TableHead>狀態</TableHead>
+                <TableHead>訂單狀態</TableHead>
+                <TableHead>付款狀態</TableHead>
                 <TableHead>下單日期</TableHead>
                 <TableHead className="text-right">金額</TableHead>
               </TableRow>
@@ -47,7 +53,14 @@ export default function RecentOrders({ orders }: RecentOrdersProps) {
                     </div>
                   </TableCell>
                   <TableCell>
-                    <Badge variant="secondary">{orderStatusLabels[order.status]}</Badge>
+                    <Badge variant={orderStatusVariants[order.status]}>
+                      {orderStatusLabels[order.status]}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
+                    <Badge variant={paymentStatusVariants[order.paymentStatus]}>
+                      {paymentStatusLabels[order.paymentStatus]}
+                    </Badge>
                   </TableCell>
                   <TableCell className="text-muted-foreground">
                     {formatDateTW(order.createdAt)}

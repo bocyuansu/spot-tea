@@ -51,7 +51,7 @@ export default function OrderMenu({ orderId, orderNumber, status, paymentStatus 
           <IconDotsVertical />
           <span className="sr-only">Open menu</span>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="min-w-32">
+        <DropdownMenuContent align="end" className="w-36">
           <DropdownMenuItem
             aria-label={`查看 ${orderNumber} 的明細`}
             render={<Link href={`/admin/orders/${orderId}`} />}

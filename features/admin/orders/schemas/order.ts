@@ -10,13 +10,11 @@ type Order = typeof order.$inferSelect;
  * 顯示用的中文字串仍然只有 features/orders/order-status.ts 那一份。
  */
 export const adminOrderStatuses = [
-  'pending_payment',
-  'paid',
+  'pending',
   'processing',
   'shipped',
   'completed',
   'cancelled',
-  'refunded',
 ] as const satisfies readonly Order['status'][];
 
 export const adminPaymentStatuses = [

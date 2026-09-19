@@ -49,9 +49,9 @@ export default function OrderStatusForm({ order }: OrderStatusFormProps) {
         return;
       }
 
-      toast.add({ type: 'success', description: '訂單狀態已更新 !' });
+      toast.add({ type: 'success', description: '狀態已更新 !' });
       // 明細頁本身就是伺服器渲染的，更新後要再取一次才看得到新狀態
-      router.refresh();
+      router.push('/admin/orders');
     });
   }
 
@@ -59,7 +59,7 @@ export default function OrderStatusForm({ order }: OrderStatusFormProps) {
     <form onSubmit={form.handleSubmit(onSubmit)}>
       <Card className="[--card-spacing:--spacing(6)]">
         <CardHeader>
-          <CardTitle className="text-xl">訂單狀態</CardTitle>
+          <CardTitle className="text-xl">訂單與付款狀態</CardTitle>
         </CardHeader>
         <CardContent>
           <FieldGroup className="gap-y-4">
@@ -85,6 +85,9 @@ export default function OrderStatusForm({ order }: OrderStatusFormProps) {
                       ))}
                     </SelectContent>
                   </Select>
+                  <FieldDescription>
+                    只記錄出貨流程走到哪裡，收款與退款請改付款狀態
+                  </FieldDescription>
                 </Field>
               )}
             />
@@ -112,7 +115,7 @@ export default function OrderStatusForm({ order }: OrderStatusFormProps) {
                     </SelectContent>
                   </Select>
                   <FieldDescription>
-                    目前沒有金流串接，收到款項後請在這裡手動改成已付款
+                    訂單的金流都記在這裡。目前沒有串接金流，收到款項或完成退款後請手動調整
                   </FieldDescription>
                 </Field>
               )}

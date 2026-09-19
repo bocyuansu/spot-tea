@@ -79,14 +79,7 @@ export const seedOrderUserEmail = 'cyuan666@test.com';
 
 type SeedOrder = {
   orderNumber: string;
-  status:
-    | 'pending_payment'
-    | 'paid'
-    | 'processing'
-    | 'shipped'
-    | 'completed'
-    | 'cancelled'
-    | 'refunded';
+  status: 'pending' | 'processing' | 'shipped' | 'completed' | 'cancelled';
   paymentStatus: 'unpaid' | 'paid' | 'failed' | 'refunded';
   paymentProvider: string | null;
   paymentTransactionId: string | null;
@@ -145,7 +138,7 @@ export const seedOrders: SeedOrder[] = [
   },
   {
     orderNumber: 'ST-20260915-0003',
-    status: 'pending_payment',
+    status: 'pending',
     paymentStatus: 'unpaid',
     paymentProvider: null,
     paymentTransactionId: null,

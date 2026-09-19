@@ -2,16 +2,16 @@ import type { order } from '@/db/schema';
 
 type Order = typeof order.$inferSelect;
 
+// 訂單狀態只講貨與流程，不講錢
 export const orderStatusLabels: Record<Order['status'], string> = {
-  pending_payment: '待付款',
-  paid: '已付款',
-  processing: '處理中',
+  pending: '待處理',
+  processing: '備貨中',
   shipped: '已出貨',
   completed: '已完成',
   cancelled: '已取消',
-  refunded: '已退款',
 };
 
+// 錢的部分全部集中在付款狀態，退款也算在這裡
 export const paymentStatusLabels: Record<Order['paymentStatus'], string> = {
   unpaid: '未付款',
   paid: '已付款',
@@ -39,3 +39,21 @@ export function getPaymentMethodLabel(provider: string | null) {
 
   return paymentMethodLabels[provider as PaymentMethod] ?? provider;
 }
+
+// 兩張後台表格（訂單列表與儀表板的最新訂單）共用同一組 Badge 樣式，避免兩邊各寫一份而走鐘
+type BadgeVariant = 'default' | 'secondary' | 'outline' | 'destructive';
+
+export const orderStatusVariants: Record<Order['status'], BadgeVariant> = {
+  pending: 'secondary',
+  processing: 'secondary',
+  shipped: 'secondary',
+  completed: 'default',
+  cancelled: 'destructive',
+};
+
+export const paymentStatusVariants: Record<Order['paymentStatus'], BadgeVariant> = {
+  unpaid: 'outline',
+  paid: 'default',
+  failed: 'destructive',
+  refunded: 'destructive',
+};
