@@ -36,11 +36,14 @@
     "enabled": true,
   },
   "upload_source_maps": true,
-  /**
-   * Smart Placement 啟用後，Cloudflare 會嘗試把 Worker 放到比較靠近後端服務的位置
-   * https://developers.cloudflare.com/workers/configuration/smart-placement/#smart-placement
-   */
-  // "placement": {  "mode": "smart" }
+  // 配合 Hyperdrive ，不要用 smart，固定在 Neon 資料庫地區
+  "placement": {
+    "region": "aws:ap-southeast-1",
+  },
+  // 使用 Vinext 必須關閉，否則會與 KV cache 衝突
+  "cache": {
+    "enabled": false,
+  },
   /**
    * 環境變數
    * https://developers.cloudflare.com/workers/wrangler/configuration/#environment-variables

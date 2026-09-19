@@ -20,7 +20,7 @@ export default function ProductCard({ product }: ProductCardProps) {
     <Card className="gap-3 overflow-hidden pt-0">
       <div className="relative aspect-square w-full overflow-hidden bg-muted">
         {image ? (
-          <Link href={`products/${product.slug}`}>
+          <Link href={`products/${product.slug}`} prefetch={false}>
             <Image
               src={image}
               alt={product.name}

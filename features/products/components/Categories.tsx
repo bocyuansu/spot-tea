@@ -17,6 +17,7 @@ export default function Categories({ categories, activeCategorySlug }: Categorie
     <nav className="flex flex-wrap gap-2">
       <Link
         href="/products"
+        prefetch={false}
         className={cn(
           buttonVariants({
             variant: activeCategorySlug ? 'outline' : 'default',
@@ -31,6 +32,7 @@ export default function Categories({ categories, activeCategorySlug }: Categorie
         <Link
           key={category.id}
           href={`/products?category=${category.slug}`}
+          prefetch={false}
           className={cn(
             buttonVariants({
               variant: activeCategorySlug === category.slug ? 'default' : 'outline',
