@@ -35,10 +35,10 @@ export function MemberLink() {
     <Link
       href="/user"
       aria-label="會員中心"
-      className="hidden md:flex gap-1 items-center text-xs sm:text-sm md:text-base hover:text-primary"
+      className="hidden gap-1 md:flex md:gap-0 items-center text-xs sm:text-sm md:text-base hover:text-primary"
     >
       <User className="size-5 md:size-6" />
-      {/* <span className="hidden lg:inline">會員中心</span> */}
+      <span className="hidden lg:inline">會員</span>
     </Link>
   );
 }
@@ -85,7 +85,7 @@ export function LogoutButton() {
       type="button"
       variant="ghost"
       onClick={handleLogout}
-      className="gap-1 text-xs sm:text-sm md:text-base hover:text-primary hover:bg-white"
+      className="px-0 gap-1 text-xs sm:text-sm md:gap-0 md:text-base hover:text-primary hover:bg-white"
     >
       <LogOut className="size-4 sm:size-5 md:size-6" />
       <span>登出</span>

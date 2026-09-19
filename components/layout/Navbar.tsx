@@ -62,9 +62,9 @@ export default async function Navbar() {
           ))}
         </ul>
         {/* RIGHT */}
-        <div className="hidden md:flex gap-2 items-center">
-          <AuthButton initialSession={session} />
+        <div className="hidden md:flex gap-3 items-center">
           <CartBadge />
+          <AuthButton initialSession={session} />
         </div>
         <div className="flex items-center md:hidden">
           <AuthButton initialSession={session} />

@@ -4,7 +4,7 @@ export const metadata: Metadata = {
   title: '商品管理',
 };
 
-export default function AdminProductsPage() {
+export default function AdminProducts() {
   return (
     <div className="flex flex-col gap-6">
       <div>
