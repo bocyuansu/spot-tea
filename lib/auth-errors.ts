@@ -27,6 +27,14 @@ const errorCodes = {
     en: 'User does not exist',
     zh: '使用者不存在 !',
   },
+  YOU_CANNOT_BAN_YOURSELF: {
+    en: 'You cannot ban yourself',
+    zh: '不能停權自己的帳號 !',
+  },
+  YOU_ARE_NOT_ALLOWED_TO_BAN_USERS: {
+    en: 'You are not allowed to ban users',
+    zh: '沒有停權會員的權限 !',
+  },
   BANNED_USER: {
     en: 'You Have been banned',
     zh: '使用者已被禁用 !',

@@ -25,9 +25,15 @@ function deleteDisabledReason(user: AdminUser, currentUserId: string) {
   return undefined;
 }
 
+// 停權到期後 admin plugin 是等會員下次登入才解除，所以列表還是會看到已停權
+function banNote(user: AdminUser) {
+  const period = user.banExpires ? `${formatDateTW(user.banExpires)} 解除` : '永久停權';
+  return user.banReason ? `${period}・${user.banReason}` : period;
+}
+
 type AdminUserTableProps = {
   users: AdminUser[];
-  // 用來擋住「刪除自己」這件事
+  // 用來擋住「停權/刪除自己」這件事
   currentUserId: string;
 };
 
@@ -70,7 +76,12 @@ export default function AdminUserTable({ users, currentUserId }: AdminUserTableP
                 </TableCell>
                 <TableCell>
                   {user.banned ? (
-                    <Badge variant="destructive">已停權</Badge>
+                    <div className="flex flex-col items-start gap-1">
+                      <Badge variant="destructive">已停權</Badge>
+                      <span className="max-w-40 truncate text-xs text-muted-foreground">
+                        {banNote(user)}
+                      </span>
+                    </div>
                   ) : (
                     <span className="text-muted-foreground">正常</span>
                   )}
@@ -83,7 +94,9 @@ export default function AdminUserTable({ users, currentUserId }: AdminUserTableP
                   <AdminUserMenu
                     userId={user.id}
                     userName={user.name}
-                    disabledReason={deleteDisabledReason(user, currentUserId)}
+                    banned={Boolean(user.banned)}
+                    isSelf={user.id === currentUserId}
+                    deleteDisabledReason={deleteDisabledReason(user, currentUserId)}
                   />
                 </TableCell>
               </TableRow>

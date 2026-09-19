@@ -35,6 +35,8 @@ export async function createAuth() {
       admin({
         defaultRole: 'customer',
         roles: adminRoles,
+        // 後台停權原因是選填的，沒填就不要落下 plugin 內建的英文 "No reason"
+        defaultBanReason: '未提供原因',
       }),
       nextCookies(),
     ], // 確保 nextCookies 是陣列的最後一個 plugin
