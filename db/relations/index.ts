@@ -4,7 +4,6 @@ import * as schema from '@/db/schema';
 
 import { authRelations } from './auth';
 import { productRelations } from './product';
-import { cartRelations } from './cart';
 import { orderRelations } from './order';
 
 // 官方 Rule 2：只用 part 的專案，其中一個 part 要是空的（不傳 callback），
@@ -19,12 +18,11 @@ const mainPart = defineRelationsPart(schema);
  * spread 是以資料表為單位的淺層覆蓋，同一張表出現在兩個 part 會整組被蓋掉而不是合併。
  *
  * 另外 defineRelationsPart 只會在同一個 part 裡找反向關聯來推導欄位，
- * 所以跨 part 的關聯（例如 user.cart）兩邊都要自己寫明 from／to。
+ * 所以跨 part 的關聯（例如 user.orders）兩邊都要自己寫明 from／to。
  */
 export const relations = {
   ...mainPart,
   ...authRelations,
   ...productRelations,
-  ...cartRelations,
   ...orderRelations,
 };

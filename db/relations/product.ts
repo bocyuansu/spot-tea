@@ -26,10 +26,6 @@ export const productRelations = defineRelationsPart(schema, (r) => ({
       to: r.product.id,
       optional: false,
     }),
-    cartItems: r.many.cartItem({
-      from: r.productVariant.id,
-      to: r.cartItem.productVariantId,
-    }),
     orderItems: r.many.orderItem({
       from: r.productVariant.id,
       to: r.orderItem.productVariantId,

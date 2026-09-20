@@ -11,16 +11,9 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { productStatusLabels } from '@/features/products/product-status';
-
 import { formatPriceTWD } from '@/lib/format';
 import type { AdminProduct } from '@/db/queries/admin/products';
 import ProductMenu from '@/features/admin/products/components/ProductMenu';
-
-const statusVariants: Record<AdminProduct['status'], 'default' | 'secondary' | 'outline'> = {
-  published: 'default',
-  draft: 'secondary',
-  archived: 'outline',
-};
 
 function formatPriceRange(variants: AdminProduct['variants']) {
   if (variants.length === 0) return '—';
