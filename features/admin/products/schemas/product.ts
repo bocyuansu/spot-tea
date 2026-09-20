@@ -13,9 +13,15 @@ export const productVariantSchema = z.object({
   stock: requiredNumber('請輸入庫存 !').int().min(0, '庫存不得小於 0 !'),
 });
 
-// useFieldArray 只吃物件，所以圖片包一層 url；值是上傳到物件儲存後拿回來的公開網址
+/**
+ * useFieldArray 只吃物件，所以圖片包一層 url。
+ * 已經存進資料庫的圖片只有 url，也就是公開網址；
+ * 剛從電腦挑進來的還沒上傳，url 是 URL.createObjectURL() 的預覽網址，
+ * file 留到表單送出時才真的傳上物件儲存，屆時 url 會換成公開網址。
+ */
 export const productImageSchema = z.object({
   url: z.string().min(1, '圖片網址不正確 !').max(300, '圖片網址不得超過 300 個字 !'),
+  file: z.instanceof(File).optional(),
 });
 
 // 下拉選單的「未分類」用空字串，對應資料庫的 null

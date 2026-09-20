@@ -48,7 +48,7 @@ export default function UserDeleteDialog() {
         <AlertDialogHeader>
           <AlertDialogTitle>確定要刪除「{user.name}」嗎 ?</AlertDialogTitle>
           <AlertDialogDescription>
-            這位會員的購物車與登入紀錄會一併刪除，而且無法復原。如果只是想暫時停用，請改用停權。
+            會員的登入紀錄會一起刪除，而且無法復原。如果只是想暫時停用，請改用停權。
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

@@ -1,13 +1,12 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { headers } from 'next/headers';
 import { CircleCheck } from 'lucide-react';
 import { buttonVariants } from '@/components/ui/button';
-import { createAuth } from '@/lib/auth';
+import { getSession } from '@/lib/session';
 import { getUserOrderByNumber } from '@/db/queries/orders';
 import OrderCard from '@/features/orders/components/OrderCard';
-import OrderShippingInfo from '@/features/orders/components/OrderShippingInfo';
+import ShippingPaymentCard from '@/components/common/ShippingPaymentCard';
 import ClearCartOnMount from '@/features/checkout/components/ClearCartOnMount';
 import SessionExpiredCard from '@/features/user/components/SessionExpiredCard';
 
@@ -23,11 +22,7 @@ type CheckoutCompletePageProps = {
 export default async function CheckoutCompletePage({ params }: CheckoutCompletePageProps) {
   const { orderNumber } = await params;
 
-  const auth = await createAuth();
-
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  const session = await getSession();
 
   if (!session) {
     return <SessionExpiredCard />;
@@ -49,7 +44,7 @@ export default async function CheckoutCompletePage({ params }: CheckoutCompleteP
 
       <OrderCard order={order} />
 
-      <OrderShippingInfo order={order} />
+      <ShippingPaymentCard order={order} />
 
       <div className="flex flex-wrap justify-center gap-3">
         <Link href="/user/orders" className={buttonVariants({ size: 'lg' })}>

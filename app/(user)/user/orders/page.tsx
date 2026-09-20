@@ -1,6 +1,5 @@
 import type { Metadata } from 'next';
-import { headers } from 'next/headers';
-import { createAuth } from '@/lib/auth';
+import { getSession } from '@/lib/session';
 import { listUserOrders } from '@/db/queries/orders';
 import OrderHistory from '@/features/orders/components/OrderHistory';
 import SessionExpiredCard from '@/features/user/components/SessionExpiredCard';
@@ -11,11 +10,7 @@ export const metadata: Metadata = {
 };
 
 export default async function UserOrdersPage() {
-  const auth = await createAuth();
-
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  const session = await getSession();
 
   if (!session) {
     return <SessionExpiredCard />;

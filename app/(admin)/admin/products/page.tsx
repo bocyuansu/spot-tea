@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { Plus } from 'lucide-react';
-import { Button, buttonVariants } from '@/components/ui/button';
+import { buttonVariants } from '@/components/ui/button';
 import { listAdminProducts } from '@/db/queries/admin/products';
 import ProductTable from '@/features/admin/products/components/ProductTable';
 

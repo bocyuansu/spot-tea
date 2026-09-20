@@ -1,3 +1,5 @@
+'use client';
+
 import { useCallback } from 'react';
 import CartItemRow from './CartItemRow';
 import { useCart } from './CartProvider';
@@ -7,10 +9,10 @@ export default function CartList() {
 
   const handleQuantityChange = useCallback(
     (variantId: string, quantity: number) => updateQuantity(variantId, quantity),
-    [],
+    [updateQuantity],
   );
 
-  const handleRemove = useCallback((variantId: string) => removeItem(variantId), []);
+  const handleRemove = useCallback((variantId: string) => removeItem(variantId), [removeItem]);
 
   return (
     <ul className="flex flex-col gap-3">

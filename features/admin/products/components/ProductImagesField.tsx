@@ -1,15 +1,17 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { useFieldArray, type UseFormReturn } from 'react-hook-form';
-import { ChevronLeft, ChevronRight, ImagePlus, Loader2, Trash2 } from 'lucide-react';
+import { ChevronLeft, ChevronRight, ImagePlus, Trash2 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { FieldDescription } from '@/components/ui/field';
 import { toast } from '@/components/ui/toast';
-import { createProductImageUploadUrl } from '@/features/admin/products/actions/product-images';
-import { productImageContentTypes } from '@/features/admin/products/schemas/product-image';
+import {
+  productImageContentTypes,
+  productImageUploadSchema,
+} from '@/features/admin/products/schemas/product-image';
 import type { ProductFormValues } from '@/features/admin/products/schemas/product';
 
 type ProductImagesFieldProps = {
@@ -19,62 +21,56 @@ type ProductImagesFieldProps = {
 export default function ProductImagesField({ form }: ProductImagesFieldProps) {
   const images = useFieldArray({ control: form.control, name: 'images' });
   const fileInput = useRef<HTMLInputElement>(null);
-  // 上傳中的張數，用來補上灰色的佔位格
-  const [uploadingCount, setUploadingCount] = useState(0);
 
-  function failed(message: string) {
-    toast.add({ type: 'error', description: message, priority: 'high' });
-  }
+  // 預覽的 blob 網址在離開表單前要還回去，不然會一直佔著記憶體
+  useEffect(() => {
+    return () => {
+      for (const image of form.getValues('images')) {
+        if (image.file) URL.revokeObjectURL(image.url);
+      }
+    };
+  }, [form]);
 
   /**
-   * 先跟 server action 要一張 presigned URL，再把檔案直接 PUT 到 Neon Object Storage，
-   * 表單只留下 ImageKit 的公開網址，送出時跟著其他欄位一起寫進資料庫。
+   * 選好的檔案只在瀏覽器裡預覽，File 跟著表單一起留到送出時才上傳，
+   * 使用者中途離開或按取消，就不會在物件儲存留下沒人用的圖片。
    */
-  async function upload(file: File) {
-    const ticket = await createProductImageUploadUrl({
-      fileName: file.name,
-      contentType: file.type,
-      size: file.size,
-    });
+  function onFilesSelected(event: React.ChangeEvent<HTMLInputElement>) {
+    const files = Array.from(event.target.files ?? []);
+    // 清空才能再選一次同一個檔案
+    event.target.value = '';
 
-    if (!ticket.ok) {
-      failed(`${file.name}：${ticket.message}`);
-      return;
+    for (const file of files) {
+      // 真正的把關在簽上傳網址之前，這裡先擋掉明顯不合規的，不用等到送出才知道
+      const parsed = productImageUploadSchema.safeParse({
+        fileName: file.name,
+        contentType: file.type,
+        size: file.size,
+      });
+
+      if (!parsed.success) {
+        toast.add({
+          type: 'error',
+          description: `${file.name}：${parsed.error.issues[0].message}`,
+          priority: 'high',
+        });
+        continue;
+      }
+
+      images.append({ url: URL.createObjectURL(file), file });
     }
-
-    // Content-Type 有被簽進網址，這裡必須送一模一樣的值
-    const response = await fetch(ticket.uploadUrl, {
-      method: 'PUT',
-      body: file,
-      headers: { 'Content-Type': file.type },
-    });
-
-    if (!response.ok) {
-      failed(`${file.name} 上傳失敗，請稍後再試 !`);
-      return;
-    }
-
-    images.append({ url: ticket.url });
   }
 
-  async function onFilesSelected(event: React.ChangeEvent<HTMLInputElement>) {
-    const files = Array.from(event.target.files ?? []);
-    // 清空才能再選一次同一個檔案，也要在 await 之前先拿好 files
-    event.target.value = '';
-    if (files.length === 0) return;
+  function removeImage(index: number) {
+    const image = form.getValues(`images.${index}`);
+    if (image.file) URL.revokeObjectURL(image.url);
 
-    setUploadingCount(files.length);
-
-    // 一張一張傳，順序才會跟使用者挑選的一致
-    for (const file of files) {
-      await upload(file);
-      setUploadingCount((count) => count - 1);
-    }
+    images.remove(index);
   }
 
   return (
     <div className="flex flex-col gap-3">
-      {images.fields.length === 0 && uploadingCount === 0 ? (
+      {images.fields.length === 0 ? (
         <p className="text-sm text-muted-foreground">還沒有圖片，前台會顯示預設的茶葉圖示</p>
       ) : (
         <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
@@ -86,6 +82,8 @@ export default function ProductImagesField({ form }: ProductImagesFieldProps) {
                   alt={`商品圖片 ${index + 1}`}
                   fill
                   sizes="200px"
+                  // 還沒上傳的是本機 blob 網址，送進 /_next/image 會被當成非法來源擋掉
+                  unoptimized={Boolean(imageField.file)}
                   className="object-cover"
                 />
                 <Badge
@@ -94,6 +92,11 @@ export default function ProductImagesField({ form }: ProductImagesFieldProps) {
                 >
                   {index === 0 ? '封面' : `第 ${index + 1} 張`}
                 </Badge>
+                {imageField.file && (
+                  <Badge variant="outline" className="absolute top-1.5 right-1.5 bg-background">
+                    待上傳
+                  </Badge>
+                )}
               </div>
 
               <div className="flex items-center justify-center gap-1">
@@ -122,18 +125,10 @@ export default function ProductImagesField({ form }: ProductImagesFieldProps) {
                   variant="ghost"
                   size="icon-sm"
                   aria-label={`移除第 ${index + 1} 張圖片`}
-                  onClick={() => images.remove(index)}
+                  onClick={() => removeImage(index)}
                 >
                   <Trash2 className="size-4" />
                 </Button>
-              </div>
-            </li>
-          ))}
-
-          {Array.from({ length: uploadingCount }, (_, index) => (
-            <li key={`uploading-${index}`} className="flex flex-col gap-2">
-              <div className="flex aspect-square items-center justify-center rounded-lg bg-muted text-muted-foreground ring-1 ring-foreground/10">
-                <Loader2 className="size-6 animate-spin" />
               </div>
             </li>
           ))}
@@ -141,7 +136,8 @@ export default function ProductImagesField({ form }: ProductImagesFieldProps) {
       )}
 
       <FieldDescription>
-        第一張會用在商品列表的封面，用箭頭調整順序。單張上限 5MB，支援 JPG、PNG、WebP、AVIF
+        第一張會用在商品列表的封面，用箭頭調整順序。圖片會在儲存時才上傳，單張上限 5MB，支援
+        JPG、PNG、WebP、AVIF
       </FieldDescription>
 
       <input
@@ -157,20 +153,10 @@ export default function ProductImagesField({ form }: ProductImagesFieldProps) {
         type="button"
         variant="outline"
         className="self-start"
-        disabled={uploadingCount > 0}
         onClick={() => fileInput.current?.click()}
       >
-        {uploadingCount > 0 ? (
-          <>
-            <Loader2 className="size-4 animate-spin" />
-            <span>上傳中</span>
-          </>
-        ) : (
-          <>
-            <ImagePlus className="size-4" />
-            <span>從電腦選擇圖片</span>
-          </>
-        )}
+        <ImagePlus className="size-4" />
+        <span>從電腦選擇圖片</span>
       </Button>
     </div>
   );

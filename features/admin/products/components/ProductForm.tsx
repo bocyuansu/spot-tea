@@ -28,6 +28,7 @@ import ProductImagesField from '@/features/admin/products/components/ProductImag
 import ProductVariantMatrix from '@/features/admin/products/components/ProductVariantMatrix';
 /* Server actions */
 import { createProduct, updateProduct } from '@/features/admin/products/actions/products';
+import { uploadProductImages } from '@/features/admin/products/upload-product-images';
 import { productStatusLabels } from '@/features/products/product-status';
 /* Nextjs */
 import { useTransition } from 'react';
@@ -90,9 +91,19 @@ export default function ProductForm({ categories, product }: ProductFormProps) {
 
   function onSubmit(values: ProductFormValues) {
     startTransition(async () => {
+      // 新挑的圖片到這一刻才進物件儲存，表單沒送出就不會留下沒人用的檔案
+      const upload = await uploadProductImages(values.images);
+      // 傳好的換成公開網址，中途失敗也留著，重試時不用再傳一次
+      form.setValue('images', upload.images);
+
+      if (!upload.ok) {
+        toast.add({ type: 'error', description: upload.message, priority: 'high' });
+        return;
+      }
+
       const result = product
-        ? await updateProduct(product.id, values)
-        : await createProduct(values);
+        ? await updateProduct(product.id, { ...values, images: upload.images })
+        : await createProduct({ ...values, images: upload.images });
 
       if (!result.ok) {
         toast.add({ type: 'error', description: result.message, priority: 'high' });
@@ -102,8 +113,6 @@ export default function ProductForm({ categories, product }: ProductFormProps) {
       toast.add({ type: 'success', description: product ? '商品已更新 !' : '商品已新增 !' });
 
       router.push('/admin/products');
-      // 列表由 server component 提供，push 之後要再取一次才看得到剛剛的異動
-      router.refresh();
     });
   }
 

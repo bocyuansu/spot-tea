@@ -23,17 +23,18 @@ const CartItemRow = memo(function CartItemRow({
 }: CartItemRowProps) {
   return (
     <Card size="sm">
-      <CardContent className="flex gap-3">
+      <CardContent className="flex gap-3 items-center">
         <Link
           href={`/products/${item.productSlug}`}
-          className="relative size-20 shrink-0 overflow-hidden rounded-lg bg-muted"
+          prefetch={false}
+          className="size-20 shrink-0 overflow-hidden rounded-lg bg-muted"
         >
           {item.image ? (
             <Image
               src={item.image}
               alt={item.productName}
-              fill
-              sizes="80px"
+              width={80}
+              height={80}
               className="object-cover"
             />
           ) : (
@@ -43,15 +44,10 @@ const CartItemRow = memo(function CartItemRow({
           )}
         </Link>
 
-        <div className="flex min-w-0 flex-1 flex-col gap-2">
-          <div className="flex items-start justify-between gap-2">
-            <div className="flex min-w-0 flex-col">
-              <Link
-                href={`/products/${item.productSlug}`}
-                className="truncate font-medium hover:text-primary"
-              >
-                {item.productName}
-              </Link>
+        <div className="flex flex-1 flex-col gap-2">
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex flex-col">
+              <span className="font-medium">{item.productName}</span>
               <span className="text-xs text-muted-foreground">規格：{item.variantLabel}</span>
               <span className="text-xs text-muted-foreground">
                 單價：{formatPriceTWD(item.price)}

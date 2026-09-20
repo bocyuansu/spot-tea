@@ -22,3 +22,19 @@ export function objectKey(fileName: string) {
 export function imageUrl(fileName: string) {
   return `${imagekitEnv().urlEndpoint}/${fileName}`;
 }
+
+/**
+ * imageUrl() 的反向：從公開網址換回物件 key，用來刪掉不再被引用的圖片。
+ * 不是這個 URL endpoint 發出來的網址就回 null，
+ * bucket 裡還有別的素材，寧可留著也不要誤刪。
+ */
+export function objectKeyFromUrl(url: string) {
+  const prefix = `${imagekitEnv().urlEndpoint}/`;
+  if (!url.startsWith(prefix)) return null;
+
+  const fileName = url.slice(prefix.length);
+  // imageUrl() 只會接一層檔名，帶路徑分隔的不是我們上傳的那種網址
+  if (!fileName || fileName.includes('/')) return null;
+
+  return objectKey(fileName);
+}

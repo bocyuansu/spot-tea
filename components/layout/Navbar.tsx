@@ -2,8 +2,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import ActiveLink from '@/components/common/ActiveLink';
 import AuthButton from '@/features/auth/components/AuthButton';
-import { createAuth } from '@/lib/auth';
-import { headers } from 'next/headers';
+import { getSession } from '@/lib/session';
+import { SITE_CONTAINER } from '@/lib/site-container';
 import { cn } from '@/lib/utils';
 import MobileMenu from '@/components/layout/MobileMenu';
 import CartBadge from '@/features/cart/components/CartBadge';
@@ -22,11 +22,8 @@ const links = [
 ];
 
 export default async function Navbar() {
-  const auth = await createAuth();
-
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  // 頁面本身通常也要 session，交給 lib/session.ts 的 cache() 每請求只查一次
+  const session = await getSession();
 
   const isAdmin = session?.user.role === 'admin';
 
@@ -34,16 +31,14 @@ export default async function Navbar() {
     <nav className="sticky top-0 z-50 w-full bg-white/80 backdrop-blur shadow-xs">
       <div
         className={cn(
-          'flex justify-between items-center mx-auto gap-2 p-4',
-          'sm:gap-4 sm:px-0 sm:max-w-xl',
-          'md:max-w-2xl md:gap-8',
-          'lg:max-w-3xl xl:max-w-7xl',
+          SITE_CONTAINER,
+          'flex justify-between items-center gap-2 p-4 sm:gap-4 md:gap-8',
         )}
       >
         {/* LEFT */}
         <Link href="/" prefetch={false} className="flex items-center">
           <Image
-            src="https://br-crimson-cake-b3f0h3r9.storage.c-4.ap-southeast-1.aws.neon.tech/images/public/spot-tea.jpg"
+            src="https://ik.imagekit.io/cyuan/spot-tea.jpg"
             alt="Spot Tea logo"
             width={100}
             height={100}

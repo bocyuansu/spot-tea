@@ -17,6 +17,8 @@ export default function StoreLocationPage() {
             src="https://br-crimson-cake-b3f0h3r9.storage.c-4.ap-southeast-1.aws.neon.tech/images/public/spot-tea-store.jpg"
             alt="Spot Tea Store"
             width={600}
+            // 少了 height 瀏覽器拿不到固有比例，圖片載入時整塊會跳動
+            height={338}
             className="aspect-video object-contain"
             unoptimized
           />

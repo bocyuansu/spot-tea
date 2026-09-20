@@ -4,13 +4,21 @@ import {
   paymentMethodDescriptions,
   type PaymentMethod,
 } from '@/features/orders/order-status';
-import type { OrderWithItems } from '@/db/queries/orders';
+import type { order } from '@/db/schema';
 
-type OrderShippingInfoProps = {
-  order: OrderWithItems;
+type Order = typeof order.$inferSelect;
+
+/**
+ * 「收件與付款資訊」卡片，訂單完成頁與後台訂單明細頁共用。
+ *
+ * 只挑出真正用到的三個欄位，前台的 OrderWithItems 與後台的 AdminOrderDetail
+ * 都滿足這個形狀，不必為了共用而把兩邊的型別綁在一起。
+ */
+type ShippingPaymentCardProps = {
+  order: Pick<Order, 'shippingAddress' | 'paymentProvider' | 'note'>;
 };
 
-export default function OrderShippingInfo({ order }: OrderShippingInfoProps) {
+export default function ShippingPaymentCard({ order }: ShippingPaymentCardProps) {
   const { recipientName, phone, postalCode, city, district, addressLine } = order.shippingAddress;
   // seed 資料的 paymentProvider 是 'ecpay'，查不到說明就不顯示那一行
   const paymentDescription = paymentMethodDescriptions[order.paymentProvider as PaymentMethod];

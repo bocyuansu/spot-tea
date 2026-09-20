@@ -21,9 +21,9 @@ export default function ProductGallery({ images, alt }: ProductGalleryProps) {
           <Image
             src={activeImage}
             alt={alt}
-            fill
-            sizes="(min-width: 768px) 50vw, 100vw"
-            className="object-cover"
+            width={800}
+            height={800}
+            className="block object-cover"
             priority
           />
         ) : (
@@ -49,9 +49,9 @@ export default function ProductGallery({ images, alt }: ProductGalleryProps) {
               <Image
                 src={image}
                 alt={`${alt} 縮圖 ${index + 1}`}
-                fill
-                sizes="64px"
-                className="object-cover"
+                width={64}
+                height={64}
+                className="block object-cover"
               />
             </button>
           ))}

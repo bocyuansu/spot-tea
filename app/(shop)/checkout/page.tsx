@@ -1,6 +1,5 @@
 import type { Metadata } from 'next';
-import { headers } from 'next/headers';
-import { createAuth } from '@/lib/auth';
+import { getSession } from '@/lib/session';
 import CheckoutView from '@/features/checkout/components/CheckoutView';
 import SessionExpiredCard from '@/features/user/components/SessionExpiredCard';
 
@@ -10,11 +9,7 @@ export const metadata: Metadata = {
 };
 
 export default async function CheckoutPage() {
-  const auth = await createAuth();
-
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  const session = await getSession();
 
   // 沒帶 cookie 的訪客已經被 proxy.ts 擋掉，這裡只會遇到 cookie 還在、session 卻失效的情況
   if (!session) {

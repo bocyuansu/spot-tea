@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
-import { headers } from 'next/headers';
-import { createAuth } from '@/lib/auth';
 import { listAdminUsers } from '@/db/queries/admin/users';
+import { getSession } from '@/lib/session';
 import UserCreateDialog from '@/features/admin/users/components/UserCreateDialog';
 import UserTable from '@/features/admin/users/components/UserTable';
 
@@ -10,12 +9,8 @@ export const metadata: Metadata = {
 };
 
 export default async function AdminUsersPage() {
-  const auth = await createAuth();
-
-  const [users, session] = await Promise.all([
-    listAdminUsers(),
-    auth.api.getSession({ headers: await headers() }),
-  ]);
+  // (admin)/layout.tsx 已經讀過了，這裡會直接命中 cache()
+  const [users, session] = await Promise.all([listAdminUsers(), getSession()]);
 
   return (
     <div className="flex flex-col gap-6">

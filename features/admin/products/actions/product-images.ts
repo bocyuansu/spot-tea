@@ -52,6 +52,10 @@ export async function createProductImageUploadUrl(
         Bucket: STORAGE_BUCKET,
         Key: objectKey(fileName),
         ContentType: parsed.data.contentType,
+        // ContentLength 也要簽進去，否則 schema 驗的 5MB 只是宣告：
+        // 拿到票的人可以在效期內 PUT 任意大小的檔案上來。
+        // 簽下去之後瀏覽器送的 Content-Length 必須與這裡一致才會通過。
+        ContentLength: parsed.data.size,
       }),
       // 只夠這次上傳用，不是能一直拿去寫 bucket 的網址
       { expiresIn: 300 },

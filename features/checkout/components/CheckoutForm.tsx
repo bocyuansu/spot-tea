@@ -64,7 +64,6 @@ export default function CheckoutForm({ defaultRecipientName }: CheckoutFormProps
       // 不能用 server 端 redirect（見 proxy.ts 的 1101 說明），一律 client 端導頁。
       // 購物車在完成頁才清空，避免導頁前畫面先閃一下空購物車
       router.push(`/checkout/complete/${result.orderNumber}`);
-      router.refresh();
     });
   }
 

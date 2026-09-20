@@ -1,14 +1,16 @@
 import Image from 'next/image';
 import Link from 'next/link';
+import { SITE_CONTAINER } from '@/lib/site-container';
+import { cn } from '@/lib/utils';
 
 export default function Footer() {
   return (
-    <div className="mt-16 mx-auto sm:px-0 sm:max-w-xl md:max-w-2xl lg:max-w-3xl xl:max-w-7xl">
+    <div className={cn(SITE_CONTAINER, 'mt-16')}>
       <div className="flex flex-col items-center gap-8 md:flex-row md:flex-wrap md:items-start md:justify-between md:gap-0 rounded-lg space-y-8">
         <div className="flex flex-col items-center md:items-start md:w-1/3 lg:w-1/6">
           <Link href="/" className="flex items-center">
             <Image
-              src="https://br-crimson-cake-b3f0h3r9.storage.c-4.ap-southeast-1.aws.neon.tech/images/public/spot-tea.jpg"
+              src="https://ik.imagekit.io/cyuan/spot-tea.jpg"
               alt="Spot Tea logo"
               width={100}
               height={100}
@@ -18,7 +20,6 @@ export default function Footer() {
         <div className="flex flex-col gap-2 text-sm items-center md:items-start md:w-1/3 lg:w-1/6">
           <p className="text-lg">關於我們</p>
           <div className="flex flex-col gap-1">
-            <Link href="/brand-story">品牌故事</Link>
             <Link href="/store-location">門市資訊</Link>
             <Link href="/">隱私權政策</Link>
           </div>

@@ -23,7 +23,10 @@ export function buildOrderNumberPrefix(stamp: string) {
 }
 
 export function buildOrderNumber(stamp: string, sequence: number) {
-  // padStart 不會截斷，單日超過 9999 筆只是自然變成 5 位數
+  // padStart 不會截斷，單日超過 9999 筆會變成 5 位數。
+  // 注意：查當天最後一筆是用 ORDER BY order_number DESC（字串排序），
+  // 而 'ST-…-10000' 會排在 'ST-…-9999' 前面，所以真的破萬時序號會算錯並一直撞到
+  // unique 限制。要支援那個量級的話，得改用 createdAt 排序或加寬補零位數。
   return `${buildOrderNumberPrefix(stamp)}${String(sequence).padStart(4, '0')}`;
 }
 

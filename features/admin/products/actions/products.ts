@@ -6,6 +6,7 @@ import { getDatabase } from '@/db/client';
 import { product, productVariant } from '@/db/schema';
 import type { ActionResult } from '@/features/admin/shared/action-result';
 import { isAdmin } from '@/features/admin/shared/admin-guard';
+import { deleteProductImages } from '@/features/admin/products/delete-product-images';
 import {
   productFormSchema,
   UNCATEGORIZED,
@@ -34,6 +35,9 @@ function toVariantColumns(variant: ProductFormValues['variants'][number], produc
     stock: variant.stock,
   };
 }
+
+/** 商品在編輯途中被刪掉時，要給出和「slug 重複」不一樣的訊息 */
+class ProductNotFound extends Error {}
 
 export async function createProduct(values: ProductFormValues): Promise<ActionResult> {
   if (!(await isAdmin())) return { ok: false, message: '沒有權限執行這個操作 !' };
@@ -79,9 +83,23 @@ export async function updateProduct(id: string, values: ProductFormValues): Prom
     .map((variant) => variant.id)
     .filter((id) => id !== undefined);
 
+  const columns = toProductColumns(parsed.data);
+  // 圖片同理，只是刪掉的那幾張除了欄位，物件儲存裡的檔案也要一起清掉
+  let removedImages: string[] = [];
+
   try {
     await db.transaction(async (tx) => {
-      await tx.update(product).set(toProductColumns(parsed.data)).where(eq(product.id, id));
+      const [previous] = await tx
+        .select({ images: product.images })
+        .from(product)
+        .where(eq(product.id, id));
+
+      // 查不到代表商品已經被刪除；繼續往下 update 會是 no-op 卻回報成功
+      if (!previous) throw new ProductNotFound();
+
+      removedImages = (previous.images ?? []).filter((url) => !columns.images.includes(url));
+
+      await tx.update(product).set(columns).where(eq(product.id, id));
 
       await tx
         .delete(productVariant)
@@ -102,9 +120,16 @@ export async function updateProduct(id: string, values: ProductFormValues): Prom
         }
       }
     });
-  } catch {
+  } catch (error) {
+    if (error instanceof ProductNotFound) {
+      return { ok: false, message: '找不到這個商品，可能已經被刪除了 !' };
+    }
+
     return { ok: false, message: '更新失敗，網址代稱或 SKU 可能已經被使用 !' };
   }
+
+  // 交易成功了才動手：回滾的話資料庫還指著這幾張圖，檔案必須留著
+  await deleteProductImages(removedImages);
 
   // 可能改到 slug 或 status，舊網址那份快取也會失真
   updateTag('products');
@@ -117,12 +142,23 @@ export async function deleteProduct(id: string): Promise<ActionResult> {
 
   const db = await getDatabase('fresh');
 
+  // 刪掉之後就查不到這個商品的圖片了，用 returning 在同一句裡把清單帶回來
+  let images: string[] = [];
+
   try {
     // product_variant 設了 onDelete: cascade，規格會跟著一起刪掉
-    await db.delete(product).where(eq(product.id, id));
+    const [deleted] = await db
+      .delete(product)
+      .where(eq(product.id, id))
+      .returning({ images: product.images });
+
+    images = deleted?.images ?? [];
   } catch {
     return { ok: false, message: '刪除失敗，請稍後再試 !' };
   }
+
+  // 商品都不在了，圖片留在 bucket 裡也沒有人會再引用
+  await deleteProductImages(images);
 
   // 不清的話商品頁還會繼續渲染已經刪掉的商品
   updateTag('products');

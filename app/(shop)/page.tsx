@@ -1,12 +1,7 @@
-import { createAuth } from '@/lib/auth';
-import { headers } from 'next/headers';
+import { getSession } from '@/lib/session';
 
 export default async function Home() {
-  const auth = await createAuth();
-
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  const session = await getSession();
 
   return (
     <div className="min-h-96 flex flex-col justify-center items-center gap-4">

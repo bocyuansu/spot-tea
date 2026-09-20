@@ -18,15 +18,15 @@ export default function ProductCard({ product }: ProductCardProps) {
 
   return (
     <Card className="gap-3 overflow-hidden pt-0">
-      <div className="relative aspect-square w-full overflow-hidden bg-muted">
+      <div className="relative aspect-square overflow-hidden bg-muted">
         {image ? (
-          <Link href={`products/${product.slug}`} prefetch={false}>
+          <Link href={`/products/${product.slug}`} prefetch={false} className="block">
             <Image
               src={image}
               alt={product.name}
-              fill
-              sizes="(min-width: 1024px) 25vw, (min-width: 640px) 33vw, 50vw"
-              className="object-cover hover:scale-105 transition-all duration-300"
+              width={600}
+              height={600}
+              className="block object-cover hover:scale-105 transition-all duration-300"
             />
           </Link>
         ) : (
