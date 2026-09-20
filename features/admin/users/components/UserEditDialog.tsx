@@ -36,37 +36,31 @@ import { getErrorMessage } from '@/lib/auth-errors';
 /* Nextjs */
 import { useTransition } from 'react';
 import { useRouter } from 'next/navigation';
-import type { user as userTable } from '@/db/schema';
+import { useUserDialog } from '@/features/admin/users/components/UserActionsProvider';
+import type { AdminUser } from '@/db/queries/admin/users';
 
-type AdminUserRow = typeof userTable.$inferSelect;
-
-function toFormValues(user: AdminUserRow): AdminUpdateUserValues {
+function toFormDefault(user: AdminUser): AdminUpdateUserValues {
   return {
     name: user.name,
     role: user.role === 'admin' ? 'admin' : 'customer',
   };
 }
 
-type UserEditDialogProps = {
-  user: AdminUserRow;
+export default function UserEditDialog() {
   // 管理員不能把自己降級，否則會把自己鎖在後台外面
-  isSelf: boolean;
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-};
-
-export default function UserEditDialog({ user, isSelf, open, onOpenChange }: UserEditDialogProps) {
+  const { user, isSelf, open, onOpenChange } = useUserDialog('edit');
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
 
   const form = useForm({
     resolver: zodResolver(adminUpdateUserSchema),
-    defaultValues: toFormValues(user),
+    defaultValues: toFormDefault(user),
   });
 
-  function handleOpenChange(next: boolean) {
-    if (next) form.reset(toFormValues(user));
-    onOpenChange(next);
+  function handleOpenChange(isOpen: boolean) {
+    // 關閉 Dialog 就清除表單
+    if (!isOpen) form.reset(toFormDefault(user));
+    onOpenChange(isOpen);
   }
 
   function onSubmit(values: AdminUpdateUserValues) {
@@ -91,7 +85,7 @@ export default function UserEditDialog({ user, isSelf, open, onOpenChange }: Use
         }
       }
 
-      handleOpenChange(false);
+      onOpenChange(false);
       toast.add({ type: 'success', description: '會員資料已更新 !' });
       router.refresh();
     });

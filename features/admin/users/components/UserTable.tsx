@@ -8,7 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import UserMenu from '@/features/admin/users/components/UserMenu';
+import UserActions from '@/features/admin/users/components/UserActions';
 import { formatDateTW } from '@/lib/format';
 import type { AdminUser } from '@/db/queries/admin/users';
 
@@ -18,13 +18,6 @@ const roleLabels: Record<string, string> = {
   customer: '一般會員',
 };
 
-// order.userId 沒設 onDelete，有訂單的會員在資料庫層就刪不掉，先在 UI 擋下來
-function deleteDisabledReason(user: AdminUser, currentUserId: string) {
-  if (user.id === currentUserId) return '不能刪除自己的帳號';
-  if (user.orderCount > 0) return '這位會員已有訂單紀錄，無法刪除';
-  return undefined;
-}
-
 // 停權到期後 admin plugin 是等會員下次登入才解除，所以列表還是會看到已停權
 function banNote(user: AdminUser) {
   const period = user.banExpires ? `${formatDateTW(user.banExpires)} 解除` : '永久停權';
@@ -33,7 +26,7 @@ function banNote(user: AdminUser) {
 
 type UserTableProps = {
   users: AdminUser[];
-  // 用來擋住「停權/刪除自己」這件事
+  // 交給 UserActions 用來擋住「停權/刪除自己」這件事
   currentUserId: string;
 };
 
@@ -91,11 +84,7 @@ export default function UserTable({ users, currentUserId }: UserTableProps) {
                   {formatDateTW(user.createdAt)}
                 </TableCell>
                 <TableCell>
-                  <UserMenu
-                    user={user}
-                    isSelf={user.id === currentUserId}
-                    deleteDisabledReason={deleteDisabledReason(user, currentUserId)}
-                  />
+                  <UserActions user={user} currentUserId={currentUserId} />
                 </TableCell>
               </TableRow>
             ))}

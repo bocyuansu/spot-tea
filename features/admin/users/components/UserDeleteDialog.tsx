@@ -16,26 +16,16 @@ import { useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { authClient } from '@/lib/auth-client';
 import { getErrorMessage } from '@/lib/auth-errors';
+import { useUserDialog } from '@/features/admin/users/components/UserActionsProvider';
 
-type UserDeleteDialogProps = {
-  userId: string;
-  userName: string;
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-};
-
-export default function UserDeleteDialog({
-  userId,
-  userName,
-  open,
-  onOpenChange,
-}: UserDeleteDialogProps) {
+export default function UserDeleteDialog() {
+  const { user, open, onOpenChange } = useUserDialog('delete');
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
 
   function onConfirm() {
     startTransition(async () => {
-      const { error } = await authClient.admin.removeUser({ userId });
+      const { error } = await authClient.admin.removeUser({ userId: user.id });
 
       if (error) {
         toast.add({
@@ -56,7 +46,7 @@ export default function UserDeleteDialog({
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>確定要刪除「{userName}」嗎 ?</AlertDialogTitle>
+          <AlertDialogTitle>確定要刪除「{user.name}」嗎 ?</AlertDialogTitle>
           <AlertDialogDescription>
             這位會員的購物車與登入紀錄會一併刪除，而且無法復原。如果只是想暫時停用，請改用停權。
           </AlertDialogDescription>

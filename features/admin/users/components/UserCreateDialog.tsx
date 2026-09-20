@@ -56,11 +56,10 @@ export default function UserCreateDialog() {
     defaultValues: emptyUser,
   });
 
-  // 關掉就把欄位清乾淨，密碼尤其不該留到下次打開
-  // 不應該和提交表單共用，避免非同步處理，提交到被清除的表單
-  function handleOpenChange(next: boolean) {
-    if (!next) form.reset(emptyUser);
-    setOpen(next);
+  function handleOpenChange(isOpen: boolean) {
+    // 關閉 Dialog 就清除表單
+    if (!isOpen) form.reset(emptyUser);
+    setOpen(isOpen);
   }
 
   function onSubmit(data: AdminCreateUserValues) {

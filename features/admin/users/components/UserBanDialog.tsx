@@ -37,23 +37,11 @@ import { getErrorMessage } from '@/lib/auth-errors';
 /* Nextjs */
 import { useTransition } from 'react';
 import { useRouter } from 'next/navigation';
+import { useUserDialog } from '@/features/admin/users/components/UserActionsProvider';
 
-type UserBanDialogProps = {
-  userId: string;
-  userName: string;
+export default function UserBanDialog() {
   // 停權與解除停權共用這個對話框，只有停權需要填原因與期限
-  banned: boolean;
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-};
-
-export default function UserBanDialog({
-  userId,
-  userName,
-  banned,
-  open,
-  onOpenChange,
-}: UserBanDialogProps) {
+  const { user, banned, open, onOpenChange } = useUserDialog('ban');
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
 
@@ -77,9 +65,9 @@ export default function UserBanDialog({
 
       // 兩個欄位都是選填，送 undefined 就不會進 request body，由 admin plugin 決定預設值
       const { error } = banned
-        ? await authClient.admin.unbanUser({ userId })
+        ? await authClient.admin.unbanUser({ userId: user.id })
         : await authClient.admin.banUser({
-            userId,
+            userId: user.id,
             banReason: banReason || undefined,
             banExpiresIn: adminBanDurationSeconds[values.duration],
           });
@@ -93,7 +81,7 @@ export default function UserBanDialog({
         return;
       }
 
-      handleOpenChange(false);
+      onOpenChange(false);
       toast.add({ type: 'success', description: banned ? '會員已解除停權 !' : '會員已停權 !' });
       router.refresh();
     });
@@ -105,7 +93,7 @@ export default function UserBanDialog({
         <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4">
           <AlertDialogHeader>
             <AlertDialogTitle>
-              {banned ? `確定要解除「${userName}」的停權嗎 ?` : `確定要停權「${userName}」嗎 ?`}
+              {banned ? `確定要解除「${user.name}」的停權嗎 ?` : `確定要停權「${user.name}」嗎 ?`}
             </AlertDialogTitle>
             <AlertDialogDescription>
               {banned
