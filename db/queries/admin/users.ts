@@ -21,10 +21,4 @@ export async function listAdminUsers() {
   }));
 }
 
-export async function getAdminUserById(id: string) {
-  const db = await getDatabase('fresh');
-
-  return db.query.user.findFirst({ where: { id } });
-}
-
 export type AdminUser = Awaited<ReturnType<typeof listAdminUsers>>[number];

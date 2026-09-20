@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import {
@@ -117,9 +116,7 @@ export default function OrderDetail({ order }: OrderDetailProps) {
           <CardTitle>下單會員</CardTitle>
         </CardHeader>
         <CardContent className="flex flex-col gap-1 text-sm">
-          <Link href={`/admin/users/${order.user.id}`} className="font-medium hover:text-primary">
-            {order.user.name}
-          </Link>
+          <span className="font-medium">{order.user.name}</span>
           <span className="text-muted-foreground">{order.user.email}</span>
         </CardContent>
       </Card>

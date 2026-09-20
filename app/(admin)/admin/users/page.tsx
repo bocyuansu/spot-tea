@@ -1,10 +1,8 @@
 import type { Metadata } from 'next';
-import Link from 'next/link';
 import { headers } from 'next/headers';
-import { Plus } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { createAuth } from '@/lib/auth';
 import { listAdminUsers } from '@/db/queries/admin/users';
+import UserCreateDialog from '@/features/admin/users/components/UserCreateDialog';
 import UserTable from '@/features/admin/users/components/UserTable';
 
 export const metadata: Metadata = {
@@ -27,10 +25,7 @@ export default async function AdminUsersPage() {
           <p className="mt-1 text-muted-foreground">共 {users.length} 位會員</p>
         </div>
 
-        <Button render={<Link href="/admin/users/new" />} nativeButton={false}>
-          <Plus className="size-4" />
-          <span>新增會員</span>
-        </Button>
+        <UserCreateDialog />
       </div>
 
       <UserTable users={users} currentUserId={session?.user.id ?? ''} />

@@ -92,9 +92,7 @@ export default function UserTable({ users, currentUserId }: UserTableProps) {
                 </TableCell>
                 <TableCell>
                   <UserMenu
-                    userId={user.id}
-                    userName={user.name}
-                    banned={Boolean(user.banned)}
+                    user={user}
                     isSelf={user.id === currentUserId}
                     deleteDisabledReason={deleteDisabledReason(user, currentUserId)}
                   />

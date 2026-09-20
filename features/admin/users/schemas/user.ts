@@ -8,11 +8,6 @@ export const adminUserRoleLabels: Record<(typeof adminUserRoles)[number], string
   admin: '管理員',
 };
 
-export const adminUserStatusLabels = {
-  active: '正常',
-  banned: '已停權',
-} as const;
-
 // 用戶名稱與密碼的規則跟前台註冊一致，避免同一個欄位有兩套標準
 const name = z.string().min(3, '用戶名稱至少 3 個字 !').max(20, '用戶名稱不得超過 20 個字 !');
 
@@ -23,10 +18,10 @@ export const adminCreateUserSchema = z.object({
   role: z.enum(adminUserRoles),
 });
 
+// 停權交給 UserBanDialog（可以帶停權期限與原因），編輯只處理基本資料
 export const adminUpdateUserSchema = z.object({
   name,
   role: z.enum(adminUserRoles),
-  status: z.enum(['active', 'banned']),
 });
 
 // admin plugin 的 banUser 收的是 banExpiresIn（幾秒後自動解除），不帶就是永久停權

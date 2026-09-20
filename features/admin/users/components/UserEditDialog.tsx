@@ -3,9 +3,17 @@
 /* UI */
 import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field';
 import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { toast } from '@/components/ui/toast';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Select,
   SelectContent,
@@ -20,7 +28,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import {
   adminUpdateUserSchema,
   adminUserRoleLabels,
-  adminUserStatusLabels,
   type AdminUpdateUserValues,
 } from '@/features/admin/users/schemas/user';
 /* Better Auth */
@@ -31,35 +38,44 @@ import { useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import type { user as userTable } from '@/db/schema';
 
-type UserEditFormProps = {
-  user: typeof userTable.$inferSelect;
-  // 管理員不能把自己降級或停權，否則會把自己鎖在後台外面
+type AdminUserRow = typeof userTable.$inferSelect;
+
+function toFormValues(user: AdminUserRow): AdminUpdateUserValues {
+  return {
+    name: user.name,
+    role: user.role === 'admin' ? 'admin' : 'customer',
+  };
+}
+
+type UserEditDialogProps = {
+  user: AdminUserRow;
+  // 管理員不能把自己降級，否則會把自己鎖在後台外面
   isSelf: boolean;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
 };
 
-export default function UserEditForm({ user, isSelf }: UserEditFormProps) {
+export default function UserEditDialog({ user, isSelf, open, onOpenChange }: UserEditDialogProps) {
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
 
   const form = useForm({
     resolver: zodResolver(adminUpdateUserSchema),
-    defaultValues: {
-      name: user.name,
-      role: user.role === 'admin' ? ('admin' as const) : ('customer' as const),
-      status: user.banned ? ('banned' as const) : ('active' as const),
-    },
+    defaultValues: toFormValues(user),
   });
 
+  function handleOpenChange(next: boolean) {
+    if (next) form.reset(toFormValues(user));
+    onOpenChange(next);
+  }
+
   function onSubmit(values: AdminUpdateUserValues) {
+    const { name, role } = values;
     startTransition(async () => {
-      // 角色與停權各自有專屬的端點（停權會一併撤銷登入中的 session），所以分開送
+      // 角色有專屬的端點，所以跟基本資料分開送
       const steps = [
-        () => authClient.admin.updateUser({ userId: user.id, data: { name: values.name } }),
-        () => authClient.admin.setRole({ userId: user.id, role: values.role }),
-        () =>
-          values.status === 'banned'
-            ? authClient.admin.banUser({ userId: user.id })
-            : authClient.admin.unbanUser({ userId: user.id }),
+        () => authClient.admin.updateUser({ userId: user.id, data: { name } }),
+        () => authClient.admin.setRole({ userId: user.id, role }),
       ];
 
       for (const step of steps) {
@@ -75,20 +91,21 @@ export default function UserEditForm({ user, isSelf }: UserEditFormProps) {
         }
       }
 
+      handleOpenChange(false);
       toast.add({ type: 'success', description: '會員資料已更新 !' });
-
-      router.push('/admin/users');
       router.refresh();
     });
   }
 
   return (
-    <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-6">
-      <Card className="[--card-spacing:--spacing(6)]">
-        <CardHeader>
-          <CardTitle className="text-xl">會員資料</CardTitle>
-        </CardHeader>
-        <CardContent>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
+      <DialogContent className="sm:max-w-md">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4">
+          <DialogHeader>
+            <DialogTitle>編輯會員</DialogTitle>
+            <DialogDescription>{user.email}</DialogDescription>
+          </DialogHeader>
+
           <FieldGroup className="gap-y-4">
             <Controller
               name="name"
@@ -135,55 +152,25 @@ export default function UserEditForm({ user, isSelf }: UserEditFormProps) {
                 </Field>
               )}
             />
-
-            <Controller
-              name="status"
-              control={form.control}
-              render={({ field }) => (
-                <Field>
-                  <FieldLabel>狀態</FieldLabel>
-                  <Select
-                    items={adminUserStatusLabels}
-                    value={field.value}
-                    onValueChange={(value) => field.onChange(value ?? 'active')}
-                    disabled={isSelf}
-                  >
-                    <SelectTrigger className="w-full">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {Object.entries(adminUserStatusLabels).map(([value, label]) => (
-                        <SelectItem key={value} value={value}>
-                          {label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FieldDescription>
-                    {isSelf ? '不能停權自己的帳號' : '停權會同時把該會員登入中的裝置登出'}
-                  </FieldDescription>
-                </Field>
-              )}
-            />
           </FieldGroup>
-        </CardContent>
-      </Card>
 
-      <div className="flex gap-3">
-        <Button type="submit" disabled={isPending}>
-          {isPending ? (
-            <>
-              <Loader2 className="size-4 animate-spin" />
-              <span>儲存中</span>
-            </>
-          ) : (
-            <span>儲存變更</span>
-          )}
-        </Button>
-        <Button type="button" variant="outline" onClick={() => router.push('/admin/users')}>
-          取消
-        </Button>
-      </div>
-    </form>
+          <DialogFooter>
+            <DialogClose disabled={isPending} render={<Button variant="outline" />}>
+              取消
+            </DialogClose>
+            <Button type="submit" disabled={isPending}>
+              {isPending ? (
+                <>
+                  <Loader2 className="size-4 animate-spin" />
+                  <span>儲存中</span>
+                </>
+              ) : (
+                <span>儲存變更</span>
+              )}
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 }
