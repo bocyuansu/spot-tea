@@ -3,8 +3,6 @@ import Link from 'next/link';
 import ActiveLink from '@/components/common/ActiveLink';
 import AuthButton from '@/features/auth/components/AuthButton';
 import { getSession } from '@/lib/session';
-import { SITE_CONTAINER } from '@/lib/site-container';
-import { cn } from '@/lib/utils';
 import MobileMenu from '@/components/layout/MobileMenu';
 import CartBadge from '@/features/cart/components/CartBadge';
 import DashboardLink from '@/features/admin/shared/components/DashboardLink';
@@ -29,12 +27,7 @@ export default async function Navbar() {
 
   return (
     <nav className="sticky top-0 z-50 w-full bg-white/80 backdrop-blur shadow-xs">
-      <div
-        className={cn(
-          SITE_CONTAINER,
-          'flex justify-between items-center gap-2 p-4 sm:gap-4 md:gap-8',
-        )}
-      >
+      <div className="site-container flex justify-between items-center gap-2 p-4 sm:gap-4 md:gap-8">
         {/* LEFT */}
         <Link href="/" prefetch={false} className="flex items-center">
           <Image

@@ -5,7 +5,7 @@ import Link from 'next/link';
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-svh flex flex-col justify-center items-center gap-6 p-4">
-      <Link href="/" className="flex items-center">
+      <Link href="/" prefetch={false} className="flex items-center">
         <Image
           src="https://ik.imagekit.io/cyuan/spot-tea.jpg"
           alt="Spot Tea logo"

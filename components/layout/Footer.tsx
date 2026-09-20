@@ -1,14 +1,12 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { SITE_CONTAINER } from '@/lib/site-container';
-import { cn } from '@/lib/utils';
 
 export default function Footer() {
   return (
-    <div className={cn(SITE_CONTAINER, 'mt-16')}>
+    <div className="site-container mt-16">
       <div className="flex flex-col items-center gap-8 md:flex-row md:flex-wrap md:items-start md:justify-between md:gap-0 rounded-lg space-y-8">
         <div className="flex flex-col items-center md:items-start md:w-1/3 lg:w-1/6">
-          <Link href="/" className="flex items-center">
+          <Link href="/" prefetch={false} className="flex items-center">
             <Image
               src="https://ik.imagekit.io/cyuan/spot-tea.jpg"
               alt="Spot Tea logo"
@@ -20,16 +18,26 @@ export default function Footer() {
         <div className="flex flex-col gap-2 text-sm items-center md:items-start md:w-1/3 lg:w-1/6">
           <p className="text-lg">關於我們</p>
           <div className="flex flex-col gap-1">
-            <Link href="/store-location">門市資訊</Link>
-            <Link href="/">隱私權政策</Link>
+            <Link href="/store-location" prefetch={false}>
+              門市資訊
+            </Link>
+            <Link href="/" prefetch={false}>
+              隱私權政策
+            </Link>
           </div>
         </div>
         <div className="flex flex-col gap-2 text-sm items-center md:items-start md:w-1/3 lg:w-1/6">
           <p className="text-lg">顧客服務</p>
           <div className="flex flex-col gap-1">
-            <Link href="/">常見問題</Link>
-            <Link href="/">購物須知</Link>
-            <Link href="/">退換貨說明</Link>
+            <Link href="/" prefetch={false}>
+              常見問題
+            </Link>
+            <Link href="/" prefetch={false}>
+              購物須知
+            </Link>
+            <Link href="/" prefetch={false}>
+              退換貨說明
+            </Link>
           </div>
         </div>
         <div className="flex flex-col gap-2 text-sm items-center md:items-start md:w-2/3 lg:w-1/4">
