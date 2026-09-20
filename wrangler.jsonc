@@ -50,7 +50,12 @@
    * Note: Use secrets to store sensitive data.
    * https://developers.cloudflare.com/workers/configuration/secrets/
    */
-  // "vars": {  "MY_VARIABLE": "production_value" }
+  // AWS_ACCESS_KEY_ID / AWS_SECRET_ACCESS_KEY / BETTER_AUTH_SECRET 屬於機密，
+  // 本機放 .dev.vars，正式環境用 `wrangler secret put` 設定，不要寫進這裡。
+  "vars": {
+    "AWS_ENDPOINT_URL_S3": "https://br-crimson-cake-b3f0h3r9.storage.c-4.ap-southeast-1.aws.neon.tech",
+    "AWS_REGION": "ap-southeast-1",
+  },
   /**
    * Service Bindings (communicate between multiple Workers)
    * https://developers.cloudflare.com/workers/wrangler/configuration/#service-bindings

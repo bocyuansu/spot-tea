@@ -13,9 +13,9 @@ export const productVariantSchema = z.object({
   stock: requiredNumber('請輸入庫存 !').int().min(0, '庫存不得小於 0 !'),
 });
 
-// useFieldArray 只吃物件，所以圖片包一層 url；接上傳功能之後這裡會換成上傳回來的網址
+// useFieldArray 只吃物件，所以圖片包一層 url；值是上傳到物件儲存後拿回來的公開網址
 export const productImageSchema = z.object({
-  url: z.string().min(1, '請輸入圖片路徑 !').max(300, '圖片路徑不得超過 300 個字 !'),
+  url: z.string().min(1, '圖片網址不正確 !').max(300, '圖片網址不得超過 300 個字 !'),
 });
 
 // 下拉選單的「未分類」用空字串，對應資料庫的 null
@@ -47,5 +47,3 @@ export const emptyProductVariant: ProductFormValues['variants'][number] = {
   price: 0,
   stock: 0,
 };
-
-export const emptyProductImage: ProductFormValues['images'][number] = { url: '' };

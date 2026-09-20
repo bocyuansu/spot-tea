@@ -1,5 +1,6 @@
 import { config } from 'dotenv';
 import { defineConfig } from 'drizzle-kit';
+import { postgresEnv } from './env';
 
 config({ path: '.env.local', override: true });
 
@@ -8,6 +9,6 @@ export default defineConfig({
   schema: './db/schema/index.ts',
   dialect: 'postgresql',
   dbCredentials: {
-    url: process.env.NEON_DATABASE_URL!,
+    url: postgresEnv().databaseUrlUnpooled,
   },
 });

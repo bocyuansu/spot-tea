@@ -3,6 +3,7 @@ import { drizzle } from 'drizzle-orm/node-postgres';
 import { config } from 'dotenv';
 import { Client } from 'pg';
 
+import { postgresEnv } from '@/env';
 import { seedCategories, seedOrderUserEmail, seedOrders, seedProducts } from './seed-data';
 import { category, order, orderItem, product, productVariant, user } from './schema';
 
@@ -10,7 +11,7 @@ import { category, order, orderItem, product, productVariant, user } from './sch
 config({ path: '.env.local', override: true });
 
 const main = async () => {
-  const client = new Client({ connectionString: process.env.NEON_DATABASE_URL });
+  const client = new Client({ connectionString: postgresEnv().databaseUrlUnpooled });
 
   try {
     // 和 Neon 建立連線

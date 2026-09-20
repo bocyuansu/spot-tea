@@ -13,19 +13,16 @@ import { drizzleAdapter } from '@better-auth/drizzle-adapter/relations-v2';
 import { drizzle } from 'drizzle-orm/node-postgres';
 import * as schema from '@/db/schema';
 import { relations } from '@/db/relations';
+import { postgresEnv } from '@/env';
 
 // 加入 override: true 強制覆蓋已經被外部工具注入的環境變數
 config({ path: '.env.local', override: true });
 
-const connectionString = process.env.NEON_DATABASE_URL;
-
-// 空字串會讓 pg 把主機名解析成字面上的 base，錯誤訊息（ENOTFOUND base）難以追查
-if (!connectionString) {
-  throw new Error('NEON_DATABASE_URL is missing or empty — check .env.local');
-}
+// 空字串或漏設都會在這裡就被擋下來，不會變成 pg 那句難追的 ENOTFOUND base
+const { databaseUrlUnpooled } = postgresEnv();
 
 // generate 只需要 schema，不會真的建立連線
-const db = drizzle(connectionString, { relations });
+const db = drizzle(databaseUrlUnpooled, { relations });
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
