@@ -1,3 +1,4 @@
+import { z } from 'zod';
 import { parseEnv } from '@neon/env';
 import config from '@/neon';
 
@@ -21,4 +22,19 @@ export function storageEnv() {
 /** migrate / seed / Better Auth CLI 這些 Node 腳本要的直連（unpooled）連線字串 */
 export function postgresEnv() {
   return parseEnv(config, ['DATABASE_URL_UNPOOLED']).postgres;
+}
+
+/**
+ * ImageKit 只當 CDN，圖片本體還是放在 Neon Object Storage，
+ * 所以這個變數不在 neon.ts 的宣告裡，parseEnv 管不到，改用 zod 自己驗一次。
+ * 行為維持一致：少了或不是合法網址就當場報錯，而不是讓 undefined 流進網址字串。
+ */
+export function imagekitEnv() {
+  const parsed = z
+    .object({
+      IMAGEKIT_URL_ENDPOINT: z.url('IMAGEKIT_URL_ENDPOINT 必須是完整的 URL endpoint !'),
+    })
+    .parse(process.env);
+
+  return { urlEndpoint: parsed.IMAGEKIT_URL_ENDPOINT.replace(/\/$/, '') };
 }

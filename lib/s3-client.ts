@@ -28,11 +28,3 @@ export const client = new S3Client({
 
 // 型別綁在 neon.ts 的 buckets 上，打錯或是刪掉宣告都會編譯失敗
 export const STORAGE_BUCKET: keyof NonNullable<typeof config.buckets> = 'images';
-
-/**
- * 物件的公開網址：endpoint + bucket + key，
- * 例如 https://<branch>.storage.c-4.ap-southeast-1.aws.neon.tech/images/products/spot-tea.jpg
- */
-export function storageObjectUrl(key: string) {
-  return `${storage.endpoint}/${STORAGE_BUCKET}/${key}`;
-}

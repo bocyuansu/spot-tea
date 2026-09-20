@@ -11,6 +11,7 @@ type SeedProduct = {
   name: string;
   slug: string;
   description: string;
+  /** 圖片檔名，seed.ts 會換算成 ImageKit 的公開網址再寫進資料庫 */
   images: string[];
   status: 'draft' | 'published' | 'archived';
   origin: string;
@@ -29,7 +30,7 @@ export const seedProducts: SeedProduct[] = [
     name: '凍頂烏龍茶',
     slug: 'dong-ding-oolong',
     description: '香氣濃郁、喉韻回甘的經典凍頂烏龍。',
-    images: ['/products/spot-tea.jpg'],
+    images: ['spot-tea.jpg'],
     status: 'published',
     origin: '南投鹿谷',
     variants: [
@@ -42,7 +43,7 @@ export const seedProducts: SeedProduct[] = [
     name: '阿里山金萱茶',
     slug: 'alishan-jinxuan',
     description: '帶有奶香與淡淡花香的高山茶。',
-    images: ['/products/spot-tea.jpg'],
+    images: ['spot-tea.jpg'],
     status: 'published',
     origin: '阿里山',
     variants: [{ weightGrams: 150, label: null, sku: 'ALJX-150', price: 780, stock: 15 }],
@@ -62,7 +63,7 @@ export const seedProducts: SeedProduct[] = [
     name: '大禹嶺高山茶禮盒',
     slug: 'dayuling-gift-box',
     description: '產量稀少的高冷茶，適合送禮的精緻禮盒組。',
-    images: ['/products/spot-tea.jpg'],
+    images: ['spot-tea.jpg'],
     status: 'published',
     origin: '大禹嶺',
     variants: [{ weightGrams: 300, label: '禮盒組', sku: 'DYL-GIFT-300', price: 3200, stock: 5 }],

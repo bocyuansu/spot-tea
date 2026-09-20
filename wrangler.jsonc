@@ -55,6 +55,7 @@
   "vars": {
     "AWS_ENDPOINT_URL_S3": "https://br-crimson-cake-b3f0h3r9.storage.c-4.ap-southeast-1.aws.neon.tech",
     "AWS_REGION": "ap-southeast-1",
+    "IMAGEKIT_URL_ENDPOINT": "https://ik.imagekit.io/cyuan",
   },
   /**
    * Service Bindings (communicate between multiple Workers)

@@ -28,7 +28,7 @@ export default function ProductImagesField({ form }: ProductImagesFieldProps) {
 
   /**
    * 先跟 server action 要一張 presigned URL，再把檔案直接 PUT 到 Neon Object Storage，
-   * 表單只留下上傳後的公開網址，送出時跟著其他欄位一起寫進資料庫。
+   * 表單只留下 ImageKit 的公開網址，送出時跟著其他欄位一起寫進資料庫。
    */
   async function upload(file: File) {
     const ticket = await createProductImageUploadUrl({

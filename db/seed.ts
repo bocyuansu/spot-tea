@@ -4,6 +4,7 @@ import { config } from 'dotenv';
 import { Client } from 'pg';
 
 import { postgresEnv } from '@/env';
+import { imageUrl } from '@/lib/imagekit';
 import { seedCategories, seedOrderUserEmail, seedOrders, seedProducts } from './seed-data';
 import { category, order, orderItem, product, productVariant, user } from './schema';
 
@@ -38,6 +39,9 @@ const main = async () => {
         throw new Error(`找不到分類 ${seedProduct.categorySlug}，請確認 seed 資料`);
       }
 
+      // seed 資料只記檔名，存進資料庫的要跟後台上傳一樣是 ImageKit 的網址
+      const images = seedProduct.images.map(imageUrl);
+
       const [insertedProduct] = await db
         .insert(product)
         .values({
@@ -45,7 +49,7 @@ const main = async () => {
           name: seedProduct.name,
           slug: seedProduct.slug,
           description: seedProduct.description,
-          images: seedProduct.images,
+          images,
           status: seedProduct.status,
           origin: seedProduct.origin,
         })
@@ -55,7 +59,7 @@ const main = async () => {
             categoryId,
             name: seedProduct.name,
             description: seedProduct.description,
-            images: seedProduct.images,
+            images,
             status: seedProduct.status,
             origin: seedProduct.origin,
             updatedAt: new Date(),
