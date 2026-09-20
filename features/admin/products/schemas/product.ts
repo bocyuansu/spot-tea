@@ -13,6 +13,11 @@ export const productVariantSchema = z.object({
   stock: requiredNumber('請輸入庫存 !').int().min(0, '庫存不得小於 0 !'),
 });
 
+// useFieldArray 只吃物件，所以圖片包一層 url；接上傳功能之後這裡會換成上傳回來的網址
+export const productImageSchema = z.object({
+  url: z.string().min(1, '請輸入圖片路徑 !').max(300, '圖片路徑不得超過 300 個字 !'),
+});
+
 // 下拉選單的「未分類」用空字串，對應資料庫的 null
 export const UNCATEGORIZED = '';
 
@@ -28,8 +33,8 @@ export const productFormSchema = z.object({
   status: z.enum(['draft', 'published', 'archived']),
   origin: z.string().max(30, '產地不得超過 30 個字 !'),
   description: z.string().max(500, '商品描述不得超過 500 個字 !'),
-  // 一行一個圖片路徑，存進資料庫前再拆成陣列
-  images: z.string(),
+  // 第一張是封面，順序就是前台圖庫的顯示順序
+  images: z.array(productImageSchema),
   variants: z.array(productVariantSchema).min(1, '至少要有一個規格 !'),
 });
 
@@ -42,3 +47,5 @@ export const emptyProductVariant: ProductFormValues['variants'][number] = {
   price: 0,
   stock: 0,
 };
+
+export const emptyProductImage: ProductFormValues['images'][number] = { url: '' };

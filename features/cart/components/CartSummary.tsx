@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Button } from '@/components/ui/button';
+import { Button, buttonVariants } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { formatPriceTWD } from '@/lib/format';
@@ -46,14 +46,9 @@ export default function CartSummary() {
           </p>
         )}
 
-        <Button
-          render={<Link href="/checkout" />}
-          nativeButton={false}
-          size="lg"
-          className="w-full"
-        >
+        <Link href="/checkout" className={buttonVariants({ size: 'lg', className: 'w-full' })}>
           前往結帳
-        </Button>
+        </Link>
         <Button type="button" variant="ghost" size="sm" onClick={clearCart}>
           清空購物車
         </Button>

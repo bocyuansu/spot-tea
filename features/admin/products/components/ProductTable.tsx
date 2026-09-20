@@ -1,31 +1,12 @@
 import Link from 'next/link';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+import { buttonVariants } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
-import { productStatusLabels } from '@/features/products/product-status';
-import { formatPriceTWD } from '@/lib/format';
+import { Table, TableBody, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import type { AdminProduct } from '@/db/queries/admin/products';
-import ProductMenu from '@/features/admin/products/components/ProductMenu';
+import ProductRow from '@/features/admin/products/components/ProductRow';
 
-function formatPriceRange(variants: AdminProduct['variants']) {
-  if (variants.length === 0) return '—';
-
-  const prices = variants.map((variant) => variant.price);
-  const minPrice = Math.min(...prices);
-  const maxPrice = Math.max(...prices);
-
-  return minPrice === maxPrice
-    ? formatPriceTWD(minPrice)
-    : `${formatPriceTWD(minPrice)} – ${formatPriceTWD(maxPrice)}`;
-}
+// 展開的規格矩陣要用 colSpan 橫跨整列，欄數改了這裡也要跟著改
+const COLUMN_COUNT = 9;
 
 type ProductTableProps = {
   products: AdminProduct[];
@@ -36,9 +17,9 @@ export default function ProductTable({ products }: ProductTableProps) {
     return (
       <div className="flex min-h-64 flex-col items-center justify-center gap-2 text-center text-muted-foreground">
         <p>資料庫裡還沒有任何商品</p>
-        <Button render={<Link href="/admin/products/new" />} nativeButton={false}>
+        <Link href="/admin/products/new" className={buttonVariants()}>
           新增第一項商品
-        </Button>
+        </Link>
       </div>
     );
   }
@@ -49,6 +30,10 @@ export default function ProductTable({ products }: ProductTableProps) {
         <Table>
           <TableHeader>
             <TableRow>
+              <TableHead className="w-10">
+                <span className="sr-only">展開規格</span>
+              </TableHead>
+              <TableHead className="w-16">圖片</TableHead>
               <TableHead>商品</TableHead>
               <TableHead>分類</TableHead>
               <TableHead>狀態</TableHead>
@@ -59,43 +44,9 @@ export default function ProductTable({ products }: ProductTableProps) {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {products.map((product) => {
-              const totalStock = product.variants.reduce(
-                (total, variant) => total + variant.stock,
-                0,
-              );
-
-              return (
-                <TableRow key={product.id}>
-                  <TableCell>
-                    <div className="flex flex-col">
-                      <span className="font-medium">{product.name}</span>
-                      <span className="text-xs text-muted-foreground">{product.slug}</span>
-                    </div>
-                  </TableCell>
-                  <TableCell className="text-muted-foreground">
-                    {product.category?.name ?? '未分類'}
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant={product.status === 'published' ? 'default' : 'outline'}>
-                      {productStatusLabels[product.status]}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="text-right text-muted-foreground">
-                    {product.variants.length}
-                  </TableCell>
-                  <TableCell className="text-right">{formatPriceRange(product.variants)}</TableCell>
-                  <TableCell
-                    className={totalStock === 0 ? 'text-right text-destructive' : 'text-right'}
-                  >
-                    {totalStock}
-                  </TableCell>
-                  <TableCell>
-                    <ProductMenu productId={product.id} productName={product.name} />
-                  </TableCell>
-                </TableRow>
-              );
-            })}
+            {products.map((product) => (
+              <ProductRow key={product.id} product={product} columnCount={COLUMN_COUNT} />
+            ))}
           </TableBody>
         </Table>
       </CardContent>

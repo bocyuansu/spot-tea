@@ -29,11 +29,7 @@ export const seedProducts: SeedProduct[] = [
     name: '凍頂烏龍茶',
     slug: 'dong-ding-oolong',
     description: '香氣濃郁、喉韻回甘的經典凍頂烏龍。',
-    images: [
-      '/products/spot-tea.jpg',
-      '/products/dong-ding-oolong-01.avif',
-      '/products/dong-ding-oolong-02.avif',
-    ],
+    images: ['/products/spot-tea.jpg'],
     status: 'published',
     origin: '南投鹿谷',
     variants: [

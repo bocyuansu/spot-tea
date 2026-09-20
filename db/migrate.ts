@@ -7,7 +7,7 @@ import { Client } from 'pg';
 config({ path: '.env.local', override: true });
 
 const main = async () => {
-  const client = new Client({ connectionString: process.env.DATABASE_URL });
+  const client = new Client({ connectionString: process.env.NEON_DATABASE_URL });
 
   try {
     // 和 Neon 建立連線

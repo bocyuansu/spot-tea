@@ -7,7 +7,12 @@ export default function Footer() {
       <div className="flex flex-col items-center gap-8 md:flex-row md:flex-wrap md:items-start md:justify-between md:gap-0 rounded-lg space-y-8">
         <div className="flex flex-col items-center md:items-start md:w-1/3 lg:w-1/6">
           <Link href="/" className="flex items-center">
-            <Image src="/assets/spot-tea.jpg" alt="Spot Tea logo" width={100} height={100} />
+            <Image
+              src="https://br-crimson-cake-b3f0h3r9.storage.c-4.ap-southeast-1.aws.neon.tech/images/public/spot-tea.jpg"
+              alt="Spot Tea logo"
+              width={100}
+              height={100}
+            />
           </Link>
         </div>
         <div className="flex flex-col gap-2 text-sm items-center md:items-start md:w-1/3 lg:w-1/6">

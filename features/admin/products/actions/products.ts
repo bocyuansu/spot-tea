@@ -20,10 +20,7 @@ function toProductColumns(values: ProductFormValues) {
     status: values.status,
     origin: values.origin || null,
     description: values.description || null,
-    images: values.images
-      .split('\n')
-      .map((line) => line.trim())
-      .filter(Boolean),
+    images: values.images.map((image) => image.url.trim()).filter(Boolean),
   };
 }
 

@@ -4,11 +4,11 @@ This project was created with create-vinext-app.
 
 ## Neon, Hyperdrive, and Drizzle
 
-1. Create a Neon database and copy its direct, non-pooled connection string into `.env` as `DATABASE_URL`.
+1. Create a Neon database and copy its direct, non-pooled connection string into `.env.local` as `NEON_DATABASE_URL`.
 2. Create the Hyperdrive configuration with the same direct connection string:
 
    ```sh
-   pnpm wrangler hyperdrive create spot-tea-neon --connection-string="$DATABASE_URL"
+   pnpm wrangler hyperdrive create spot-tea-neon --connection-string="$NEON_DATABASE_URL"
    ```
 
 3. Replace `<your-hyperdrive-id-here>` in `wrangler.jsonc` with the returned Hyperdrive ID.
@@ -36,6 +36,6 @@ Hyperdrive manages connection pooling in production. The Worker creates a short-
 - `pnpm run start` starts the built Worker locally with Wrangler.
 - `pnpm run deploy` deploys the Cloudflare Worker.
 - `pnpm run db:generate` generates SQL migrations from `db/schema.ts`.
-- `pnpm run db:migrate` applies pending migrations using `DATABASE_URL`.
+- `pnpm run db:migrate` applies pending migrations using `NEON_DATABASE_URL`.
 - `pnpm run db:seed` upserts the categories, products, and variants in `db/seed-data.ts`. It is idempotent, so it is safe to re-run.
 - `pnpm run cf-typegen` refreshes the Cloudflare binding types.

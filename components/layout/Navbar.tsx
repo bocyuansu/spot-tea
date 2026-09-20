@@ -43,7 +43,7 @@ export default async function Navbar() {
         {/* LEFT */}
         <Link href="/" prefetch={false} className="flex items-center">
           <Image
-            src="/assets/spot-tea.jpg"
+            src="https://br-crimson-cake-b3f0h3r9.storage.c-4.ap-southeast-1.aws.neon.tech/images/public/spot-tea.jpg"
             alt="Spot Tea logo"
             width={100}
             height={100}

@@ -17,11 +17,11 @@ import { relations } from '@/db/relations';
 // 加入 override: true 強制覆蓋已經被外部工具注入的環境變數
 config({ path: '.env.local', override: true });
 
-const connectionString = process.env.DATABASE_URL;
+const connectionString = process.env.NEON_DATABASE_URL;
 
 // 空字串會讓 pg 把主機名解析成字面上的 base，錯誤訊息（ENOTFOUND base）難以追查
 if (!connectionString) {
-  throw new Error('DATABASE_URL is missing or empty — check .env.local');
+  throw new Error('NEON_DATABASE_URL is missing or empty — check .env.local');
 }
 
 // generate 只需要 schema，不會真的建立連線

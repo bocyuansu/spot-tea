@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { Plus } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Button, buttonVariants } from '@/components/ui/button';
 import { listAdminProducts } from '@/db/queries/admin/products';
 import ProductTable from '@/features/admin/products/components/ProductTable';
 
@@ -22,10 +22,10 @@ export default async function AdminProductsPage() {
           </p>
         </div>
 
-        <Button render={<Link href="/admin/products/new" />} nativeButton={false}>
+        <Link href="/admin/products/new" prefetch={false} className={buttonVariants()}>
           <Plus className="size-4" />
           <span>新增商品</span>
-        </Button>
+        </Link>
       </div>
 
       <ProductTable products={products} />

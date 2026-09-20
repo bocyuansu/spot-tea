@@ -14,9 +14,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Loader2, Plus, Trash2 } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 /* React Hook Form */
-import { Controller, useFieldArray, useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
   emptyProductVariant,
@@ -24,6 +24,8 @@ import {
   UNCATEGORIZED,
   type ProductFormValues,
 } from '@/features/admin/products/schemas/product';
+import ProductImagesField from '@/features/admin/products/components/ProductImagesField';
+import ProductVariantMatrix from '@/features/admin/products/components/ProductVariantMatrix';
 /* Server actions */
 import { createProduct, updateProduct } from '@/features/admin/products/actions/products';
 import { productStatusLabels } from '@/features/products/product-status';
@@ -41,7 +43,7 @@ function toFormValues(product: AdminProductDetail | undefined): ProductFormValue
       status: 'draft',
       origin: '',
       description: '',
-      images: '',
+      images: [],
       variants: [emptyProductVariant],
     };
   }
@@ -53,7 +55,7 @@ function toFormValues(product: AdminProductDetail | undefined): ProductFormValue
     status: product.status,
     origin: product.origin ?? '',
     description: product.description ?? '',
-    images: (product.images ?? []).join('\n'),
+    images: (product.images ?? []).map((url) => ({ url })),
     variants: product.variants.map((variant) => ({
       id: variant.id,
       weightGrams: variant.weightGrams,
@@ -79,8 +81,6 @@ export default function ProductForm({ categories, product }: ProductFormProps) {
     resolver: zodResolver(productFormSchema),
     defaultValues: toFormValues(product),
   });
-
-  const variants = useFieldArray({ control: form.control, name: 'variants' });
 
   // Select 的 items 讓 SelectValue 顯示標籤而不是原始的值
   const categoryItems: Record<string, string> = {
@@ -225,25 +225,16 @@ export default function ProductForm({ categories, product }: ProductFormProps) {
                 </Field>
               )}
             />
-
-            <Controller
-              name="images"
-              control={form.control}
-              render={({ field, fieldState }) => (
-                <Field>
-                  <FieldLabel>圖片路徑</FieldLabel>
-                  <Textarea
-                    aria-invalid={fieldState.invalid}
-                    rows={3}
-                    placeholder="/products/spot-tea.jpg"
-                    {...field}
-                  />
-                  <FieldDescription>一行一張，第一張會用在商品列表的封面</FieldDescription>
-                  {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-                </Field>
-              )}
-            />
           </FieldGroup>
+        </CardContent>
+      </Card>
+
+      <Card className="[--card-spacing:--spacing(6)]">
+        <CardHeader>
+          <CardTitle className="text-xl">商品圖片</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <ProductImagesField form={form} />
         </CardContent>
       </Card>
 
@@ -251,93 +242,8 @@ export default function ProductForm({ categories, product }: ProductFormProps) {
         <CardHeader>
           <CardTitle className="text-xl">規格與庫存</CardTitle>
         </CardHeader>
-        <CardContent className="flex flex-col gap-4">
-          {variants.fields.map((variantField, index) => {
-            // 數字欄位用 register + valueAsNumber，空白時才不會被當成字串送出去
-            const variantErrors = form.formState.errors.variants?.[index];
-
-            return (
-              <div key={variantField.id} className="rounded-lg border p-4">
-                <div className="mb-3 flex items-center justify-between">
-                  <span className="text-sm font-medium">規格 {index + 1}</span>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    disabled={variants.fields.length === 1}
-                    onClick={() => variants.remove(index)}
-                  >
-                    <Trash2 className="size-4" />
-                    <span>移除</span>
-                  </Button>
-                </div>
-
-                <FieldGroup className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-                  <Field>
-                    <FieldLabel>淨重（克）</FieldLabel>
-                    <Input
-                      type="number"
-                      aria-invalid={Boolean(variantErrors?.weightGrams)}
-                      {...form.register(`variants.${index}.weightGrams`, { valueAsNumber: true })}
-                    />
-                    {variantErrors?.weightGrams && (
-                      <FieldError errors={[variantErrors.weightGrams]} />
-                    )}
-                  </Field>
-
-                  <Field>
-                    <FieldLabel>顯示名稱</FieldLabel>
-                    <Input
-                      aria-invalid={Boolean(variantErrors?.label)}
-                      placeholder="禮盒組"
-                      {...form.register(`variants.${index}.label`)}
-                    />
-                    {variantErrors?.label && <FieldError errors={[variantErrors.label]} />}
-                  </Field>
-
-                  <Field>
-                    <FieldLabel>SKU</FieldLabel>
-                    <Input
-                      aria-invalid={Boolean(variantErrors?.sku)}
-                      placeholder="ALI-OOL-150"
-                      {...form.register(`variants.${index}.sku`)}
-                    />
-                    {variantErrors?.sku && <FieldError errors={[variantErrors.sku]} />}
-                  </Field>
-
-                  <Field>
-                    <FieldLabel>價格</FieldLabel>
-                    <Input
-                      type="number"
-                      aria-invalid={Boolean(variantErrors?.price)}
-                      {...form.register(`variants.${index}.price`, { valueAsNumber: true })}
-                    />
-                    {variantErrors?.price && <FieldError errors={[variantErrors.price]} />}
-                  </Field>
-
-                  <Field>
-                    <FieldLabel>庫存</FieldLabel>
-                    <Input
-                      type="number"
-                      aria-invalid={Boolean(variantErrors?.stock)}
-                      {...form.register(`variants.${index}.stock`, { valueAsNumber: true })}
-                    />
-                    {variantErrors?.stock && <FieldError errors={[variantErrors.stock]} />}
-                  </Field>
-                </FieldGroup>
-              </div>
-            );
-          })}
-
-          <Button
-            type="button"
-            variant="outline"
-            className="self-start"
-            onClick={() => variants.append(emptyProductVariant)}
-          >
-            <Plus className="size-4" />
-            <span>新增規格</span>
-          </Button>
+        <CardContent>
+          <ProductVariantMatrix form={form} />
         </CardContent>
       </Card>
 
