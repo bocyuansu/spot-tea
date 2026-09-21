@@ -2,7 +2,6 @@
 
 import Link from 'next/link';
 import { IconDashboard, IconLeaf, IconReceipt, IconUsers } from '@tabler/icons-react';
-
 import {
   Sidebar,
   SidebarContent,

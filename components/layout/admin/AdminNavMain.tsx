@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { type Icon } from '@tabler/icons-react';
+import { IconEye, type Icon } from '@tabler/icons-react';
 import {
   SidebarGroup,
   SidebarGroupContent,
@@ -20,19 +20,32 @@ export function AdminNavMain({
   }[];
 }) {
   return (
-    <SidebarGroup>
-      <SidebarGroupContent>
-        <SidebarMenu>
-          {links.map((link) => (
-            <SidebarMenuItem key={link.title}>
-              <SidebarMenuButton render={<Link href={link.url} prefetch={false} />}>
-                {link.icon && <link.icon />}
-                <span>{link.title}</span>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          ))}
-        </SidebarMenu>
-      </SidebarGroupContent>
-    </SidebarGroup>
+    <>
+      <SidebarGroup>
+        <SidebarGroupContent>
+          <SidebarMenu>
+            {links.map((link) => (
+              <SidebarMenuItem key={link.title}>
+                <SidebarMenuButton render={<Link href={link.url} prefetch={false} />}>
+                  {link.icon && <link.icon />}
+                  <span>{link.title}</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            ))}
+          </SidebarMenu>
+        </SidebarGroupContent>
+      </SidebarGroup>
+
+      <SidebarGroup className="mt-auto">
+        <SidebarGroupContent>
+          <SidebarMenuItem>
+            <SidebarMenuButton render={<Link href="/" prefetch={false} />}>
+              <IconEye stroke={2} />
+              <span>檢視商店</span>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarGroupContent>
+      </SidebarGroup>
+    </>
   );
 }

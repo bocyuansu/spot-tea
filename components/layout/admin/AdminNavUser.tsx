@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { IconDotsVertical, IconLogout, IconUserCircle } from '@tabler/icons-react';
+import { IconDotsVertical, IconLogout } from '@tabler/icons-react';
 
 import { authClient } from '@/lib/auth-client';
 import { toast } from '@/components/ui/toast';

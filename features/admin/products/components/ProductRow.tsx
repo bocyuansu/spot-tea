@@ -18,6 +18,7 @@ import { formatPriceTWD } from '@/lib/format';
 import { cn } from '@/lib/utils';
 import type { AdminProduct } from '@/db/queries/admin/products';
 import ProductMenu from '@/features/admin/products/components/ProductMenu';
+import Link from 'next/link';
 
 function formatPriceRange(variants: AdminProduct['variants']) {
   if (variants.length === 0) return '—';
@@ -67,13 +68,15 @@ export default function ProductRow({ product, columnCount }: ProductRowProps) {
 
         <TableCell>
           {cover ? (
-            <Image
-              src={cover}
-              alt={product.name}
-              width={40}
-              height={40}
-              className="size-10 rounded-md object-cover ring-1 ring-foreground/10"
-            />
+            <Link href={`/products/${product.slug}`} prefetch={false}>
+              <Image
+                src={product.images?.[0] ?? ''}
+                alt={product.name}
+                width={40}
+                height={40}
+                className="size-10 rounded-md object-cover ring-1 ring-foreground/10"
+              />
+            </Link>
           ) : (
             <div className="flex size-10 items-center justify-center rounded-md bg-muted text-muted-foreground/50">
               <Leaf className="size-4" />

@@ -6,6 +6,7 @@ import {
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
+  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
@@ -15,10 +16,17 @@ import { toast } from '@/components/ui/toast';
 import { Button } from '@/components/ui/button';
 import { authClient } from '@/lib/auth-client';
 import { useRouter } from 'next/navigation';
+import { IconReceipt, IconUserCircle } from '@tabler/icons-react';
 import Link from 'next/link';
 
 type AuthButtonProps = {
   initialSession: typeof authClient.$Infer.Session | null;
+};
+
+export type UserSummary = {
+  name: string;
+  email: string;
+  image?: string | null;
 };
 
 export default function AuthButton({ initialSession }: AuthButtonProps) {
@@ -28,7 +36,7 @@ export default function AuthButton({ initialSession }: AuthButtonProps) {
   const session = isPending && !isRefetching ? initialSession : data;
 
   if (session) {
-    return <DropdownMenuAvatar userName={session.user.name} userImg={session.user.image} />;
+    return <DropdownMenuAvatar user={session.user} />;
   }
 
   return <LoginButton />;
@@ -99,7 +107,7 @@ export function LogoutButton() {
   );
 }
 
-function DropdownMenuAvatar({ userName, userImg }: { userName: string; userImg?: string | null }) {
+function DropdownMenuAvatar({ user }: { user: UserSummary }) {
   const router = useRouter();
 
   async function handleLogout() {
@@ -130,7 +138,7 @@ function DropdownMenuAvatar({ userName, userImg }: { userName: string; userImg?:
         render={
           <Button variant="ghost" size="icon" className="rounded-full">
             <Avatar>
-              <AvatarImage src={userImg ?? ''} alt={userName} />
+              <AvatarImage src={user.image ?? ''} alt={user.name} />
               <AvatarFallback>
                 <User className="size-5" />
               </AvatarFallback>
@@ -138,11 +146,33 @@ function DropdownMenuAvatar({ userName, userImg }: { userName: string; userImg?:
           </Button>
         }
       />
-      <DropdownMenuContent align="end" className="min-w-20">
+      <DropdownMenuContent className="min-w-56" side="bottom" align="end" sideOffset={8}>
         <DropdownMenuGroup>
+          <DropdownMenuLabel className="p-0 font-normal">
+            <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
+              <Avatar>
+                <AvatarImage src={user.image ?? ''} alt={user.name} />
+                <AvatarFallback>
+                  <User className="size-5" />
+                </AvatarFallback>
+              </Avatar>
+              <div className="grid flex-1 text-left text-sm leading-tight">
+                <span className="truncate font-medium">{user.name}</span>
+                <span className="truncate text-xs text-muted-foreground">{user.email}</span>
+              </div>
+            </div>
+          </DropdownMenuLabel>
+        </DropdownMenuGroup>
+        <DropdownMenuSeparator />
+        <DropdownMenuGroup>
+          <DropdownMenuLabel>帳戶</DropdownMenuLabel>
           <DropdownMenuItem render={<Link href="/user" prefetch={false} />}>
-            <User />
-            <span>會員</span>
+            <IconUserCircle />
+            <span>會員中心</span>
+          </DropdownMenuItem>
+          <DropdownMenuItem render={<Link href="/user/orders" prefetch={false} />}>
+            <IconReceipt />
+            <span>訂單資料</span>
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
