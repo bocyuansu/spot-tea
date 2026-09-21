@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { orderStatusLabels, paymentStatusLabels } from '@/features/orders/order-status';
@@ -6,9 +7,11 @@ import { formatDateTW, formatPriceTWD } from '@/lib/format';
 
 type OrderCardProps = {
   order: OrderWithItems;
+  // 卡片底部的操作，例如「我的訂單」裡尚未付款訂單的付款按鈕
+  action?: ReactNode;
 };
 
-export default function OrderCard({ order }: OrderCardProps) {
+export default function OrderCard({ order, action }: OrderCardProps) {
   return (
     <Card size="sm">
       <CardContent className="flex flex-col gap-3">
@@ -53,6 +56,8 @@ export default function OrderCard({ order }: OrderCardProps) {
           </span>
           <span className="font-semibold text-primary">{formatPriceTWD(order.totalAmount)}</span>
         </div>
+
+        {action && <div className="flex justify-end">{action}</div>}
       </CardContent>
     </Card>
   );

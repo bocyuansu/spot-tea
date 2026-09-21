@@ -41,7 +41,7 @@ export default function CheckoutForm({ defaultRecipientName }: CheckoutFormProps
       district: '',
       addressLine: '',
       note: '',
-      paymentMethod: 'cod' as const,
+      paymentMethod: 'ecpay' as const,
     },
   });
 
@@ -59,10 +59,15 @@ export default function CheckoutForm({ defaultRecipientName }: CheckoutFormProps
         return;
       }
 
-      toast.add({ type: 'success', description: '訂單已成立 !' });
+      toast.add({
+        type: 'success',
+        description: values.paymentMethod === 'ecpay' ? '訂單已成立，請完成付款 !' : '訂單已成立 !',
+      });
 
       // 不能用 server 端 redirect（見 proxy.ts 的 1101 說明），一律 client 端導頁。
-      // 購物車在完成頁才清空，避免導頁前畫面先閃一下空購物車
+      // 購物車在完成頁才清空，避免導頁前畫面先閃一下空購物車。
+      // 信用卡訂單也先到完成頁再從那裡前往綠界：購物車已清、訂單已保留，
+      // 付款失敗或從綠界按上一頁回來時都能在同一頁重付，不會回到結帳頁重複下單
       router.push(`/checkout/complete/${result.orderNumber}`);
     });
   }

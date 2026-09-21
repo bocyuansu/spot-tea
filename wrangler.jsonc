@@ -46,16 +46,16 @@
   },
   /**
    * 環境變數
-   * https://developers.cloudflare.com/workers/wrangler/configuration/#environment-variables
-   * Note: Use secrets to store sensitive data.
-   * https://developers.cloudflare.com/workers/configuration/secrets/
    */
-  // AWS_ACCESS_KEY_ID / AWS_SECRET_ACCESS_KEY / BETTER_AUTH_SECRET 屬於機密，
-  // 本機放 .dev.vars，正式環境用 `wrangler secret put` 設定，不要寫進這裡。
+  // AWS_ACCESS_KEY_ID / AWS_SECRET_ACCESS_KEY / BETTER_AUTH_SECRET 屬於機密
+  // ECPAY_HASH_KEY / ECPAY_HASH_IV 屬於機密
   "vars": {
     "AWS_ENDPOINT_URL_S3": "https://br-crimson-cake-b3f0h3r9.storage.c-4.ap-southeast-1.aws.neon.tech",
     "AWS_REGION": "ap-southeast-1",
     "IMAGEKIT_URL_ENDPOINT": "https://ik.imagekit.io/cyuan",
+    // 目前是綠界的公開測試特店；拿到正式特店後改掉這兩個並把 ECPAY_MODE 換成 production
+    "ECPAY_MERCHANT_ID": "3002607",
+    "ECPAY_MODE": "stage",
   },
   /**
    * Service Bindings (communicate between multiple Workers)

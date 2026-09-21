@@ -2,6 +2,8 @@ import Link from 'next/link';
 import { Package } from 'lucide-react';
 import { buttonVariants } from '@/components/ui/button';
 import OrderCard from '@/features/orders/components/OrderCard';
+import EcpayPayButton from '@/features/payments/components/EcpayPayButton';
+import { isAwaitingEcpayPayment } from '@/features/orders/order-status';
 import type { OrderWithItems } from '@/db/queries/orders';
 
 type OrderHistoryProps = {
@@ -22,7 +24,15 @@ export default function OrderHistory({ orders }: OrderHistoryProps) {
       ) : (
         <div className="flex flex-col gap-3">
           {orders.map((order) => (
-            <OrderCard key={order.id} order={order} />
+            <OrderCard
+              key={order.id}
+              order={order}
+              action={
+                isAwaitingEcpayPayment(order) && (
+                  <EcpayPayButton orderNumber={order.orderNumber} size="sm" />
+                )
+              }
+            />
           ))}
         </div>
       )}

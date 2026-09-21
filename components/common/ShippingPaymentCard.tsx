@@ -20,7 +20,7 @@ type ShippingPaymentCardProps = {
 
 export default function ShippingPaymentCard({ order }: ShippingPaymentCardProps) {
   const { recipientName, phone, postalCode, city, district, addressLine } = order.shippingAddress;
-  // seed 資料的 paymentProvider 是 'ecpay'，查不到說明就不顯示那一行
+  // 舊資料的 paymentProvider 可能不在清單裡，查不到說明就不顯示那一行
   const paymentDescription = paymentMethodDescriptions[order.paymentProvider as PaymentMethod];
 
   return (

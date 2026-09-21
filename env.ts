@@ -38,3 +38,26 @@ export function imagekitEnv() {
 
   return { urlEndpoint: parsed.IMAGEKIT_URL_ENDPOINT.replace(/\/$/, '') };
 }
+
+/**
+ * 綠界金流的特店資訊，一樣不在 neon.ts 的管轄內，用 zod 驗。
+ * HashKey / HashIV 屬於機密，只能在 server 端讀，絕不能帶進 client bundle。
+ * ECPAY_MODE 決定送單到測試或正式環境，預設給 stage，避免漏設時誤打正式站。
+ */
+export function ecpayEnv() {
+  const parsed = z
+    .object({
+      ECPAY_MERCHANT_ID: z.string().min(1, 'ECPAY_MERCHANT_ID 未設定 !'),
+      ECPAY_HASH_KEY: z.string().min(1, 'ECPAY_HASH_KEY 未設定 !'),
+      ECPAY_HASH_IV: z.string().min(1, 'ECPAY_HASH_IV 未設定 !'),
+      ECPAY_MODE: z.enum(['stage', 'production']).default('stage'),
+    })
+    .parse(process.env);
+
+  return {
+    merchantId: parsed.ECPAY_MERCHANT_ID,
+    hashKey: parsed.ECPAY_HASH_KEY,
+    hashIv: parsed.ECPAY_HASH_IV,
+    mode: parsed.ECPAY_MODE,
+  };
+}

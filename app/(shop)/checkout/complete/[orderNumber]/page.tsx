@@ -1,13 +1,15 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { CircleCheck } from 'lucide-react';
+import { CircleCheck, CreditCard } from 'lucide-react';
 import { buttonVariants } from '@/components/ui/button';
 import { getSession } from '@/lib/session';
 import { getUserOrderByNumber } from '@/db/queries/orders';
 import OrderCard from '@/features/orders/components/OrderCard';
 import ShippingPaymentCard from '@/components/common/ShippingPaymentCard';
 import ClearCartOnMount from '@/features/checkout/components/ClearCartOnMount';
+import EcpayPaymentCard from '@/features/payments/components/EcpayPaymentCard';
+import { isAwaitingEcpayPayment } from '@/features/orders/order-status';
 import SessionExpiredCard from '@/features/user/components/SessionExpiredCard';
 
 export const metadata: Metadata = {
@@ -32,15 +34,28 @@ export default async function CheckoutCompletePage({ params }: CheckoutCompleteP
 
   if (!order) notFound();
 
+  // 綠界付款回來也導到這頁；付款失敗或中途離開時訂單仍是 unpaid，可以在這裡重付
+  const awaitingPayment = isAwaitingEcpayPayment(order);
+
   return (
     <div className="flex flex-col gap-6">
       <ClearCartOnMount orderNumber={order.orderNumber} />
 
       <div className="flex flex-col items-center gap-2 text-center">
-        <CircleCheck className="size-12 text-primary" />
-        <h1 className="font-heading text-3xl md:text-4xl">感謝您的訂購 !</h1>
+        {awaitingPayment ? (
+          <CreditCard className="size-12 text-primary" />
+        ) : (
+          <CircleCheck className="size-12 text-primary" />
+        )}
+        <h1 className="font-heading text-3xl md:text-4xl">
+          {awaitingPayment ? '訂單已成立，請完成付款' : '感謝您的訂購 !'}
+        </h1>
         <p className="text-muted-foreground">訂單編號：{order.orderNumber}</p>
       </div>
+
+      {awaitingPayment && (
+        <EcpayPaymentCard orderNumber={order.orderNumber} totalAmount={order.totalAmount} />
+      )}
 
       <OrderCard order={order} />
 

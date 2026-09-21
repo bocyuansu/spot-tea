@@ -113,7 +113,8 @@ export async function createOrder(input: CreateOrderInput): Promise<CreateOrderR
         const nextOrderNumber = buildOrderNumber(stamp, nextOrderSequence(latest?.orderNumber));
 
         // status 與 paymentStatus 走 schema 的預設值（pending / unpaid）：
-        // 訂單流程從待處理開始，付款與否是另一條線，由後台手動確認
+        // 訂單流程從待處理開始，付款與否是另一條線：綠界信用卡由付款通知回寫，
+        // 貨到付款與 ATM 匯款由後台手動確認
         const [createdOrder] = await tx
           .insert(order)
           .values({
