@@ -1,5 +1,14 @@
 'use client';
 
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { User } from 'lucide-react';
 import { LogOut } from 'lucide-react';
 import { toast } from '@/components/ui/toast';
@@ -19,12 +28,7 @@ export default function AuthButton({ initialSession }: AuthButtonProps) {
   const session = isPending && !isRefetching ? initialSession : data;
 
   if (session) {
-    return (
-      <>
-        <MemberLink />
-        <LogoutButton />
-      </>
-    );
+    return <DropdownMenuAvatar userName={session.user.name} userImg={session.user.image} />;
   }
 
   return <LoginButton />;
@@ -43,7 +47,7 @@ export function MemberLink() {
     </Link>
   );
 }
-// text-xs p-1 sm:text-sm sm:px-2 md:text-base md:px-3 md:py-2
+
 export function LoginButton() {
   return (
     <Link
@@ -92,5 +96,61 @@ export function LogoutButton() {
       <LogOut className="size-4 sm:size-5 md:size-6" />
       <span>登出</span>
     </Button>
+  );
+}
+
+function DropdownMenuAvatar({ userName, userImg }: { userName: string; userImg?: string | null }) {
+  const router = useRouter();
+
+  async function handleLogout() {
+    await authClient.signOut({
+      fetchOptions: {
+        onSuccess: () => {
+          toast.add({
+            type: 'success',
+            description: '登出成功 !',
+          });
+          router.refresh();
+        },
+        onError: ({ error }) => {
+          console.error(error.error.message);
+          toast.add({
+            type: 'error',
+            description: error.error.message,
+            priority: 'high',
+          });
+        },
+      },
+    });
+  }
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger
+        render={
+          <Button variant="ghost" size="icon" className="rounded-full">
+            <Avatar>
+              <AvatarImage src={userImg ?? ''} alt={userName} />
+              <AvatarFallback>
+                <User className="size-5" />
+              </AvatarFallback>
+            </Avatar>
+          </Button>
+        }
+      />
+      <DropdownMenuContent align="end" className="min-w-20">
+        <DropdownMenuGroup>
+          <DropdownMenuItem render={<Link href="/user" prefetch={false} />}>
+            <User />
+            <span>會員</span>
+          </DropdownMenuItem>
+        </DropdownMenuGroup>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem onClick={handleLogout}>
+          <LogOut />
+          <span>登出</span>
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }

@@ -32,7 +32,7 @@ export default function ProductMenu({
         <DropdownMenuContent align="end" className="min-w-25">
           <DropdownMenuItem
             aria-label={`編輯 ${productName}`}
-            render={<Link href={`/admin/products/${productId}`} />}
+            render={<Link href={`/admin/products/${productId}`} prefetch={false} />}
           >
             <Pencil className="size-4" /> 編輯
           </DropdownMenuItem>

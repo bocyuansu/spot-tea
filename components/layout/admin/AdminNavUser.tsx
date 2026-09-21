@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { IconDotsVertical, IconLogout } from '@tabler/icons-react';
+import { IconDotsVertical, IconLogout, IconUserCircle } from '@tabler/icons-react';
 
 import { authClient } from '@/lib/auth-client';
 import { toast } from '@/components/ui/toast';
@@ -80,9 +80,9 @@ export function AdminNavUser({ user }: { user: AdminUserSummary }) {
               />
             }
           >
-            <Avatar className="h-8 w-8 rounded-lg grayscale">
-              {user.image && <AvatarImage src={user.image} alt={user.name} />}
-              <AvatarFallback className="rounded-lg">{initials}</AvatarFallback>
+            <Avatar>
+              <AvatarImage src={user.image ?? ''} alt={user.name} />
+              <AvatarFallback>{initials}</AvatarFallback>
             </Avatar>
             <div className="grid flex-1 text-left text-sm leading-tight">
               <span className="truncate font-medium">{user.name}</span>
@@ -99,9 +99,9 @@ export function AdminNavUser({ user }: { user: AdminUserSummary }) {
             <DropdownMenuGroup>
               <DropdownMenuLabel className="p-0 font-normal">
                 <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                  <Avatar className="h-8 w-8 rounded-lg">
-                    {user.image && <AvatarImage src={user.image} alt={user.name} />}
-                    <AvatarFallback className="rounded-lg">{initials}</AvatarFallback>
+                  <Avatar>
+                    <AvatarImage src={user.image ?? ''} alt={user.name} />
+                    <AvatarFallback>{initials}</AvatarFallback>
                   </Avatar>
                   <div className="grid flex-1 text-left text-sm leading-tight">
                     <span className="truncate font-medium">{user.name}</span>

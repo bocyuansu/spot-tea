@@ -54,7 +54,7 @@ export default function OrderMenu({ orderId, orderNumber, status, paymentStatus 
         <DropdownMenuContent align="end" className="w-36">
           <DropdownMenuItem
             aria-label={`查看 ${orderNumber} 的明細`}
-            render={<Link href={`/admin/orders/${orderId}`} />}
+            render={<Link href={`/admin/orders/${orderId}`} prefetch={false} />}
           >
             <Eye className="size-4" /> 查看明細
           </DropdownMenuItem>
