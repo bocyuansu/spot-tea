@@ -18,11 +18,10 @@ export const client = new S3Client({
   },
   // Neon 的 storage gateway 只吃 path-style 定址
   forcePathStyle: true,
-  // Recent SDK versions default to embedding a checksum in presigned PUT
-  // URLs computed from an empty body (since no body exists at presign
-  // time), which rejects any upload with real content. This restores the
-  // upload/download behavior below and the presigned PUT URL in
-  // Objects (/docs/storage/objects#presigned-urls).
+  // 最近的 SDK 版本預設會在預簽名（presigned）的 PUT URL 中嵌入校驗碼（checksum）
+  // 該校驗碼是基於「空主體（empty body）」計算而來的（因為在進行預簽名時還不存在實際的主體內容）
+  // 這會導致任何帶有實際內容的預先上傳遭到拒絕。
+  // 此變更恢復了下方的上傳/下載行為，以及 Objects 文件中說明的預簽名 PUT URL 機制
   requestChecksumCalculation: 'WHEN_REQUIRED',
 });
 
