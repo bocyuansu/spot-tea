@@ -1,107 +1,114 @@
 'use client';
 
-import { LayoutDashboard, Menu, ShoppingCart, User, X } from 'lucide-react';
-import { useEffect, useState } from 'react';
-import Link from 'next/link';
+// UI
+import {
+  Sheet,
+  SheetContent,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
+import { SidebarProvider } from '@/components/ui/sidebar';
+// Icon
+import { LayoutDashboard, Menu, ShoppingCart, User } from 'lucide-react';
+import { IconShoppingBag, IconMapPin } from '@tabler/icons-react';
+import { authClient } from '@/lib/auth-client';
+import Link from 'next/link';
+import { NavUser } from './NavUser';
 
-type Link = {
-  href: string;
-  label: string;
-};
+type User = typeof authClient.$Infer.Session.user | undefined;
 
 type MobileMenuProps = {
-  links: Link[];
+  user: User;
   isLoggedIn: boolean;
   isAdmin: boolean;
 };
 
-export default function MobileMenu({ links, isLoggedIn, isAdmin }: MobileMenuProps) {
-  const [isOpen, setIsOpen] = useState(false);
-
-  // 打開選單時，禁止背景捲動
-  useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-    }
-    return () => {
-      document.body.style.overflow = '';
-    };
-  }, [isOpen]);
-
+export default function MobileMenu({ user, isLoggedIn, isAdmin }: MobileMenuProps) {
   return (
-    <div>
-      <Button
-        variant="link"
-        aria-label="切換選單"
-        className="border-0 p-2"
-        onClick={() => setIsOpen(!isOpen)}
-      >
-        {isOpen ? <X className="size-6" /> : <Menu className="size-6" />}
-      </Button>
+    <SidebarProvider className="min-h-0">
+      <Sheet>
+        <SheetTrigger
+          render={
+            <Button variant="link" aria-label="切換選單" className="border-0 p-2">
+              <Menu className="size-6" />
+            </Button>
+          }
+        />
+        <SheetContent side="left">
+          <SheetHeader>
+            <SheetTitle>商店導覽</SheetTitle>
+          </SheetHeader>
+          <ul className="grid flex-1 auto-rows-min gap-6 px-4">
+            <li className="w-full flex">
+              <Link
+                href="/products"
+                prefetch={false}
+                className="flex-1 flex items-center gap-1 hover:text-primary"
+              >
+                <IconShoppingBag className="size-5" />
+                所有商品
+              </Link>
+            </li>
 
-      <ul
-        className={cn(
-          'md:hidden h-screen fixed top-full left-0 w-full bg-primary p-4 space-y-4 flex flex-col items-center z-10 shadow-lg transition-transform duration-300 ease-in-out',
-          isOpen ? 'translate-x-0' : '-translate-x-full',
-        )}
-      >
-        {links.map((link) => (
-          <li key={link.label} className="w-full flex text-center">
-            <Link
-              href={link.href}
-              prefetch={false}
-              className="flex-1 text-white hover:text-green-500"
-              onClick={() => setIsOpen(false)}
-            >
-              {link.label}
-            </Link>
-          </li>
-        ))}
+            <li className="w-full flex">
+              <Link
+                href="/store-location"
+                prefetch={false}
+                className="flex-1 flex items-center gap-1 hover:text-primary"
+              >
+                <IconMapPin className="size-5" />
+                門市資訊
+              </Link>
+            </li>
 
-        <li className="w-full flex text-center">
-          <Link
-            href="/cart"
-            prefetch={false}
-            className="flex-1 flex gap-1 justify-center items-center text-white hover:text-green-500"
-            onClick={() => setIsOpen(false)}
-          >
-            <ShoppingCart className="size-5" />
-            購物車
-          </Link>
-        </li>
+            <li className="w-full flex">
+              <Link
+                href="/cart"
+                prefetch={false}
+                className="flex-1 flex items-center gap-1 hover:text-primary"
+              >
+                <ShoppingCart className="size-5" />
+                購物車
+              </Link>
+            </li>
 
-        {isLoggedIn && (
-          <li className="w-full flex text-center">
-            <Link
-              href="/user"
-              prefetch={false}
-              className="flex-1 flex gap-1 justify-center items-center text-white hover:text-green-500"
-              onClick={() => setIsOpen(false)}
-            >
-              <User className="size-5" />
-              <span>會員中心</span>
-            </Link>
-          </li>
-        )}
+            {isLoggedIn && (
+              <li className="w-full flex text-center">
+                <Link
+                  href="/user"
+                  prefetch={false}
+                  className="flex-1 flex items-center gap-1 hover:text-primary"
+                >
+                  <User className="size-5" />
+                  <span>會員中心</span>
+                </Link>
+              </li>
+            )}
 
-        {isAdmin && (
-          <li className="w-full flex text-center">
-            <Link
-              href="/admin/dashboard"
-              prefetch={false}
-              className="flex-1 flex gap-1 justify-center items-center text-white hover:text-green-500"
-              onClick={() => setIsOpen(false)}
-            >
-              <LayoutDashboard className="size-5" />
-              <span>管理員後台</span>
-            </Link>
-          </li>
-        )}
-      </ul>
-    </div>
+            {isAdmin && (
+              <li className="w-full flex text-center">
+                <Link
+                  href="/admin/dashboard"
+                  prefetch={false}
+                  className="flex-1 flex items-center gap-1 hover:text-primary"
+                >
+                  <LayoutDashboard className="size-5" />
+                  <span>管理員後台</span>
+                </Link>
+              </li>
+            )}
+          </ul>
+
+          {user && (
+            <SheetFooter>
+              <NavUser user={user} />
+            </SheetFooter>
+          )}
+        </SheetContent>
+      </Sheet>
+    </SidebarProvider>
   );
 }

@@ -7,7 +7,6 @@ import MobileMenu from '@/components/layout/MobileMenu';
 import CartBadge from '@/features/cart/components/CartBadge';
 import DashboardLink from '@/features/admin/shared/components/DashboardLink';
 
-// products?category=xxx
 const links = [
   {
     href: '/products',
@@ -59,8 +58,8 @@ export default async function Navbar() {
           <AuthButton initialSession={session} />
         </div>
         <div className="flex items-center md:hidden">
-          <AuthButton initialSession={session} />
-          <MobileMenu links={links} isLoggedIn={!!session} isAdmin={isAdmin} />
+          {/* <AuthButton initialSession={session} /> */}
+          <MobileMenu user={session?.user} isLoggedIn={!!session} isAdmin={isAdmin} />
         </div>
       </div>
     </nav>

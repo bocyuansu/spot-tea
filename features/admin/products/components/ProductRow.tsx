@@ -46,7 +46,7 @@ type ProductRowProps = {
 export default function ProductRow({ product, columnCount }: ProductRowProps) {
   const [expanded, setExpanded] = useState(false);
 
-  const cover = product.images?.[0] ?? null;
+  const productImgUrl = product.images?.[0] ?? null;
   const totalStock = product.variants.reduce((total, variant) => total + variant.stock, 0);
   const hasVariants = product.variants.length > 0;
 
@@ -67,8 +67,8 @@ export default function ProductRow({ product, columnCount }: ProductRowProps) {
         </TableCell>
 
         <TableCell>
-          {cover ? (
-            <Link href={`/products/${product.slug}`} prefetch={false}>
+          {productImgUrl ? (
+            <Link href={productImgUrl} prefetch={false}>
               <Image
                 src={product.images?.[0] ?? ''}
                 alt={product.name}

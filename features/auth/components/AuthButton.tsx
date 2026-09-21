@@ -16,7 +16,7 @@ import { toast } from '@/components/ui/toast';
 import { Button } from '@/components/ui/button';
 import { authClient } from '@/lib/auth-client';
 import { useRouter } from 'next/navigation';
-import { IconReceipt, IconUserCircle } from '@tabler/icons-react';
+import { IconMapPin, IconReceipt, IconShoppingBag, IconUserCircle } from '@tabler/icons-react';
 import Link from 'next/link';
 
 type AuthButtonProps = {
@@ -173,6 +173,17 @@ function DropdownMenuAvatar({ user }: { user: UserSummary }) {
           <DropdownMenuItem render={<Link href="/user/orders" prefetch={false} />}>
             <IconReceipt />
             <span>訂單資料</span>
+          </DropdownMenuItem>
+        </DropdownMenuGroup>
+        <DropdownMenuGroup>
+          <DropdownMenuLabel>商店</DropdownMenuLabel>
+          <DropdownMenuItem render={<Link href="/products" prefetch={false} />}>
+            <IconShoppingBag />
+            <span>所有商品</span>
+          </DropdownMenuItem>
+          <DropdownMenuItem render={<Link href="/store-location" prefetch={false} />}>
+            <IconMapPin />
+            <span>門市資訊</span>
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />

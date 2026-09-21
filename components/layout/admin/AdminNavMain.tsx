@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { IconEye, type Icon } from '@tabler/icons-react';
+import { IconHome, type Icon } from '@tabler/icons-react';
 import {
   SidebarGroup,
   SidebarGroupContent,
@@ -40,7 +40,7 @@ export function AdminNavMain({
         <SidebarGroupContent>
           <SidebarMenuItem>
             <SidebarMenuButton render={<Link href="/" prefetch={false} />}>
-              <IconEye stroke={2} />
+              <IconHome />
               <span>檢視商店</span>
             </SidebarMenuButton>
           </SidebarMenuItem>

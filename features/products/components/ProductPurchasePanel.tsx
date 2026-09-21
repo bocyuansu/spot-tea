@@ -1,7 +1,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { ShoppingCart } from 'lucide-react';
+import { ShoppingCartPlus } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import QuantityStepper from '@/components/common/QuantityStepper';
@@ -139,7 +139,7 @@ export default function ProductPurchasePanel({
         onClick={handleAddToCart}
         className="w-full gap-2"
       >
-        <ShoppingCart className="size-4" />
+        <ShoppingCartPlus className="size-4" />
         {isSoldOut ? '已售完' : '加入購物車'}
       </Button>
     </div>
