@@ -1,0 +1,2 @@
+ALTER TABLE "order" ADD COLUMN "updated_by_id" text;--> statement-breakpoint
+ALTER TABLE "order" ADD CONSTRAINT "order_updated_by_id_user_id_fkey" FOREIGN KEY ("updated_by_id") REFERENCES "user"("id");

@@ -24,9 +24,9 @@ export const adminPaymentStatuses = [
   'refunded',
 ] as const satisfies readonly Order['paymentStatus'][];
 
-export const adminOrderStatusSchema = z.object({
-  status: z.enum(adminOrderStatuses),
-  paymentStatus: z.enum(adminPaymentStatuses),
-});
+// 後台每次只把其中一個狀態推到下一步，所以兩者分開驗證
+export const adminOrderStatusSchema = z.enum(adminOrderStatuses);
+export const adminPaymentStatusSchema = z.enum(adminPaymentStatuses);
 
-export type AdminOrderStatusValues = z.infer<typeof adminOrderStatusSchema>;
+export type AdminOrderStatus = z.infer<typeof adminOrderStatusSchema>;
+export type AdminPaymentStatus = z.infer<typeof adminPaymentStatusSchema>;

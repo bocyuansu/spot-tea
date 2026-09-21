@@ -51,10 +51,11 @@ export async function applyEcpayResult(params: EcpayParams) {
 
   // 冪等：綠界最多會重送 4 次，而 ReturnURL 與 OrderResultURL 也會各來一次，
   // 帶上 paymentStatus = 'unpaid' 讓重複的通知命中 0 列。
-  // 金額也要對得上，防止拿一筆小額交易的通知去標記大額訂單
+  // 金額也要對得上，防止拿一筆小額交易的通知去標記大額訂單。
+  // 這次變更不是管理員做的，updatedById 清成 null，才不會算到上一個動過訂單的管理員頭上
   const [updated] = await db
     .update(order)
-    .set({ paymentStatus: 'paid', paymentTransactionId: params.TradeNo })
+    .set({ paymentStatus: 'paid', paymentTransactionId: params.TradeNo, updatedById: null })
     .where(
       and(
         eq(order.orderNumber, orderNumber),

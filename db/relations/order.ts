@@ -9,6 +9,11 @@ export const orderRelations = defineRelationsPart(schema, (r) => ({
       to: r.user.id,
       optional: false,
     }),
+    // updatedById 可空（沒有管理員動過，或最後一次是綠界通知），維持 user | null
+    updatedBy: r.one.user({
+      from: r.order.updatedById,
+      to: r.user.id,
+    }),
     items: r.many.orderItem({
       from: r.order.id,
       to: r.orderItem.orderId,

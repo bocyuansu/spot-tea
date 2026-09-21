@@ -1,6 +1,8 @@
 import type { order } from '@/db/schema';
 
 type Order = typeof order.$inferSelect;
+type OrderStatus = Order['status'];
+type PaymentStatus = Order['paymentStatus'];
 
 // 訂單狀態只講貨與流程，不講錢
 export const orderStatusLabels: Record<Order['status'], string> = {
@@ -18,6 +20,45 @@ export const paymentStatusLabels: Record<Order['paymentStatus'], string> = {
   failed: '付款失敗',
   refunded: '已退款',
 };
+
+/**
+ * 後台只能用按鈕把狀態往下一步推，不能任意改回去，這兩張表就是全部的規則。
+ * 取消只在出貨前；出貨後的退貨一律在付款狀態上標記退款。
+ * 目標型別排除了起點（待處理、未付款、付款失敗），型別上就不可能有一步走回去。
+ */
+export const orderStatusTransitions: Record<OrderStatus, Exclude<OrderStatus, 'pending'>[]> = {
+  pending: ['processing', 'cancelled'],
+  processing: ['shipped', 'cancelled'],
+  shipped: ['completed'],
+  completed: [],
+  cancelled: [],
+};
+
+// 綠界不會把訂單寫成 failed（見 features/payments/ecpay-result.ts），failed 只會是舊資料，
+// 一樣可以在確認收到款項後補記已付款
+export const paymentStatusTransitions: Record<
+  PaymentStatus,
+  Exclude<PaymentStatus, 'unpaid' | 'failed'>[]
+> = {
+  unpaid: ['paid'],
+  failed: ['paid'],
+  paid: ['refunded'],
+  refunded: [],
+};
+
+// 反查哪些狀態可以走到 next；server 端把它當成 UPDATE 的條件
+export function getPreviousStatuses<S extends string>(
+  transitions: Record<S, readonly S[]>,
+  next: S,
+): S[] {
+  return (Object.keys(transitions) as S[]).filter((from) => transitions[from].includes(next));
+}
+
+// 信用卡與 ATM 匯款要先收到錢才能開始備貨；貨到付款本來就是送達時才收錢。
+// paymentProvider 是自由文字，沒填或不認得的一律當成要先付款
+export function isAwaitingPrepayment(order: Pick<Order, 'paymentProvider' | 'paymentStatus'>) {
+  return order.paymentProvider !== 'cod' && order.paymentStatus !== 'paid';
+}
 
 // 訂單一律以未付款成立。貨到付款與 ATM 匯款由後台手動確認；
 // ecpay 是綠界信用卡，付款結果由綠界的通知回寫（見 features/payments）

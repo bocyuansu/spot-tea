@@ -81,7 +81,6 @@ export default function OrderTable({ orders }: OrderTableProps) {
                   <OrderMenu
                     orderId={order.id}
                     orderNumber={order.orderNumber}
-                    status={order.status}
                     paymentStatus={order.paymentStatus}
                   />
                 </TableCell>

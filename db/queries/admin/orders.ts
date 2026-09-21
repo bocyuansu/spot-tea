@@ -21,6 +21,7 @@ export async function getAdminOrderById(id: string) {
     where: { id },
     with: {
       user: { columns: { id: true, name: true, email: true } },
+      updatedBy: { columns: { name: true } },
       items: true,
     },
   });

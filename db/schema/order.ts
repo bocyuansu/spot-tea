@@ -49,6 +49,10 @@ export const order = pgTable(
       .defaultNow()
       .$onUpdate(() => /* @__PURE__ */ new Date())
       .notNull(),
+    // 最後一次更新這筆訂單的管理員，和 updatedAt 描述的是同一次變更；
+    // 顧客下單、綠界付款通知這類不是管理員做的變更一律寫 null。
+    // 跟 userId 一樣不設 onDelete：更新過訂單的管理員請改用停權，不要刪除帳號
+    updatedById: text('updated_by_id').references(() => user.id),
   },
   (table) => [
     index('order_userId_idx').on(table.userId),
