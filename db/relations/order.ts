@@ -18,6 +18,10 @@ export const orderRelations = defineRelationsPart(schema, (r) => ({
       from: r.order.id,
       to: r.orderItem.orderId,
     }),
+    events: r.many.orderEvent({
+      from: r.order.id,
+      to: r.orderEvent.orderId,
+    }),
   },
   orderItem: {
     order: r.one.order({
@@ -30,6 +34,18 @@ export const orderRelations = defineRelationsPart(schema, (r) => ({
     productVariant: r.one.productVariant({
       from: r.orderItem.productVariantId,
       to: r.productVariant.id,
+    }),
+  },
+  orderEvent: {
+    order: r.one.order({
+      from: r.orderEvent.orderId,
+      to: r.order.id,
+      optional: false,
+    }),
+    // actorId 可空（綠界付款通知），維持 user | null
+    actor: r.one.user({
+      from: r.orderEvent.actorId,
+      to: r.user.id,
     }),
   },
 }));

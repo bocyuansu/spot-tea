@@ -20,7 +20,12 @@ import { useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
-export default function LoginForm() {
+type LoginFormProps = {
+  // 登入後要回去的站內路徑，由 login/page.tsx 驗證過
+  redirectTo: string;
+};
+
+export default function LoginForm({ redirectTo }: LoginFormProps) {
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
 
@@ -46,7 +51,7 @@ export default function LoginForm() {
               description: '登入成功 !',
             });
 
-            router.push('/');
+            router.push(redirectTo);
           },
           onError: (ctx) => {
             // console.error(ctx.error);

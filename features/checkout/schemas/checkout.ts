@@ -30,6 +30,9 @@ export const createOrderSchema = checkoutFormSchema.extend({
       (items) => new Set(items.map((item) => item.variantId)).size === items.length,
       '購物車資料有誤，請重新整理 !',
     ),
+  // 顧客在結帳頁看到的合計。只拿來比對，不會拿來計價：
+  // 購物車的單價是加入當下的快照，商品改價後要先讓顧客看到新金額才能成立訂單
+  expectedTotal: z.number().int().nonnegative(),
 });
 
 export type CheckoutFormValues = z.infer<typeof checkoutFormSchema>;

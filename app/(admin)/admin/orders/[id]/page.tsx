@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import { getAdminOrderById } from '@/db/queries/admin/orders';
 import OrderDetail from '@/features/admin/orders/components/OrderDetail';
 import OrderStatusActions from '@/features/admin/orders/components/OrderStatusActions';
+import OrderTimeline from '@/features/admin/orders/components/OrderTimeline';
 import { formatDateTW } from '@/lib/format';
 
 export const metadata: Metadata = {
@@ -29,7 +30,10 @@ export default async function AdminOrderDetailPage({ params }: AdminOrderDetailP
 
       <div className="grid gap-6 xl:grid-cols-[2fr_1fr] xl:items-start">
         <OrderDetail order={order} />
-        <OrderStatusActions order={order} />
+        <div className="flex flex-col gap-6">
+          <OrderStatusActions order={order} />
+          <OrderTimeline order={order} />
+        </div>
       </div>
     </div>
   );

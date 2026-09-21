@@ -19,8 +19,9 @@ import type { ActionResult } from '@/features/admin/shared/action-result';
 
 type OrderStepButtonProps = {
   label: string;
-  // 取消訂單、標記退款這類收不回來的步驟會先跳確認框，按鈕也改用 destructive 樣式
-  confirm?: { title: string; description: string };
+  // 標記已付款、取消訂單、標記退款這類收不回來的步驟會先跳確認框；
+  // 其中會讓訂單走不下去的（取消、退款）再加上 destructive 樣式
+  confirm?: { title: string; description: string; destructive?: boolean };
   disabled?: boolean;
   onRun: () => Promise<ActionResult>;
 };
@@ -66,9 +67,11 @@ export default function OrderStepButton({
     );
   }
 
+  const variant = confirm.destructive ? 'destructive' : 'default';
+
   return (
     <>
-      <Button variant="destructive" disabled={disabled} onClick={() => setOpen(true)}>
+      <Button variant={variant} disabled={disabled} onClick={() => setOpen(true)}>
         {label}
       </Button>
       <AlertDialog open={open} onOpenChange={setOpen}>
@@ -79,7 +82,7 @@ export default function OrderStepButton({
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel disabled={isPending}>返回</AlertDialogCancel>
-            <AlertDialogAction variant="destructive" disabled={isPending} onClick={run}>
+            <AlertDialogAction variant={variant} disabled={isPending} onClick={run}>
               {content}
             </AlertDialogAction>
           </AlertDialogFooter>

@@ -13,7 +13,7 @@ export async function listAdminOrders() {
   });
 }
 
-// 後台的訂單明細頁；訂單列表不需要 items，只有這裡才一併撈出來
+// 後台的訂單明細頁；訂單列表不需要 items 與歷程，只有這裡才一併撈出來
 export async function getAdminOrderById(id: string) {
   const db = await getDatabase('fresh');
 
@@ -23,6 +23,10 @@ export async function getAdminOrderById(id: string) {
       user: { columns: { id: true, name: true, email: true } },
       updatedBy: { columns: { name: true } },
       items: true,
+      events: {
+        with: { actor: { columns: { name: true } } },
+        orderBy: { createdAt: 'asc' },
+      },
     },
   });
 }

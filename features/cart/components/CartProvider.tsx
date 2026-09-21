@@ -4,6 +4,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState } 
 import {
   CART_STORAGE_KEY,
   addCartItem,
+  applyLatestPrices,
   getCartCount,
   getCartSubtotal,
   readStoredCart,
@@ -21,6 +22,7 @@ type CartContextValue = {
   addItem: (item: CartItem) => void;
   updateQuantity: (variantId: string, quantity: number) => void;
   removeItem: (variantId: string) => void;
+  updatePrices: (latestPrices: Record<string, number>) => void;
   clearCart: () => void;
 };
 
@@ -62,6 +64,10 @@ export default function CartProvider({ children }: { children: React.ReactNode }
     setItems((prev) => removeCartItem(prev, variantId));
   }, []);
 
+  const updatePrices = useCallback((latestPrices: Record<string, number>) => {
+    setItems((prev) => applyLatestPrices(prev, latestPrices));
+  }, []);
+
   const clearCart = useCallback(() => setItems([]), []);
 
   const value = useMemo<CartContextValue>(
@@ -73,9 +79,10 @@ export default function CartProvider({ children }: { children: React.ReactNode }
       addItem,
       updateQuantity,
       removeItem,
+      updatePrices,
       clearCart,
     }),
-    [items, isHydrated, addItem, updateQuantity, removeItem, clearCart],
+    [items, isHydrated, addItem, updateQuantity, removeItem, updatePrices, clearCart],
   );
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;

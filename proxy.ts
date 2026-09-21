@@ -11,9 +11,13 @@ import { getSessionCookie } from 'better-auth/cookies';
  * proxy 跑在沒有快取的 default entrypoint，轉址會直接回給瀏覽器。
  */
 export function proxy(request: NextRequest) {
-  // 只樂觀檢查 cookie 是否存在，真正的 session 驗證仍由頁面的 getSession 負責
+  // 只樂觀檢查 cookie 是否存在，真正的 session 驗證仍由頁面的 getSession 負責。
+  // 沒登入就帶去登入頁，並記住原本要去的地方，例如從購物車按「前往結帳」
   if (!getSessionCookie(request)) {
-    return NextResponse.redirect(new URL('/', request.url));
+    const loginUrl = new URL('/login', request.url);
+    loginUrl.searchParams.set('next', `${request.nextUrl.pathname}${request.nextUrl.search}`);
+
+    return NextResponse.redirect(loginUrl);
   }
 
   // /admin 本身沒有內容，進來就帶到儀表板

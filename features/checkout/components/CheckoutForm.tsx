@@ -26,7 +26,7 @@ type CheckoutFormProps = {
 };
 
 export default function CheckoutForm({ defaultRecipientName }: CheckoutFormProps) {
-  const { items, subtotal } = useCart();
+  const { items, subtotal, updatePrices } = useCart();
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
 
@@ -46,15 +46,20 @@ export default function CheckoutForm({ defaultRecipientName }: CheckoutFormProps
   });
 
   const shippingFee = calculateShippingFee(subtotal);
+  const totalAmount = subtotal + shippingFee;
 
   function onSubmit(values: CheckoutFormValues) {
     startTransition(async () => {
       const result = await createOrder({
         ...values,
         items: items.map((item) => ({ variantId: item.variantId, quantity: item.quantity })),
+        expectedTotal: totalAmount,
       });
 
       if (!result.ok) {
+        // 價格變了：換上最新單價，右側的訂單明細會跟著重算，顧客確認後再送一次
+        if (result.latestPrices) updatePrices(result.latestPrices);
+
         toast.add({ type: 'error', description: result.message, priority: 'high' });
         return;
       }
@@ -234,7 +239,7 @@ export default function CheckoutForm({ defaultRecipientName }: CheckoutFormProps
         items={items}
         subtotal={subtotal}
         shippingFee={shippingFee}
-        totalAmount={subtotal + shippingFee}
+        totalAmount={totalAmount}
         isPending={isPending}
       />
     </form>

@@ -10,6 +10,7 @@ import {
 } from '@/components/ui/table';
 import {
   getPaymentMethodLabel,
+  isAwaitingRefund,
   orderStatusLabels,
   orderStatusVariants,
   paymentStatusLabels,
@@ -64,9 +65,12 @@ export default function OrderTable({ orders }: OrderTableProps) {
                   </Badge>
                 </TableCell>
                 <TableCell>
-                  <Badge variant={paymentStatusVariants[order.paymentStatus]}>
-                    {paymentStatusLabels[order.paymentStatus]}
-                  </Badge>
+                  <div className="flex flex-wrap gap-1">
+                    <Badge variant={paymentStatusVariants[order.paymentStatus]}>
+                      {paymentStatusLabels[order.paymentStatus]}
+                    </Badge>
+                    {isAwaitingRefund(order) && <Badge variant="destructive">待退款</Badge>}
+                  </div>
                 </TableCell>
                 <TableCell className="text-muted-foreground">
                   {getPaymentMethodLabel(order.paymentProvider)}
@@ -78,11 +82,7 @@ export default function OrderTable({ orders }: OrderTableProps) {
                   {formatPriceTWD(order.totalAmount)}
                 </TableCell>
                 <TableCell>
-                  <OrderMenu
-                    orderId={order.id}
-                    orderNumber={order.orderNumber}
-                    paymentStatus={order.paymentStatus}
-                  />
+                  <OrderMenu orderId={order.id} orderNumber={order.orderNumber} />
                 </TableCell>
               </TableRow>
             ))}

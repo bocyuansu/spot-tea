@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   addCartItem,
+  applyLatestPrices,
   clampQuantity,
   getCartCount,
   getCartSubtotal,
@@ -88,6 +89,24 @@ describe('removeCartItem', () => {
 
     expect(items).toHaveLength(1);
     expect(items[0].variantId).toBe('var-2');
+  });
+});
+
+describe('applyLatestPrices', () => {
+  it('replaces the stored price with the latest one', () => {
+    const items = applyLatestPrices(
+      [createItem({ price: 680 }), createItem({ variantId: 'var-2', price: 2280 })],
+      { 'var-1': 720 },
+    );
+
+    expect(items[0].price).toBe(720);
+    expect(items[1].price).toBe(2280);
+  });
+
+  it('keeps an unchanged item as the same object', () => {
+    const item = createItem({ price: 680 });
+
+    expect(applyLatestPrices([item], { 'var-1': 680 })[0]).toBe(item);
   });
 });
 

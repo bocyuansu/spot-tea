@@ -50,13 +50,17 @@ describe('checkoutFormSchema', () => {
 
 describe('createOrderSchema', () => {
   it('accepts items alongside the form values', () => {
-    const input = { ...createFormValues(), items: [{ variantId: 'var-1', quantity: 2 }] };
+    const input = {
+      ...createFormValues(),
+      expectedTotal: 1480,
+      items: [{ variantId: 'var-1', quantity: 2 }],
+    };
 
     expect(createOrderSchema.safeParse(input).success).toBe(true);
   });
 
   it('rejects an empty cart', () => {
-    const input = { ...createFormValues(), items: [] };
+    const input = { ...createFormValues(), expectedTotal: 1480, items: [] };
 
     expect(createOrderSchema.safeParse(input).success).toBe(false);
   });
@@ -64,6 +68,7 @@ describe('createOrderSchema', () => {
   it('rejects a duplicated variant', () => {
     const input = {
       ...createFormValues(),
+      expectedTotal: 1480,
       items: [
         { variantId: 'var-1', quantity: 1 },
         { variantId: 'var-1', quantity: 1 },
@@ -74,10 +79,24 @@ describe('createOrderSchema', () => {
   });
 
   it('rejects a non positive or fractional quantity', () => {
-    const zero = { ...createFormValues(), items: [{ variantId: 'var-1', quantity: 0 }] };
-    const fractional = { ...createFormValues(), items: [{ variantId: 'var-1', quantity: 1.5 }] };
+    const zero = {
+      ...createFormValues(),
+      expectedTotal: 1480,
+      items: [{ variantId: 'var-1', quantity: 0 }],
+    };
+    const fractional = {
+      ...createFormValues(),
+      expectedTotal: 1480,
+      items: [{ variantId: 'var-1', quantity: 1.5 }],
+    };
 
     expect(createOrderSchema.safeParse(zero).success).toBe(false);
     expect(createOrderSchema.safeParse(fractional).success).toBe(false);
+  });
+
+  it('requires the total the customer saw', () => {
+    const input = { ...createFormValues(), items: [{ variantId: 'var-1', quantity: 2 }] };
+
+    expect(createOrderSchema.safeParse(input).success).toBe(false);
   });
 });

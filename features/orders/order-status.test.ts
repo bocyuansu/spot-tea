@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   getPreviousStatuses,
   isAwaitingPrepayment,
+  isAwaitingRefund,
   orderStatusTransitions,
   paymentStatusTransitions,
 } from './order-status';
@@ -43,5 +44,20 @@ describe('isAwaitingPrepayment', () => {
 
   it('treats a missing payment provider as prepaid', () => {
     expect(isAwaitingPrepayment({ paymentProvider: null, paymentStatus: 'unpaid' })).toBe(true);
+  });
+});
+
+describe('isAwaitingRefund', () => {
+  it('flags a cancelled order that has been paid', () => {
+    expect(isAwaitingRefund({ status: 'cancelled', paymentStatus: 'paid' })).toBe(true);
+  });
+
+  it('ignores cancelled orders that were never paid or already refunded', () => {
+    expect(isAwaitingRefund({ status: 'cancelled', paymentStatus: 'unpaid' })).toBe(false);
+    expect(isAwaitingRefund({ status: 'cancelled', paymentStatus: 'refunded' })).toBe(false);
+  });
+
+  it('ignores paid orders that are still going ahead', () => {
+    expect(isAwaitingRefund({ status: 'processing', paymentStatus: 'paid' })).toBe(false);
   });
 });

@@ -1,6 +1,6 @@
 import { and, eq } from 'drizzle-orm';
 import { getDatabase } from '@/db/client';
-import { order } from '@/db/schema';
+import { order, orderEvent } from '@/db/schema';
 import { ecpayEnv } from '@/env';
 import { verifyCheckMacValue, type EcpayParams } from '@/features/payments/ecpay';
 
@@ -21,6 +21,7 @@ export async function readEcpayParams(request: Request): Promise<EcpayParams> {
  * 兩者帶的欄位與 CheckMacValue 完全相同，而且官方不保證誰先到，
  * 所以哪一個先進來就由哪一個回寫；消費者被導回完成頁時就能看到已付款。
  * 驗證不過回 null，呼叫端不該相信 params 裡的任何內容。
+ * succeeded 只代表綠界回報付款成功，不代表這次有寫入（重送的通知一樣是 true）。
  *
  * 規格：https://developers.ecpay.com.tw/2878.md（2026-09-21 web_fetch）
  */
@@ -38,38 +39,47 @@ export async function applyEcpayResult(params: EcpayParams) {
   // 不代表一定失敗，官方要求人工到後台確認，所以只處理成功，不把訂單標成 failed
   if (params.RtnCode !== '1') {
     console.warn('[ecpay] 付款未成功', orderNumber, params.RtnCode, params.RtnMsg);
-    return { orderNumber };
+    return { orderNumber, succeeded: false };
   }
 
   // SimulatePaid=1 是綠界後台按「模擬付款」產生的通知，沒有真的收到錢，官方明言不可出貨
   if (params.SimulatePaid === '1') {
     console.warn('[ecpay] 收到模擬付款通知，不更新訂單', orderNumber);
-    return { orderNumber };
+    return { orderNumber, succeeded: false };
   }
 
   const db = await getDatabase('fresh');
 
   // 冪等：綠界最多會重送 4 次，而 ReturnURL 與 OrderResultURL 也會各來一次，
-  // 帶上 paymentStatus = 'unpaid' 讓重複的通知命中 0 列。
+  // 帶上 paymentStatus = 'unpaid' 讓重複的通知命中 0 列，歷程也就不會重複記錄。
   // 金額也要對得上，防止拿一筆小額交易的通知去標記大額訂單。
-  // 這次變更不是管理員做的，updatedById 清成 null，才不會算到上一個動過訂單的管理員頭上
-  const [updated] = await db
-    .update(order)
-    .set({ paymentStatus: 'paid', paymentTransactionId: params.TradeNo, updatedById: null })
-    .where(
-      and(
-        eq(order.orderNumber, orderNumber),
-        eq(order.paymentProvider, 'ecpay'),
-        eq(order.paymentStatus, 'unpaid'),
-        eq(order.totalAmount, Number(params.TradeAmt)),
-      ),
-    )
-    .returning({ id: order.id });
+  // 這次變更不是管理員做的，updatedById 與歷程的 actorId 都寫 null，
+  // 才不會算到上一個動過訂單的管理員頭上
+  const updated = await db.transaction(async (tx) => {
+    const [row] = await tx
+      .update(order)
+      .set({ paymentStatus: 'paid', paymentTransactionId: params.TradeNo, updatedById: null })
+      .where(
+        and(
+          eq(order.orderNumber, orderNumber),
+          eq(order.paymentProvider, 'ecpay'),
+          eq(order.paymentStatus, 'unpaid'),
+          eq(order.totalAmount, Number(params.TradeAmt)),
+        ),
+      )
+      .returning({ id: order.id });
+
+    if (!row) return false;
+
+    await tx.insert(orderEvent).values({ orderId: row.id, paymentStatus: 'paid', actorId: null });
+
+    return true;
+  });
 
   if (!updated) {
     // 多半是重送的通知；若訂單其實還是未付款，就是金額對不上，需要人工查帳
     console.warn('[ecpay] 付款通知沒有更新任何訂單', orderNumber, params.TradeNo, params.TradeAmt);
   }
 
-  return { orderNumber };
+  return { orderNumber, succeeded: true };
 }

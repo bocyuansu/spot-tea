@@ -15,7 +15,10 @@ import {
 } from '@/features/orders/order-number';
 import { createOrderSchema, type CreateOrderInput } from '@/features/checkout/schemas/checkout';
 
-export type CreateOrderResult = { ok: true; orderNumber: string } | { ok: false; message: string };
+export type CreateOrderResult =
+  | { ok: true; orderNumber: string }
+  // latestPrices 只在價格變動時出現，client 用它更新購物車裡的單價
+  | { ok: false; message: string; latestPrices?: Record<string, number> };
 
 // 同一個訂單編號被搶走時 pg 會回這個 code；drizzle 有時把原始錯誤包在 cause 裡
 const UNIQUE_VIOLATION = '23505';
@@ -23,6 +26,13 @@ const MAX_ATTEMPTS = 3;
 
 /** 把可以直接給使用者看的原因帶出 transaction，同時讓整筆交易 rollback */
 class CheckoutError extends Error {}
+
+/** 顧客看到的合計和資料庫算出來的不同，多帶回最新單價讓 client 更新購物車 */
+class PriceChangedError extends CheckoutError {
+  constructor(readonly latestPrices: Record<string, number>) {
+    super('部分商品價格已更新，請確認新的金額後再送出訂單 !');
+  }
+}
 
 function isDuplicateOrderNumber(error: unknown) {
   const { code, cause } = (error ?? {}) as { code?: string; cause?: { code?: string } };
@@ -47,7 +57,13 @@ export async function createOrder(input: CreateOrderInput): Promise<CreateOrderR
   const parsed = createOrderSchema.safeParse(input);
   if (!parsed.success) return { ok: false, message: '欄位格式有誤，請重新檢查 !' };
 
-  const { items: requestedItems, paymentMethod, note, ...shippingAddress } = parsed.data;
+  const {
+    items: requestedItems,
+    paymentMethod,
+    note,
+    expectedTotal,
+    ...shippingAddress
+  } = parsed.data;
   const db = await getDatabase('fresh');
 
   for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt += 1) {
@@ -99,6 +115,13 @@ export async function createOrder(input: CreateOrderInput): Promise<CreateOrderR
 
         const subtotalAmount = items.reduce((total, item) => total + item.subtotal, 0);
         const shippingFee = calculateShippingFee(subtotalAmount);
+
+        // 運費也是由小計算出來的，所以比合計就涵蓋了改價造成的運費變化
+        if (subtotalAmount + shippingFee !== expectedTotal) {
+          throw new PriceChangedError(
+            Object.fromEntries(items.map((item) => [item.variantId, item.unitPrice])),
+          );
+        }
 
         // 當天的最後一筆訂單決定序號；同一秒的併發會算出相同編號，
         // 由 orderNumber 的 unique 限制擋下來，再由外層重跑整筆交易
@@ -172,6 +195,9 @@ export async function createOrder(input: CreateOrderInput): Promise<CreateOrderR
       return { ok: true, orderNumber };
     } catch (error) {
       // 購物車本身有問題，重試也不會變好
+      if (error instanceof PriceChangedError) {
+        return { ok: false, message: error.message, latestPrices: error.latestPrices };
+      }
       if (error instanceof CheckoutError) return { ok: false, message: error.message };
 
       if (isDuplicateOrderNumber(error) && attempt < MAX_ATTEMPTS) continue;

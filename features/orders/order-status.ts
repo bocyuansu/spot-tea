@@ -60,6 +60,12 @@ export function isAwaitingPrepayment(order: Pick<Order, 'paymentProvider' | 'pay
   return order.paymentProvider !== 'cod' && order.paymentStatus !== 'paid';
 }
 
+// 訂單取消了錢卻已經進來，例如顧客停在綠界付款頁時訂單被取消、之後才付款成功。
+// 把錢記成已付款是對的，但後台要看得出這筆還欠顧客一次退款
+export function isAwaitingRefund(order: Pick<Order, 'status' | 'paymentStatus'>) {
+  return order.status === 'cancelled' && order.paymentStatus === 'paid';
+}
+
 // 訂單一律以未付款成立。貨到付款與 ATM 匯款由後台手動確認；
 // ecpay 是綠界信用卡，付款結果由綠界的通知回寫（見 features/payments）
 export const paymentMethods = ['ecpay', 'cod', 'bank_transfer'] as const;

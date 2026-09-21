@@ -1,4 +1,14 @@
-import { pgTable, text, timestamp, index, integer, jsonb, pgEnum } from 'drizzle-orm/pg-core';
+import { sql } from 'drizzle-orm';
+import {
+  pgTable,
+  text,
+  timestamp,
+  index,
+  integer,
+  jsonb,
+  pgEnum,
+  check,
+} from 'drizzle-orm/pg-core';
 import { user } from './auth';
 import { productVariant } from './product';
 
@@ -81,4 +91,32 @@ export const orderItem = pgTable(
     createdAt: timestamp('created_at').defaultNow().notNull(),
   },
   (table) => [index('orderItem_orderId_idx').on(table.orderId)],
+);
+
+/**
+ * 訂單的每一次狀態變更。order.updatedById 只留得住最後一次，這裡保留完整歷程。
+ *
+ * 只記「變成什麼」，前一個狀態就是上一筆事件。每筆事件只會改訂單狀態或付款狀態其中之一，
+ * 用各自的 enum 欄位存，資料庫就會擋掉不存在的狀態值。
+ * 下單本身不寫事件，order.createdAt 已經記下了。
+ */
+export const orderEvent = pgTable(
+  'order_event',
+  {
+    id: text('id')
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
+    orderId: text('order_id')
+      .notNull()
+      .references(() => order.id, { onDelete: 'cascade' }),
+    status: orderStatusEnum('status'),
+    paymentStatus: paymentStatusEnum('payment_status'),
+    // 做這次變更的管理員；綠界付款通知寫 null，規則與 order.updatedById 相同，也不設 onDelete
+    actorId: text('actor_id').references(() => user.id),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+  },
+  (table) => [
+    index('orderEvent_orderId_idx').on(table.orderId),
+    check('order_event_one_change', sql`num_nonnulls(${table.status}, ${table.paymentStatus}) = 1`),
+  ],
 );

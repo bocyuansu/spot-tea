@@ -1,8 +1,9 @@
 'use server';
 
-import { and, eq, inArray, or } from 'drizzle-orm';
+import { updateTag } from 'next/cache';
+import { and, eq, inArray, or, sql } from 'drizzle-orm';
 import { getDatabase } from '@/db/client';
-import { order } from '@/db/schema';
+import { order, orderEvent, orderItem, productVariant } from '@/db/schema';
 import type { ActionResult } from '@/features/admin/shared/action-result';
 import { getAdminUser } from '@/features/admin/shared/admin-guard';
 import {
@@ -27,8 +28,8 @@ const STALE_ORDER_MESSAGE = '訂單狀態已經變更，請重新整理後再試
  * 或有人繞過畫面亂送，都只會命中 0 列，不會把別人剛改的狀態蓋回去。
  * 信用卡與 ATM 匯款要先收到錢才能開始備貨，條件與 isAwaitingPrepayment 相同。
  *
- * 取消訂單刻意不自動回補庫存：要不要補貨是另一個判斷（出貨了嗎？破損嗎？）；
- * 同理，取消也不會自動把付款狀態改成已退款，退款要另外確認。
+ * 取消只能發生在出貨前，貨都還在倉庫裡，所以同一筆交易裡直接把庫存補回去；
+ * 取消不會自動把付款狀態改成已退款，退款要另外確認。
  */
 export async function transitionOrderStatus(
   id: string,
@@ -47,26 +48,58 @@ export async function transitionOrderStatus(
   const db = await getDatabase('fresh');
 
   try {
-    const [updated] = await db
-      .update(order)
-      .set({ status: parsed.data, updatedById: admin.id })
-      .where(
-        and(
-          eq(order.id, id),
-          inArray(order.status, from),
-          parsed.data === 'processing'
-            ? or(eq(order.paymentProvider, 'cod'), eq(order.paymentStatus, 'paid'))
-            : undefined,
-        ),
-      )
-      .returning({ id: order.id });
+    const updated = await db.transaction(async (tx) => {
+      const [row] = await tx
+        .update(order)
+        .set({ status: parsed.data, updatedById: admin.id })
+        .where(
+          and(
+            eq(order.id, id),
+            inArray(order.status, from),
+            parsed.data === 'processing'
+              ? or(eq(order.paymentProvider, 'cod'), eq(order.paymentStatus, 'paid'))
+              : undefined,
+          ),
+        )
+        .returning({ id: order.id });
+
+      if (!row) return false;
+
+      await tx
+        .insert(orderEvent)
+        .values({ orderId: row.id, status: parsed.data, actorId: admin.id });
+
+      // 上面的條件式 UPDATE 保證同一張訂單只會取消一次，庫存也就只會補一次。
+      // 跟結帳扣庫存一樣在資料庫端相加，不要讀出來算好再寫回去
+      if (parsed.data === 'cancelled') {
+        const items = await tx
+          .select({ variantId: orderItem.productVariantId, quantity: orderItem.quantity })
+          .from(orderItem)
+          .where(eq(orderItem.orderId, row.id));
+
+        for (const item of items) {
+          // 規格被刪除後 productVariantId 會變成 null，已經沒有庫存可以補
+          if (!item.variantId) continue;
+
+          await tx
+            .update(productVariant)
+            .set({ stock: sql`${productVariant.stock} + ${item.quantity}` })
+            .where(eq(productVariant.id, item.variantId));
+        }
+      }
+
+      return true;
+    });
 
     if (!updated) return { ok: false, message: STALE_ORDER_MESSAGE };
   } catch {
     return { ok: false, message: '更新失敗，請稍後再試 !' };
   }
 
-  // 訂單資料沒有經過 unstable_cache，不需要 updateTag
+  // 訂單資料沒有經過 unstable_cache，只有取消補了庫存時要清商品快取：
+  // 前台的商品列表與單一商品查詢都內嵌 variants，兩份都掛著 products 標籤
+  if (parsed.data === 'cancelled') updateTag('products');
+
   return { ok: true };
 }
 
@@ -94,11 +127,21 @@ export async function transitionPaymentStatus(
   const db = await getDatabase('fresh');
 
   try {
-    const [updated] = await db
-      .update(order)
-      .set({ paymentStatus: parsed.data, updatedById: admin.id })
-      .where(and(eq(order.id, id), inArray(order.paymentStatus, from)))
-      .returning({ id: order.id });
+    const updated = await db.transaction(async (tx) => {
+      const [row] = await tx
+        .update(order)
+        .set({ paymentStatus: parsed.data, updatedById: admin.id })
+        .where(and(eq(order.id, id), inArray(order.paymentStatus, from)))
+        .returning({ id: order.id });
+
+      if (!row) return false;
+
+      await tx
+        .insert(orderEvent)
+        .values({ orderId: row.id, paymentStatus: parsed.data, actorId: admin.id });
+
+      return true;
+    });
 
     if (!updated) return { ok: false, message: STALE_ORDER_MESSAGE };
   } catch {

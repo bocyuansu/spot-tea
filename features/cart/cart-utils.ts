@@ -54,6 +54,18 @@ export function removeCartItem(items: CartItem[], variantId: string): CartItem[]
   return items.filter((cartItem) => cartItem.variantId !== variantId);
 }
 
+// 結帳時 server 發現價格變了，會帶回各規格的最新單價，把購物車裡的價格快照換成它
+export function applyLatestPrices(
+  items: CartItem[],
+  latestPrices: Record<string, number>,
+): CartItem[] {
+  return items.map((cartItem) => {
+    const price = latestPrices[cartItem.variantId];
+
+    return price === undefined || price === cartItem.price ? cartItem : { ...cartItem, price };
+  });
+}
+
 export function getCartCount(items: CartItem[]) {
   return items.reduce((total, cartItem) => total + cartItem.quantity, 0);
 }

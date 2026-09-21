@@ -19,10 +19,16 @@ export const metadata: Metadata = {
 
 type CheckoutCompletePageProps = {
   params: Promise<{ orderNumber: string }>;
+  // 綠界付款沒有成功時，api/payments/ecpay/result 會帶 payment=incomplete 導回來
+  searchParams: Promise<{ payment?: string }>;
 };
 
-export default async function CheckoutCompletePage({ params }: CheckoutCompletePageProps) {
+export default async function CheckoutCompletePage({
+  params,
+  searchParams,
+}: CheckoutCompletePageProps) {
   const { orderNumber } = await params;
+  const { payment } = await searchParams;
 
   const session = await getSession();
 
@@ -54,7 +60,11 @@ export default async function CheckoutCompletePage({ params }: CheckoutCompleteP
       </div>
 
       {awaitingPayment && (
-        <EcpayPaymentCard orderNumber={order.orderNumber} totalAmount={order.totalAmount} />
+        <EcpayPaymentCard
+          orderNumber={order.orderNumber}
+          totalAmount={order.totalAmount}
+          lastAttemptIncomplete={payment === 'incomplete'}
+        />
       )}
 
       <OrderCard order={order} />

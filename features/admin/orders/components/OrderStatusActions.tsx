@@ -4,7 +4,9 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import {
+  getPaymentMethodLabel,
   isAwaitingPrepayment,
+  isAwaitingRefund,
   orderStatusLabels,
   orderStatusTransitions,
   orderStatusVariants,
@@ -17,7 +19,7 @@ import {
   transitionPaymentStatus,
 } from '@/features/admin/orders/actions/orders';
 import OrderStepButton from '@/features/admin/orders/components/OrderStepButton';
-import { formatDateTimeTW } from '@/lib/format';
+import { formatDateTimeTW, formatPriceTWD } from '@/lib/format';
 import type { AdminOrderDetail } from '@/db/queries/admin/orders';
 
 type OrderStatus = AdminOrderDetail['status'];
@@ -86,7 +88,8 @@ export default function OrderStatusActions({ order }: OrderStatusActionsProps) {
                       ? {
                           title: `確定要取消 ${order.orderNumber} 嗎 ?`,
                           description:
-                            '取消後無法復原。庫存不會自動補回；已付款的訂單請另外完成退款，再標記為已退款。',
+                            '取消後無法復原，商品會自動補回庫存。已付款的訂單請另外完成退款，再標記為已退款。',
+                          destructive: true,
                         }
                       : undefined
                   }
@@ -111,6 +114,12 @@ export default function OrderStatusActions({ order }: OrderStatusActionsProps) {
               {paymentStatusLabels[order.paymentStatus]}
             </Badge>
           </div>
+          {/* 到綠界後台查帳或退款時要用它找到這筆交易 */}
+          {order.paymentTransactionId && (
+            <p className="text-sm text-muted-foreground">
+              綠界交易編號：{order.paymentTransactionId}
+            </p>
+          )}
           {paymentSteps.length > 0 && (
             <div className="grid gap-2">
               {paymentSteps.map((next) => (
@@ -118,20 +127,28 @@ export default function OrderStatusActions({ order }: OrderStatusActionsProps) {
                   key={next}
                   label={paymentStepLabels[next]}
                   confirm={
-                    next === 'refunded'
+                    next === 'paid'
                       ? {
+                          title: `確定要把 ${order.orderNumber} 標記為已付款嗎 ?`,
+                          description: `請先確認已收到${getPaymentMethodLabel(order.paymentProvider)}的款項 ${formatPriceTWD(order.totalAmount)}。標記後無法復原，預付的訂單也會因此可以開始備貨。`,
+                        }
+                      : {
                           title: `確定要把 ${order.orderNumber} 標記為已退款嗎 ?`,
                           description:
                             '這裡只記錄結果，不會真的退款。請先在綠界後台或銀行完成退款；標記後無法復原。',
+                          destructive: true,
                         }
-                      : undefined
                   }
                   onRun={() => transitionPaymentStatus(order.id, next)}
                 />
               ))}
             </div>
           )}
-          <p className="text-sm text-muted-foreground">{paymentStepHints[order.paymentStatus]}</p>
+          <p className="text-sm text-muted-foreground">
+            {isAwaitingRefund(order)
+              ? '訂單已取消但已收到款項，請先在綠界後台或銀行完成退款，再標記為已退款'
+              : paymentStepHints[order.paymentStatus]}
+          </p>
         </section>
 
         {order.updatedBy && (
