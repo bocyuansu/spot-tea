@@ -3,6 +3,7 @@
 // UI
 import {
   Sheet,
+  SheetClose,
   SheetContent,
   SheetFooter,
   SheetHeader,
@@ -42,67 +43,72 @@ export default function MobileMenu({ user, isLoggedIn, isAdmin }: MobileMenuProp
           <SheetHeader>
             <SheetTitle>商店導覽</SheetTitle>
           </SheetHeader>
-          <ul className="grid flex-1 auto-rows-min gap-6 px-4">
-            <li className="w-full flex">
-              <Link
-                href="/products"
-                prefetch={false}
-                className="flex-1 flex items-center gap-1 hover:text-primary"
-              >
-                <IconShoppingBag className="size-5" />
-                所有商品
-              </Link>
-            </li>
-
-            <li className="w-full flex">
-              <Link
-                href="/store-location"
-                prefetch={false}
-                className="flex-1 flex items-center gap-1 hover:text-primary"
-              >
-                <IconMapPin className="size-5" />
-                門市資訊
-              </Link>
-            </li>
-
-            <li className="w-full flex">
-              <Link
-                href="/cart"
-                prefetch={false}
-                className="flex-1 flex items-center gap-1 hover:text-primary"
-              >
-                <ShoppingCart className="size-5" />
-                購物車
-              </Link>
-            </li>
-
+          <div className="grid flex-1 auto-rows-min gap-6 px-4">
+            <SheetClose
+              render={
+                <Link
+                  href="/products"
+                  prefetch={false}
+                  className="flex items-center gap-1 hover:text-primary"
+                >
+                  <IconShoppingBag className="size-5" />
+                  所有商品
+                </Link>
+              }
+            />
+            <SheetClose
+              render={
+                <Link
+                  href="/store-location"
+                  prefetch={false}
+                  className="flex items-center gap-1 hover:text-primary"
+                >
+                  <IconMapPin className="size-5" />
+                  門市資訊
+                </Link>
+              }
+            />
+            <SheetClose
+              render={
+                <Link
+                  href="/cart"
+                  prefetch={false}
+                  className="flex items-center gap-1 hover:text-primary"
+                >
+                  <ShoppingCart className="size-5" />
+                  購物車
+                </Link>
+              }
+            />
             {isLoggedIn && (
-              <li className="w-full flex text-center">
-                <Link
-                  href="/user"
-                  prefetch={false}
-                  className="flex-1 flex items-center gap-1 hover:text-primary"
-                >
-                  <User className="size-5" />
-                  <span>會員中心</span>
-                </Link>
-              </li>
+              <SheetClose
+                render={
+                  <Link
+                    href="/user"
+                    prefetch={false}
+                    className="flex items-center gap-1 hover:text-primary"
+                  >
+                    <User className="size-5" />
+                    <span>會員中心</span>
+                  </Link>
+                }
+              />
             )}
-
             {isAdmin && (
-              <li className="w-full flex text-center">
-                <Link
-                  href="/admin/dashboard"
-                  prefetch={false}
-                  className="flex-1 flex items-center gap-1 hover:text-primary"
-                >
-                  <LayoutDashboard className="size-5" />
-                  <span>管理員後台</span>
-                </Link>
-              </li>
+              <SheetClose
+                render={
+                  <Link
+                    href="/admin/dashboard"
+                    prefetch={false}
+                    className="flex items-center gap-1 hover:text-primary"
+                  >
+                    <LayoutDashboard className="size-5" />
+                    <span>管理員後台</span>
+                  </Link>
+                }
+              />
             )}
-          </ul>
-
+          </div>
           <SheetFooter>{user ? <NavUser user={user} /> : <LoginButton />}</SheetFooter>
         </SheetContent>
       </Sheet>
