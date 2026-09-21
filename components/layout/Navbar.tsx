@@ -31,7 +31,7 @@ export default async function Navbar() {
         {/* LEFT */}
         <Link href="/" prefetch={false} className="flex items-center">
           <Image
-            src="https://ik.imagekit.io/cyuan/spot-tea.jpg"
+            src="https://ik.imagekit.io/cyuan/products/spot-tea.jpg"
             alt="Spot Tea logo"
             width={100}
             height={100}

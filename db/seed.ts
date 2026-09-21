@@ -40,7 +40,7 @@ const main = async () => {
       }
 
       // seed 資料只記檔名，存進資料庫的要跟後台上傳一樣是 ImageKit 的網址
-      const images = seedProduct.images.map(imageUrl);
+      const images = seedProduct.images.map((fileName) => imageUrl('products', fileName));
 
       const [insertedProduct] = await db
         .insert(product)

@@ -11,7 +11,7 @@ type SeedProduct = {
   name: string;
   slug: string;
   description: string;
-  /** 圖片檔名，seed.ts 會換算成 ImageKit 的公開網址再寫進資料庫 */
+  /** products 資料夾裡的圖片檔名，seed.ts 會換算成 ImageKit 的公開網址再寫進資料庫 */
   images: string[];
   status: 'draft' | 'published' | 'archived';
   origin: string;

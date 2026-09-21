@@ -3,7 +3,7 @@
 import { PutObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { client, STORAGE_BUCKET } from '@/lib/s3-client';
-import { imageUrl, objectKey } from '@/lib/imagekit';
+import { imageUrl } from '@/lib/imagekit';
 import { isAdmin } from '@/features/admin/shared/admin-guard';
 import {
   productImageUploadSchema,
@@ -50,18 +50,16 @@ export async function createProductImageUploadUrl(
       client,
       new PutObjectCommand({
         Bucket: STORAGE_BUCKET,
-        Key: objectKey(fileName),
+        Key: `products/${fileName}`,
         ContentType: parsed.data.contentType,
-        // ContentLength 也要簽進去，否則 schema 驗的 5MB 只是宣告：
-        // 拿到票的人可以在效期內 PUT 任意大小的檔案上來。
-        // 簽下去之後瀏覽器送的 Content-Length 必須與這裡一致才會通過。
         ContentLength: parsed.data.size,
       }),
       // 只夠這次上傳用，不是能一直拿去寫 bucket 的網址
       { expiresIn: 300 },
     );
 
-    return { ok: true, uploadUrl, url: imageUrl(fileName) };
+    // imageUrl() 回傳的就是寫入資料庫的圖片網址，資料夾要跟上面的 Key 一致
+    return { ok: true, uploadUrl, url: imageUrl('products', fileName) };
   } catch {
     return { ok: false, message: '無法取得上傳網址，請稍後再試 !' };
   }

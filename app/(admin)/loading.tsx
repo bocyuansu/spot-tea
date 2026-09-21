@@ -9,8 +9,8 @@ export default function AdminLoading() {
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-2">
-        <Skeleton className="h-9 w-48" />
-        <Skeleton className="h-5 w-32" />
+        <Skeleton className="h-9 w-32" />
+        <Skeleton className="h-5 w-48" />
       </div>
 
       <Card>
