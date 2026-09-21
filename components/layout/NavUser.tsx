@@ -19,13 +19,38 @@ import { authClient } from '@/lib/auth-client';
 import { useRouter } from 'next/navigation';
 import { User } from 'lucide-react';
 
-type UserSummary = {
+// 只需要顯示用的欄位，不必把整個 better-auth 的 user 型別拉進來
+export type UserSummary = {
   name: string;
   email: string;
   image?: string | null;
 };
 
-export function NavUser({ user }: { user: UserSummary }) {
+type NavUserProps = {
+  user: UserSummary;
+  // 不在元件內呼叫 useSidebar：手機選單的 Sheet 外面沒有 SidebarProvider，由呼叫端決定彈出方向
+  side?: 'top' | 'right' | 'bottom' | 'left';
+  sideOffset?: number;
+};
+
+function UserInfo({ user }: { user: UserSummary }) {
+  return (
+    <>
+      <Avatar>
+        <AvatarImage src={user.image ?? ''} alt={user.name} />
+        <AvatarFallback>
+          <User className="size-5" />
+        </AvatarFallback>
+      </Avatar>
+      <div className="grid flex-1 text-left text-sm leading-tight">
+        <span className="truncate font-medium">{user.name}</span>
+        <span className="truncate text-xs text-muted-foreground">{user.email}</span>
+      </div>
+    </>
+  );
+}
+
+export function NavUser({ user, side = 'bottom', sideOffset = 8 }: NavUserProps) {
   const router = useRouter();
 
   async function handleLogout() {
@@ -62,32 +87,14 @@ export function NavUser({ user }: { user: UserSummary }) {
               />
             }
           >
-            <Avatar>
-              <AvatarImage src={user.image ?? ''} alt={user.name} />
-              <AvatarFallback>
-                <User className="size-5" />
-              </AvatarFallback>
-            </Avatar>
-            <div className="grid flex-1 text-left text-sm leading-tight">
-              <span className="truncate font-medium">{user.name}</span>
-              <span className="truncate text-xs text-muted-foreground">{user.email}</span>
-            </div>
+            <UserInfo user={user} />
             <IconDotsVertical className="ml-auto size-4" />
           </DropdownMenuTrigger>
-          <DropdownMenuContent className="min-w-56" side="bottom" align="end" sideOffset={8}>
+          <DropdownMenuContent className="min-w-56" side={side} align="end" sideOffset={sideOffset}>
             <DropdownMenuGroup>
               <DropdownMenuLabel className="p-0 font-normal">
                 <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                  <Avatar>
-                    <AvatarImage src={user.image ?? ''} alt={user.name} />
-                    <AvatarFallback>
-                      <User className="size-5" />
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="grid flex-1 text-left text-sm leading-tight">
-                    <span className="truncate font-medium">{user.name}</span>
-                    <span className="truncate text-xs text-muted-foreground">{user.email}</span>
-                  </div>
+                  <UserInfo user={user} />
                 </div>
               </DropdownMenuLabel>
             </DropdownMenuGroup>

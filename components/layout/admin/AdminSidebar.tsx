@@ -10,9 +10,10 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  useSidebar,
 } from '@/components/ui/sidebar';
 import { AdminNavMain } from './AdminNavMain';
-import { AdminNavUser, type AdminUserSummary } from './AdminNavUser';
+import { NavUser, type UserSummary } from '../NavUser';
 
 const navMain = [
   {
@@ -38,10 +39,12 @@ const navMain = [
 ];
 
 type AdminSidebarProps = React.ComponentProps<typeof Sidebar> & {
-  user: AdminUserSummary;
+  user: UserSummary;
 };
 
 export function AdminSidebar({ user, ...props }: AdminSidebarProps) {
+  const { isMobile } = useSidebar();
+
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
@@ -60,7 +63,7 @@ export function AdminSidebar({ user, ...props }: AdminSidebarProps) {
       </SidebarContent>
 
       <SidebarFooter>
-        <AdminNavUser user={user} />
+        <NavUser user={user} side={isMobile ? 'bottom' : 'right'} />
       </SidebarFooter>
     </Sidebar>
   );
