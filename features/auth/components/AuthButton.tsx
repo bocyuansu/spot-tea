@@ -61,10 +61,10 @@ export function LoginButton() {
     <Link
       href="/login"
       prefetch={false}
-      className="flex gap-1 items-center text-xs sm:text-sm md:text-base hover:text-primary"
+      className="flex gap-1 items-center text-base hover:text-primary"
     >
-      <User className="size-5 md:size-6" />
-      <span>登入</span>
+      <User className="size-6" />
+      <span className="text-lg">登入</span>
     </Link>
   );
 }

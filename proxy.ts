@@ -13,7 +13,7 @@ import { getSessionCookie } from 'better-auth/cookies';
 export function proxy(request: NextRequest) {
   // 只樂觀檢查 cookie 是否存在，真正的 session 驗證仍由頁面的 getSession 負責
   if (!getSessionCookie(request)) {
-    return NextResponse.redirect(new URL('/login', request.url));
+    return NextResponse.redirect(new URL('/', request.url));
   }
 
   // /admin 本身沒有內容，進來就帶到儀表板

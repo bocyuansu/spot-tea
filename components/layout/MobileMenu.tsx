@@ -17,6 +17,7 @@ import { IconShoppingBag, IconMapPin } from '@tabler/icons-react';
 import { authClient } from '@/lib/auth-client';
 import Link from 'next/link';
 import { NavUser } from './NavUser';
+import { LoginButton } from '@/features/auth/components/AuthButton';
 
 type User = typeof authClient.$Infer.Session.user | undefined;
 
@@ -102,11 +103,7 @@ export default function MobileMenu({ user, isLoggedIn, isAdmin }: MobileMenuProp
             )}
           </ul>
 
-          {user && (
-            <SheetFooter>
-              <NavUser user={user} />
-            </SheetFooter>
-          )}
+          <SheetFooter>{user ? <NavUser user={user} /> : <LoginButton />}</SheetFooter>
         </SheetContent>
       </Sheet>
     </SidebarProvider>

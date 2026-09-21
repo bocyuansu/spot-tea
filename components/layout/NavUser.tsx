@@ -36,7 +36,7 @@ export function NavUser({ user }: { user: UserSummary }) {
             type: 'success',
             description: '登出成功 !',
           });
-          router.push('/login');
+          router.refresh();
         },
         onError: ({ error }) => {
           console.error(error.error.message);
