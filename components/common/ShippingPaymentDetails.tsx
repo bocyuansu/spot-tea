@@ -21,9 +21,9 @@ export default function ShippingPaymentDetails({ order }: ShippingPaymentDetails
   const paymentDescription = paymentMethodDescriptions[order.paymentProvider as PaymentMethod];
 
   return (
-    <div className="w-full flex">
+    <div className="w-full flex justify-between">
       {/* LEFT */}
-      <dl className="w-1/2 flex flex-col gap-3 text-sm">
+      <dl className="flex flex-col gap-3 text-sm">
         <div>
           <dt className="font-medium">收件人</dt>
           <dd>{recipientName}　</dd>
@@ -58,7 +58,7 @@ export default function ShippingPaymentDetails({ order }: ShippingPaymentDetails
       </dl>
 
       {/* Right */}
-      <dl className="w-1/2 flex flex-col gap-3 text-sm">
+      <dl className="flex flex-col gap-3 text-sm">
         <div className="flex gap-2 items-center">
           <dt className="font-medium py-2">訂單狀態</dt>
           <dd>
