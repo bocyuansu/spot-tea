@@ -20,4 +20,20 @@ next-env.d.ts
 
 # TypeScript 編譯狀態快取 (TypeScript build info)
 *.tsbuildinfo
+
+# Neon CLI 本機 context (Neon CLI context)
 .neon
+
+# 測試覆蓋率報告 (Test coverage)
+coverage/
+
+# 除錯日誌 (Debug logs)
+*.log
+
+# 作業系統產生的檔案 (OS files)
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Claude Code 個人設定 (Claude Code local settings)
+.claude/settings.local.json
