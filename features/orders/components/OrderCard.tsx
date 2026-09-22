@@ -1,16 +1,9 @@
 'use client';
 
 import type { ReactNode } from 'react';
-import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import ShippingPaymentDetails from '@/components/common/ShippingPaymentDetails';
-import {
-  orderStatusLabels,
-  orderStatusVariants,
-  paymentStatusLabels,
-  paymentStatusVariants,
-} from '@/features/orders/order-status';
 import type { OrderWithItems } from '@/db/queries/orders';
 import { formatDateTW, formatPriceTWD } from '@/lib/format';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
