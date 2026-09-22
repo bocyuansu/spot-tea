@@ -54,13 +54,15 @@ export const order = pgTable(
       addressLine: string;
     }>(),
     note: text('note'),
+    // 顧客在「我的訂單」自行取消時填的原因；後台取消的與沒被取消的訂單都是 null
+    cancelReason: text('cancel_reason'),
     createdAt: timestamp('created_at').defaultNow().notNull(),
     updatedAt: timestamp('updated_at')
       .defaultNow()
       .$onUpdate(() => /* @__PURE__ */ new Date())
       .notNull(),
     // 最後一次更新這筆訂單的管理員，和 updatedAt 描述的是同一次變更；
-    // 顧客下單、綠界付款通知這類不是管理員做的變更一律寫 null。
+    // 顧客下單、顧客自行取消、綠界付款通知這類不是管理員做的變更一律寫 null。
     // 跟 userId 一樣不設 onDelete：更新過訂單的管理員請改用停權，不要刪除帳號
     updatedById: text('updated_by_id').references(() => user.id),
   },
@@ -111,7 +113,7 @@ export const orderEvent = pgTable(
       .references(() => order.id, { onDelete: 'cascade' }),
     status: orderStatusEnum('status'),
     paymentStatus: paymentStatusEnum('payment_status'),
-    // 做這次變更的管理員；綠界付款通知寫 null，規則與 order.updatedById 相同，也不設 onDelete
+    // 做這次變更的管理員；綠界付款通知與顧客自行取消寫 null，規則與 order.updatedById 相同，也不設 onDelete
     actorId: text('actor_id').references(() => user.id),
     createdAt: timestamp('created_at').defaultNow().notNull(),
   },

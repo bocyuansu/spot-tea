@@ -16,9 +16,11 @@ function describeEvent(event: OrderEvent) {
   return '狀態變更';
 }
 
-// 沒有 actor 的事件只會是綠界付款通知自動入帳
-function describeActor(event: OrderEvent) {
-  return event.actor ? event.actor.name : '綠界自動入帳';
+// 沒有 actor 的事件都不是管理員做的：訂單狀態的只會是顧客自行取消，付款狀態的只會是綠界自動入帳
+function describeActor(event: OrderEvent, customerName: string) {
+  if (event.actor) return event.actor.name;
+
+  return event.status ? `${customerName}（顧客）` : '綠界自動入帳';
 }
 
 /**
@@ -43,7 +45,7 @@ export default function OrderTimeline({ order }: OrderTimelineProps) {
             <li key={event.id} className="flex flex-col gap-0.5">
               <span>{describeEvent(event)}</span>
               <span className="text-xs text-muted-foreground">
-                {formatDateTimeTW(event.createdAt)}・{describeActor(event)}
+                {formatDateTimeTW(event.createdAt)}・{describeActor(event, order.user.name)}
               </span>
             </li>
           ))}

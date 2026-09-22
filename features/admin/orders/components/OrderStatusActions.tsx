@@ -5,13 +5,13 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import {
   getPaymentMethodLabel,
+  getPaymentSteps,
   isAwaitingPrepayment,
   isAwaitingRefund,
   orderStatusLabels,
   orderStatusTransitions,
   orderStatusVariants,
   paymentStatusLabels,
-  paymentStatusTransitions,
   paymentStatusVariants,
 } from '@/features/orders/order-status';
 import {
@@ -54,13 +54,26 @@ const paymentStepHints: Record<PaymentStatus, string> = {
   refunded: '款項已經退還，沒有下一步了',
 };
 
+// 已取消的訂單另外說明：收到的款項要退，還沒收到的就不再收（見 getPaymentSteps）
+function getPaymentHint(order: AdminOrderDetail) {
+  if (isAwaitingRefund(order)) {
+    return '訂單已取消但已收到款項，請先在綠界後台或銀行完成退款，再標記為已退款';
+  }
+
+  if (order.status === 'cancelled' && order.paymentStatus !== 'refunded') {
+    return '訂單已經取消，不能再標記為已付款';
+  }
+
+  return paymentStepHints[order.paymentStatus];
+}
+
 type OrderStatusActionsProps = {
   order: AdminOrderDetail;
 };
 
 export default function OrderStatusActions({ order }: OrderStatusActionsProps) {
   const orderSteps = orderStatusTransitions[order.status];
-  const paymentSteps = paymentStatusTransitions[order.paymentStatus];
+  const paymentSteps = getPaymentSteps(order);
   const awaitingPrepayment = isAwaitingPrepayment(order) && order.status === 'pending';
 
   return (
@@ -144,11 +157,7 @@ export default function OrderStatusActions({ order }: OrderStatusActionsProps) {
               ))}
             </div>
           )}
-          <p className="text-sm text-muted-foreground">
-            {isAwaitingRefund(order)
-              ? '訂單已取消但已收到款項，請先在綠界後台或銀行完成退款，再標記為已退款'
-              : paymentStepHints[order.paymentStatus]}
-          </p>
+          <p className="text-sm text-muted-foreground">{getPaymentHint(order)}</p>
         </section>
 
         {order.updatedBy && (

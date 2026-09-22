@@ -1,9 +1,9 @@
 'use server';
 
 import { updateTag } from 'next/cache';
-import { and, eq, inArray, or, sql } from 'drizzle-orm';
+import { and, eq, inArray, ne, or } from 'drizzle-orm';
 import { getDatabase } from '@/db/client';
-import { order, orderEvent, orderItem, productVariant } from '@/db/schema';
+import { order, orderEvent } from '@/db/schema';
 import type { ActionResult } from '@/features/admin/shared/action-result';
 import { getAdminUser } from '@/features/admin/shared/admin-guard';
 import {
@@ -17,6 +17,7 @@ import {
   orderStatusTransitions,
   paymentStatusTransitions,
 } from '@/features/orders/order-status';
+import { restoreOrderStock } from '@/features/orders/restore-stock';
 
 const STALE_ORDER_MESSAGE = '訂單狀態已經變更，請重新整理後再試 !';
 
@@ -69,24 +70,7 @@ export async function transitionOrderStatus(
         .insert(orderEvent)
         .values({ orderId: row.id, status: parsed.data, actorId: admin.id });
 
-      // 上面的條件式 UPDATE 保證同一張訂單只會取消一次，庫存也就只會補一次。
-      // 跟結帳扣庫存一樣在資料庫端相加，不要讀出來算好再寫回去
-      if (parsed.data === 'cancelled') {
-        const items = await tx
-          .select({ variantId: orderItem.productVariantId, quantity: orderItem.quantity })
-          .from(orderItem)
-          .where(eq(orderItem.orderId, row.id));
-
-        for (const item of items) {
-          // 規格被刪除後 productVariantId 會變成 null，已經沒有庫存可以補
-          if (!item.variantId) continue;
-
-          await tx
-            .update(productVariant)
-            .set({ stock: sql`${productVariant.stock} + ${item.quantity}` })
-            .where(eq(productVariant.id, item.variantId));
-        }
-      }
+      if (parsed.data === 'cancelled') await restoreOrderStock(tx, row.id);
 
       return true;
     });
@@ -109,6 +93,7 @@ export async function transitionOrderStatus(
  * 綠界信用卡通常由付款通知自動入帳，這裡給貨到付款、ATM 匯款，
  * 以及綠界要求到後台人工確認的交易補記用。退款要先在綠界後台或銀行完成，這裡只記錄結果。
  * 併發的處理方式和 transitionOrderStatus 相同。
+ * 已取消的訂單不能再標記已付款，條件與 getPaymentSteps 相同。
  */
 export async function transitionPaymentStatus(
   id: string,
@@ -131,7 +116,13 @@ export async function transitionPaymentStatus(
       const [row] = await tx
         .update(order)
         .set({ paymentStatus: parsed.data, updatedById: admin.id })
-        .where(and(eq(order.id, id), inArray(order.paymentStatus, from)))
+        .where(
+          and(
+            eq(order.id, id),
+            inArray(order.paymentStatus, from),
+            parsed.data === 'paid' ? ne(order.status, 'cancelled') : undefined,
+          ),
+        )
         .returning({ id: order.id });
 
       if (!row) return false;

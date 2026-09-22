@@ -54,6 +54,19 @@ export function getPreviousStatuses<S extends string>(
   return (Object.keys(transitions) as S[]).filter((from) => transitions[from].includes(next));
 }
 
+// 顧客在「我的訂單」能不能自己取消，和後台一樣看 orderStatusTransitions：只在出貨前
+export function isCancellable(order: Pick<Order, 'status'>) {
+  return orderStatusTransitions[order.status].includes('cancelled');
+}
+
+// 後台這筆訂單的付款狀態能往哪走：訂單取消後就不再收款，不能手動標記已付款。
+// 綠界的付款通知不受這條限制，取消後才付款成功的錢照實記成已付款（見 isAwaitingRefund）
+export function getPaymentSteps(order: Pick<Order, 'status' | 'paymentStatus'>) {
+  const steps = paymentStatusTransitions[order.paymentStatus];
+
+  return order.status === 'cancelled' ? steps.filter((next) => next !== 'paid') : steps;
+}
+
 // 信用卡與 ATM 匯款要先收到錢才能開始備貨；貨到付款本來就是送達時才收錢。
 // paymentProvider 是自由文字，沒填或不認得的一律當成要先付款
 export function isAwaitingPrepayment(order: Pick<Order, 'paymentProvider' | 'paymentStatus'>) {

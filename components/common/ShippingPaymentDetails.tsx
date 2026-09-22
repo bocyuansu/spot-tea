@@ -7,7 +7,6 @@ import {
   paymentStatusVariants,
   type PaymentMethod,
 } from '@/features/orders/order-status';
-import type { order } from '@/db/schema';
 import { Badge } from '../ui/badge';
 import { OrderWithItems } from '@/db/queries/orders';
 import { formatDateTW } from '@/lib/format';
@@ -62,6 +61,13 @@ export default function ShippingPaymentDetails({ order }: ShippingPaymentDetails
           <div className="flex flex-col">
             <dt className="font-medium">訂單備註</dt>
             <dd className="whitespace-pre-wrap">{order.note}</dd>
+          </div>
+        )}
+
+        {order.cancelReason && (
+          <div className="flex flex-col">
+            <dt className="font-medium">取消原因</dt>
+            <dd className="whitespace-pre-wrap">{order.cancelReason}</dd>
           </div>
         )}
       </dl>

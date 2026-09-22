@@ -9,7 +9,7 @@ export const orderRelations = defineRelationsPart(schema, (r) => ({
       to: r.user.id,
       optional: false,
     }),
-    // updatedById 可空（沒有管理員動過，或最後一次是綠界通知），維持 user | null
+    // updatedById 可空（沒有管理員動過，或最後一次是綠界通知、顧客自行取消），維持 user | null
     updatedBy: r.one.user({
       from: r.order.updatedById,
       to: r.user.id,
@@ -42,7 +42,7 @@ export const orderRelations = defineRelationsPart(schema, (r) => ({
       to: r.order.id,
       optional: false,
     }),
-    // actorId 可空（綠界付款通知），維持 user | null
+    // actorId 可空（綠界付款通知、顧客自行取消），維持 user | null
     actor: r.one.user({
       from: r.orderEvent.actorId,
       to: r.user.id,

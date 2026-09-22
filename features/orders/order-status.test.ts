@@ -1,8 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import {
+  getPaymentSteps,
   getPreviousStatuses,
   isAwaitingPrepayment,
   isAwaitingRefund,
+  isCancellable,
   orderStatusTransitions,
   paymentStatusTransitions,
 } from './order-status';
@@ -26,6 +28,35 @@ describe('getPreviousStatuses', () => {
 
   it('does not allow cancelling once the order has shipped', () => {
     expect(getPreviousStatuses(orderStatusTransitions, 'cancelled')).not.toContain('shipped');
+  });
+});
+
+describe('isCancellable', () => {
+  it('lets the customer cancel before the order ships', () => {
+    expect(isCancellable({ status: 'pending' })).toBe(true);
+    expect(isCancellable({ status: 'processing' })).toBe(true);
+  });
+
+  it('does not allow cancelling a shipped, completed or already cancelled order', () => {
+    expect(isCancellable({ status: 'shipped' })).toBe(false);
+    expect(isCancellable({ status: 'completed' })).toBe(false);
+    expect(isCancellable({ status: 'cancelled' })).toBe(false);
+  });
+});
+
+describe('getPaymentSteps', () => {
+  it('lets an unpaid order that is still going ahead be marked as paid', () => {
+    expect(getPaymentSteps({ status: 'pending', paymentStatus: 'unpaid' })).toEqual(['paid']);
+    expect(getPaymentSteps({ status: 'shipped', paymentStatus: 'failed' })).toEqual(['paid']);
+  });
+
+  it('does not allow marking a cancelled order as paid', () => {
+    expect(getPaymentSteps({ status: 'cancelled', paymentStatus: 'unpaid' })).toEqual([]);
+    expect(getPaymentSteps({ status: 'cancelled', paymentStatus: 'failed' })).toEqual([]);
+  });
+
+  it('still lets a cancelled order that was paid be refunded', () => {
+    expect(getPaymentSteps({ status: 'cancelled', paymentStatus: 'paid' })).toEqual(['refunded']);
   });
 });
 
