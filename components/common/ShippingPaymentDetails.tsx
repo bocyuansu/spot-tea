@@ -1,21 +1,18 @@
 import {
   getPaymentMethodLabel,
+  orderStatusLabels,
+  orderStatusVariants,
   paymentMethodDescriptions,
+  paymentStatusLabels,
+  paymentStatusVariants,
   type PaymentMethod,
 } from '@/features/orders/order-status';
 import type { order } from '@/db/schema';
+import { Badge } from '../ui/badge';
+import { OrderWithItems } from '@/db/queries/orders';
 
-type Order = typeof order.$inferSelect;
-
-/**
- * 收件人、收件地址、付款方式與訂單備註。前台的訂單卡片把它併在訂單裡，
- * 後台訂單明細頁則包成獨立的「收件與付款資訊」卡片，外框由各自決定。
- *
- * 只挑出真正用到的三個欄位，前台的 OrderWithItems 與後台的 AdminOrderDetail
- * 都滿足這個形狀，不必為了共用而把兩邊的型別綁在一起。
- */
 type ShippingPaymentDetailsProps = {
-  order: Pick<Order, 'shippingAddress' | 'paymentProvider' | 'note'>;
+  order: OrderWithItems;
 };
 
 export default function ShippingPaymentDetails({ order }: ShippingPaymentDetailsProps) {
@@ -24,37 +21,61 @@ export default function ShippingPaymentDetails({ order }: ShippingPaymentDetails
   const paymentDescription = paymentMethodDescriptions[order.paymentProvider as PaymentMethod];
 
   return (
-    <dl className="flex flex-col gap-3 text-sm">
-      <div className="flex flex-col gap-1">
-        <dt className="text-xs text-muted-foreground">收件人</dt>
-        <dd>
-          {recipientName}　{phone}
-        </dd>
-      </div>
-
-      <div className="flex flex-col gap-1">
-        <dt className="text-xs text-muted-foreground">收件地址</dt>
-        <dd>
-          {postalCode} {city}
-          {district}
-          {addressLine}
-        </dd>
-      </div>
-
-      <div className="flex flex-col gap-1">
-        <dt className="text-xs text-muted-foreground">付款方式</dt>
-        <dd>{getPaymentMethodLabel(order.paymentProvider)}</dd>
-        {paymentDescription && (
-          <dd className="text-xs text-muted-foreground">{paymentDescription}</dd>
-        )}
-      </div>
-
-      {order.note && (
-        <div className="flex flex-col gap-1">
-          <dt className="text-xs text-muted-foreground">訂單備註</dt>
-          <dd className="whitespace-pre-wrap">{order.note}</dd>
+    <div className="w-full flex">
+      {/* LEFT */}
+      <dl className="w-1/2 flex flex-col gap-3 text-sm">
+        <div>
+          <dt className="font-medium">收件人</dt>
+          <dd>{recipientName}　</dd>
         </div>
-      )}
-    </dl>
+
+        <div>
+          <dt className="font-medium">手機號碼</dt>
+          <dd>{phone}</dd>
+        </div>
+
+        <div>
+          <dt className="font-medium">付款方式</dt>
+          <dd>{getPaymentMethodLabel(order.paymentProvider)}</dd>
+          {paymentDescription && <dd>提醒：{paymentDescription}</dd>}
+        </div>
+
+        <div>
+          <dt className="font-medium">收件地址</dt>
+          <dd>
+            {postalCode} {city}
+            {district}
+            {addressLine}
+          </dd>
+        </div>
+
+        {order.note && (
+          <div className="flex flex-col">
+            <dt className="font-medium">訂單備註</dt>
+            <dd className="whitespace-pre-wrap">{order.note}</dd>
+          </div>
+        )}
+      </dl>
+
+      {/* Right */}
+      <dl className="w-1/2 flex flex-col gap-3 text-sm">
+        <div className="flex gap-2 items-center">
+          <dt className="font-medium py-2">訂單狀態</dt>
+          <dd>
+            <Badge variant={orderStatusVariants[order.status]}>
+              {orderStatusLabels[order.status]}
+            </Badge>
+          </dd>
+        </div>
+        <div className="flex gap-2 items-center">
+          <dt className="font-medium py-2">付款狀態</dt>
+          <dd>
+            <Badge variant={paymentStatusVariants[order.paymentStatus]}>
+              {paymentStatusLabels[order.paymentStatus]}
+            </Badge>
+          </dd>
+        </div>
+      </dl>
+    </div>
   );
 }

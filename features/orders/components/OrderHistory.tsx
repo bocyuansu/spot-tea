@@ -12,7 +12,7 @@ type OrderHistoryProps = {
 
 export default function OrderHistory({ orders }: OrderHistoryProps) {
   return (
-    <section className="flex flex-col gap-4">
+    <section>
       {orders.length === 0 ? (
         <div className="flex flex-col items-center gap-4 py-12 text-center">
           <Package className="size-12 text-muted-foreground/50" />
