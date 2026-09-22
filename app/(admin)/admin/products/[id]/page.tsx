@@ -5,6 +5,7 @@ import {
   listAdminCategories,
 } from '@/db/queries/admin/products';
 import ProductForm from '@/features/admin/products/components/ProductForm';
+import { getAdminUser } from '@/features/admin/shared/admin-guard';
 
 export const metadata: Metadata = {
   title: '編輯商品',
@@ -18,6 +19,9 @@ export default async function AdminProductEditPage({
   params,
 }: AdminProductEditPageProps) {
   const { id } = await params;
+
+  // layout 已經顯示 AccessDenied；這裡擋的是 RSC payload 裡的頁面資料
+  if (!(await getAdminUser())) return null;
 
   const [product, categories] = await Promise.all([
     getAdminProductById(id),

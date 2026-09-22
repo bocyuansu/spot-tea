@@ -5,6 +5,7 @@ import OrderDetail from '@/features/admin/orders/components/OrderDetail';
 import OrderStatusActions from '@/features/admin/orders/components/OrderStatusActions';
 import OrderTimeline from '@/features/admin/orders/components/OrderTimeline';
 import { formatDateTW } from '@/lib/format';
+import { getAdminUser } from '@/features/admin/shared/admin-guard';
 
 export const metadata: Metadata = {
   title: '訂單明細',
@@ -18,6 +19,9 @@ export default async function AdminOrderDetailPage({
   params,
 }: AdminOrderDetailPageProps) {
   const { id } = await params;
+
+  // layout 已經顯示 AccessDenied；這裡擋的是 RSC payload 裡的頁面資料
+  if (!(await getAdminUser())) return null;
 
   const order = await getAdminOrderById(id);
 

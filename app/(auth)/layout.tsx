@@ -11,7 +11,7 @@ export default function AuthLayout({
     <div className="min-h-svh flex flex-col justify-center items-center gap-6 p-4">
       <Link href="/" prefetch={false} className="flex items-center">
         <Image
-          src="https://ik.imagekit.io/cyuan/products/spot-tea.jpg"
+          src="https://ik.imagekit.io/cyuan/public/spot-tea.jpg"
           alt="Spot Tea logo"
           width={100}
           height={100}

@@ -12,8 +12,9 @@ import { createAuth } from '@/lib/auth';
  *
  * React 的 cache() 以請求為範圍做記憶化，整棵 RSC 樹共用同一次結果。
  *
- * 只給 server component 用。server action 與 route handler 仍各自呼叫 createAuth()：
- * 它們本來就只讀一次，沒有要去重的對象。
+ * 記憶化只在 server component 的渲染裡生效。server action 與 route handler 不在渲染裡，
+ * 呼叫這裡時 cache() 不會記憶，等同直接查一次；它們本來就只讀一次，沒有要去重的對象，
+ * 所以後台 action 經由 admin-guard.ts 用它，和直接呼叫 createAuth() 的 action 效果相同。
  */
 export const getAuth = cache(createAuth);
 

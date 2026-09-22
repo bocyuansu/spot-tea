@@ -42,29 +42,19 @@ export const listPublishedProducts = unstable_cache(
   },
 );
 
-// 在 products/[slug]/page.tsx 會在 generateMetadata 和 Page 呼叫
-export const getPublishedProductBySlug = unstable_cache(
-  async (slug: string) => {
-    const db = await getDatabase('fresh');
+/**
+ * products/[slug]/page.tsx 的 generateMetadata 和 Page 都會呼叫。
+ *
+ * 刻意不為每個 slug 各包一份 unstable_cache，而是從整份上架清單裡找：
+ * 那樣任何人亂打的 /products/<slug> 都會新增一個 KV key（連「查無商品」也會被快取），
+ * Cloudflare Free 方案每天只有 1,000 次 KV 寫入。整份型錄只佔一個 key，
+ * 失效也跟著 listPublishedProducts 的 products / categories 標籤走。
+ */
+export async function getPublishedProductBySlug(slug: string) {
+  const products = await listPublishedProducts('');
 
-    return db.query.product.findFirst({
-      where: {
-        slug,
-        status: 'published',
-      },
-      with: {
-        category: true,
-        variants: true,
-      },
-    });
-  },
-  ['productBySlug'],
-  {
-    // 同樣內嵌了 category，且和列表共用 products：商品異動時兩份都要一起失效
-    tags: ['products', 'categories'],
-    revalidate: 3600,
-  },
-);
+  return products.find((product) => product.slug === slug);
+}
 
 export type ProductWithDetails = Awaited<
   ReturnType<typeof listPublishedProducts>

@@ -1,15 +1,20 @@
 import type { Metadata } from 'next';
 import { listAdminUsers } from '@/db/queries/admin/users';
-import { getSession } from '@/lib/session';
 import UserCreateDialog from '@/features/admin/users/components/UserCreateDialog';
 import UserTable from '@/features/admin/users/components/UserTable';
+import { getAdminUser } from '@/features/admin/shared/admin-guard';
 
 export const metadata: Metadata = {
   title: '使用者管理',
 };
 
 export default async function AdminUsersPage() {
-  const [users, session] = await Promise.all([listAdminUsers(), getSession()]);
+  // 不能和查詢一起 Promise.all：確認身分之前，會員清單一筆都不能撈出來。
+  // layout 已經顯示 AccessDenied；這裡擋的是 RSC payload 裡的頁面資料
+  const admin = await getAdminUser();
+  if (!admin) return null;
+
+  const users = await listAdminUsers();
 
   return (
     <div className="flex flex-col gap-6">
@@ -22,7 +27,7 @@ export default async function AdminUsersPage() {
         <UserCreateDialog />
       </div>
 
-      <UserTable users={users} currentUserId={session?.user.id ?? ''} />
+      <UserTable users={users} currentUserId={admin.id} />
     </div>
   );
 }

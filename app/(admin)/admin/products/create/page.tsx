@@ -1,12 +1,16 @@
 import type { Metadata } from 'next';
 import { listAdminCategories } from '@/db/queries/admin/products';
 import ProductForm from '@/features/admin/products/components/ProductForm';
+import { getAdminUser } from '@/features/admin/shared/admin-guard';
 
 export const metadata: Metadata = {
   title: '新增商品',
 };
 
 export default async function AdminProductCreatePage() {
+  // layout 已經顯示 AccessDenied；這裡擋的是 RSC payload 裡的頁面資料
+  if (!(await getAdminUser())) return null;
+
   const categories = await listAdminCategories();
 
   return (

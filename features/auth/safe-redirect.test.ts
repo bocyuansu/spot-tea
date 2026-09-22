@@ -20,4 +20,18 @@ describe('getSafeRedirectPath', () => {
     expect(getSafeRedirectPath('/\\evil.example')).toBe('/');
     expect(getSafeRedirectPath('checkout')).toBe('/');
   });
+
+  // URL parser 會先刪掉 tab 與換行，這些字串解析後都會變成 //evil.example
+  it('rejects paths that only become another site once tabs or newlines are stripped', () => {
+    expect(getSafeRedirectPath('/\t/evil.example')).toBe('/');
+    expect(getSafeRedirectPath('/\n/evil.example')).toBe('/');
+    expect(getSafeRedirectPath('/\r\n/evil.example')).toBe('/');
+    expect(getSafeRedirectPath('/\t\\evil.example')).toBe('/');
+  });
+
+  it('keeps the hash of a same-site path', () => {
+    expect(getSafeRedirectPath('/products?category=oolong#top')).toBe(
+      '/products?category=oolong#top',
+    );
+  });
 });

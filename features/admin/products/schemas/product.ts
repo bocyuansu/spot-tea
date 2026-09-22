@@ -13,6 +13,9 @@ export const productVariantSchema = z.object({
   sku: z.string().min(1, '請輸入 SKU !').max(40, 'SKU 不得超過 40 個字 !'),
   price: requiredNumber('請輸入價格 !').int().min(0, '價格不得小於 0 !'),
   stock: requiredNumber('請輸入庫存 !').int().min(0, '庫存不得小於 0 !'),
+  // 既有規格開頁當下的庫存，給 updateProduct 當樂觀鎖：庫存沒改就不寫回去，
+  // 改了也要資料庫還是這個數字才寫，才不會把編輯期間賣掉的數量蓋掉。新增的規格沒有
+  originalStock: z.number().int().nonnegative().optional(),
 });
 
 /**

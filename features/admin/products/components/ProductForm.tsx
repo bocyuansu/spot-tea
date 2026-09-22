@@ -78,6 +78,7 @@ function toFormValues(
       sku: variant.sku,
       price: variant.price,
       stock: variant.stock,
+      originalStock: variant.stock,
     })),
   };
 }

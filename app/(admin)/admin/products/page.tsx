@@ -4,12 +4,16 @@ import { Plus } from 'lucide-react';
 import { buttonVariants } from '@/components/ui/button';
 import { listAdminProducts } from '@/db/queries/admin/products';
 import ProductTable from '@/features/admin/products/components/ProductTable';
+import { getAdminUser } from '@/features/admin/shared/admin-guard';
 
 export const metadata: Metadata = {
   title: '商品管理',
 };
 
 export default async function AdminProductsPage() {
+  // layout 已經顯示 AccessDenied；這裡擋的是 RSC payload 裡的頁面資料
+  if (!(await getAdminUser())) return null;
+
   const products = await listAdminProducts();
 
   return (

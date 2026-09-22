@@ -42,6 +42,9 @@ function toVariantColumns(
 /** 商品在編輯途中被刪掉時，要給出和「slug 重複」不一樣的訊息 */
 class ProductNotFound extends Error {}
 
+/** 規格在編輯途中被改掉（庫存被買走、規格被別人刪掉）時，要請使用者重新整理 */
+class StaleVariant extends Error {}
+
 export async function createProduct(
   values: ProductFormValues,
 ): Promise<ActionResult> {
@@ -74,8 +77,7 @@ export async function createProduct(
     return { ok: false, message: '新增失敗，網址代稱或 SKU 可能已經被使用 !' };
   }
 
-  // 前台列表與單一商品查詢共用 products 這個 tag，一次就能清掉兩邊。
-  // 新增也要清：這個 slug 先前可能被訪問過，那次的「查無商品」已經被快取住了。
+  // 前台的商品列表掛著 products 這個 tag，商品頁也是從這份列表找，新商品要清了才會出現
   updateTag('products');
 
   return { ok: true };
@@ -131,19 +133,47 @@ export async function updateProduct(
         );
 
       for (const variant of parsed.data.variants) {
-        if (variant.id) {
-          await tx
-            .update(productVariant)
-            .set(toVariantColumns(variant, id))
-            .where(eq(productVariant.id, variant.id));
-        } else {
+        if (!variant.id) {
           await tx.insert(productVariant).values(toVariantColumns(variant, id));
+          continue;
         }
+
+        /**
+         * 表單裡的庫存是開頁當下的快照，這段期間可能已經有人結帳扣掉了。
+         * 沒改庫存就整欄不寫，才不會把賣掉的數量蓋回去（lost update）；
+         * 改了的話，資料庫還得是開頁當下的數字才寫，否則命中 0 列、整筆 rollback。
+         * 沒帶 originalStock 的只會是改版前就開著的舊頁面，照舊直接寫入。
+         */
+        const stockChanged = variant.stock !== variant.originalStock;
+        const { stock, ...columns } = toVariantColumns(variant, id);
+
+        const [updated] = await tx
+          .update(productVariant)
+          .set(stockChanged ? { ...columns, stock } : columns)
+          .where(
+            and(
+              eq(productVariant.id, variant.id),
+              // 只能改這個商品自己的規格
+              eq(productVariant.productId, id),
+              stockChanged && variant.originalStock !== undefined
+                ? eq(productVariant.stock, variant.originalStock)
+                : undefined,
+            ),
+          )
+          .returning({ id: productVariant.id });
+
+        if (!updated) throw new StaleVariant();
       }
     });
   } catch (error) {
     if (error instanceof ProductNotFound) {
       return { ok: false, message: '找不到這個商品，可能已經被刪除了 !' };
+    }
+    if (error instanceof StaleVariant) {
+      return {
+        ok: false,
+        message: '規格或庫存在編輯期間有變動，請重新整理後再試 !',
+      };
     }
 
     return { ok: false, message: '更新失敗，網址代稱或 SKU 可能已經被使用 !' };

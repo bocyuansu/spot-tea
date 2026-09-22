@@ -1,12 +1,16 @@
 import type { Metadata } from 'next';
 import { listAdminOrders } from '@/db/queries/admin/orders';
 import OrderTable from '@/features/admin/orders/components/OrderTable';
+import { getAdminUser } from '@/features/admin/shared/admin-guard';
 
 export const metadata: Metadata = {
   title: '訂單管理',
 };
 
 export default async function AdminOrdersPage() {
+  // layout 已經顯示 AccessDenied；這裡擋的是 RSC payload 裡的頁面資料
+  if (!(await getAdminUser())) return null;
+
   const orders = await listAdminOrders();
 
   return (

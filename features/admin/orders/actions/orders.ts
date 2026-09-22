@@ -86,7 +86,7 @@ export async function transitionOrderStatus(
   }
 
   // 訂單資料沒有經過 unstable_cache，只有取消補了庫存時要清商品快取：
-  // 前台的商品列表與單一商品查詢都內嵌 variants，兩份都掛著 products 標籤
+  // 前台的商品列表內嵌 variants、掛著 products 標籤，商品頁也是從這份列表找
   if (parsed.data === 'cancelled') updateTag('products');
 
   return { ok: true };
@@ -134,13 +134,11 @@ export async function transitionPaymentStatus(
 
       if (!row) return false;
 
-      await tx
-        .insert(orderEvent)
-        .values({
-          orderId: row.id,
-          paymentStatus: parsed.data,
-          actorId: admin.id,
-        });
+      await tx.insert(orderEvent).values({
+        orderId: row.id,
+        paymentStatus: parsed.data,
+        actorId: admin.id,
+      });
 
       return true;
     });

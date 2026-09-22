@@ -2,12 +2,16 @@ import type { Metadata } from 'next';
 import { listAdminCategoriesWithCounts } from '@/db/queries/admin/categories';
 import CategoryCreateDialog from '@/features/admin/categories/components/CategoryCreateDialog';
 import CategoryTable from '@/features/admin/categories/components/CategoryTable';
+import { getAdminUser } from '@/features/admin/shared/admin-guard';
 
 export const metadata: Metadata = {
   title: '商品分類',
 };
 
 export default async function AdminCategoriesPage() {
+  // layout 已經顯示 AccessDenied；這裡擋的是 RSC payload 裡的頁面資料
+  if (!(await getAdminUser())) return null;
+
   const categories = await listAdminCategoriesWithCounts();
 
   return (

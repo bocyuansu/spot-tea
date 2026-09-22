@@ -12,7 +12,7 @@ import {
 } from '@/features/admin/categories/schemas/category';
 
 /**
- * 前台的分類清單、商品列表與單一商品查詢都掛著 categories 這個 tag
+ * 前台的分類清單與商品列表都掛著 categories 這個 tag，商品頁也是從商品列表找
  * （見 db/queries/products.ts），所以分類異動只要清這一個。
  */
 const CATEGORIES_TAG = 'categories';

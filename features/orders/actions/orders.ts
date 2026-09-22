@@ -82,7 +82,7 @@ export async function cancelOrder(
     return { ok: false, message: '取消失敗，請稍後再試 !' };
   }
 
-  // 補了庫存，而前台的商品列表與單一商品查詢都內嵌 variants，兩份快取都要清
+  // 補了庫存，而前台的商品列表內嵌 variants（商品頁也是從這份列表找），快取要清
   updateTag('products');
 
   return { ok: true };

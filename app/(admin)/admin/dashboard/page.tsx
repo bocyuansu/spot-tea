@@ -3,12 +3,16 @@ import { getAdminOverview } from '@/db/queries/admin/overview';
 import StatCards from '@/features/admin/dashboard/components/StatCards';
 import RecentOrders from '@/features/admin/dashboard/components/RecentOrders';
 import LowStock from '@/features/admin/dashboard/components/LowStock';
+import { getAdminUser } from '@/features/admin/shared/admin-guard';
 
 export const metadata: Metadata = {
   title: '後台儀表板',
 };
 
 export default async function AdminDashboardPage() {
+  // layout 已經顯示 AccessDenied；這裡擋的是 RSC payload 裡的頁面資料
+  if (!(await getAdminUser())) return null;
+
   const overview = await getAdminOverview();
 
   return (

@@ -8,7 +8,7 @@ export default function Footer() {
         <div className="flex flex-col items-center md:items-start md:w-1/3 lg:w-1/6">
           <Link href="/" prefetch={false} className="flex items-center">
             <Image
-              src="https://ik.imagekit.io/cyuan/products/spot-tea.jpg"
+              src="https://ik.imagekit.io/cyuan/public/spot-tea.jpg"
               alt="Spot Tea logo"
               width={100}
               height={100}
