@@ -6,7 +6,6 @@ import { buttonVariants } from '@/components/ui/button';
 import { getSession } from '@/lib/session';
 import { getUserOrderByNumber } from '@/db/queries/orders';
 import OrderCard from '@/features/orders/components/OrderCard';
-import ShippingPaymentCard from '@/components/common/ShippingPaymentCard';
 import ClearCartOnMount from '@/features/checkout/components/ClearCartOnMount';
 import EcpayPaymentCard from '@/features/payments/components/EcpayPaymentCard';
 import { isAwaitingEcpayPayment } from '@/features/orders/order-status';
@@ -68,8 +67,6 @@ export default async function CheckoutCompletePage({
       )}
 
       <OrderCard order={order} />
-
-      <ShippingPaymentCard order={order} />
 
       <div className="flex flex-wrap justify-center gap-3">
         <Link href="/user/orders" className={buttonVariants({ size: 'lg' })}>

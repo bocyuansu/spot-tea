@@ -8,7 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import ShippingPaymentCard from '@/components/common/ShippingPaymentCard';
+import ShippingPaymentDetails from '@/components/common/ShippingPaymentDetails';
 import { formatPriceTWD } from '@/lib/format';
 import type { AdminOrderDetail } from '@/db/queries/admin/orders';
 
@@ -68,7 +68,14 @@ export default function OrderDetail({ order }: OrderDetailProps) {
         </CardContent>
       </Card>
 
-      <ShippingPaymentCard order={order} />
+      <Card>
+        <CardHeader>
+          <CardTitle>收件與付款資訊</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <ShippingPaymentDetails order={order} />
+        </CardContent>
+      </Card>
 
       <Card>
         <CardHeader>

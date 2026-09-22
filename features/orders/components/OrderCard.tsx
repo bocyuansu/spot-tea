@@ -1,7 +1,14 @@
 import type { ReactNode } from 'react';
+import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { orderStatusLabels, paymentStatusLabels } from '@/features/orders/order-status';
+import ShippingPaymentDetails from '@/components/common/ShippingPaymentDetails';
+import {
+  orderStatusLabels,
+  orderStatusVariants,
+  paymentStatusLabels,
+  paymentStatusVariants,
+} from '@/features/orders/order-status';
 import type { OrderWithItems } from '@/db/queries/orders';
 import { formatDateTW, formatPriceTWD } from '@/lib/format';
 
@@ -15,22 +22,33 @@ export default function OrderCard({ order, action }: OrderCardProps) {
   return (
     <Card size="sm">
       <CardContent className="flex flex-col gap-3">
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <div className="flex min-w-0 flex-col">
-            <span className="truncate font-medium">訂單編號：{order.orderNumber}</span>
-            <span className="text-xs text-muted-foreground">
-              下單日期：{formatDateTW(order.createdAt)}
-            </span>
-          </div>
-          <div className="flex shrink-0 items-center gap-2">
-            <span className="rounded-full bg-primary/10 px-2 py-0.5 text-xs text-primary">
-              {orderStatusLabels[order.status]}
-            </span>
-            <span className="rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground">
-              {paymentStatusLabels[order.paymentStatus]}
-            </span>
-          </div>
+        <div className="flex min-w-0 flex-col">
+          <span className="truncate font-medium">訂單編號：{order.orderNumber}</span>
+          <span className="text-xs text-muted-foreground">
+            下單日期：{formatDateTW(order.createdAt)}
+          </span>
         </div>
+
+        <Separator />
+
+        <dl className="grid grid-cols-2 gap-2 text-sm">
+          <div className="flex flex-col gap-1">
+            <dt className="text-xs text-muted-foreground">訂單狀態</dt>
+            <dd>
+              <Badge variant={orderStatusVariants[order.status]}>
+                {orderStatusLabels[order.status]}
+              </Badge>
+            </dd>
+          </div>
+          <div className="flex flex-col gap-1">
+            <dt className="text-xs text-muted-foreground">付款狀態</dt>
+            <dd>
+              <Badge variant={paymentStatusVariants[order.paymentStatus]}>
+                {paymentStatusLabels[order.paymentStatus]}
+              </Badge>
+            </dd>
+          </div>
+        </dl>
 
         <Separator />
 
@@ -56,6 +74,10 @@ export default function OrderCard({ order, action }: OrderCardProps) {
           </span>
           <span className="font-semibold text-primary">{formatPriceTWD(order.totalAmount)}</span>
         </div>
+
+        <Separator />
+
+        <ShippingPaymentDetails order={order} />
 
         {action && <div className="flex justify-end">{action}</div>}
       </CardContent>

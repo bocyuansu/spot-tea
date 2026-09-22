@@ -90,7 +90,7 @@ export function getPaymentMethodLabel(provider: string | null) {
   return paymentMethodLabels[provider as PaymentMethod] ?? provider;
 }
 
-// 兩張後台表格（訂單列表與儀表板的最新訂單）共用同一組 Badge 樣式，避免兩邊各寫一份而走鐘
+// 後台表格（訂單列表與儀表板的最新訂單）與前台的訂單卡片共用同一組 Badge 樣式，避免各寫一份而走鐘
 type BadgeVariant = 'default' | 'secondary' | 'outline' | 'destructive';
 
 export const orderStatusVariants: Record<Order['status'], BadgeVariant> = {
