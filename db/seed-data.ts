@@ -46,7 +46,9 @@ export const seedProducts: SeedProduct[] = [
     images: ['spot-tea.jpg'],
     status: 'published',
     origin: '阿里山',
-    variants: [{ weightGrams: 150, label: null, sku: 'ALJX-150', price: 780, stock: 15 }],
+    variants: [
+      { weightGrams: 150, label: null, sku: 'ALJX-150', price: 780, stock: 15 },
+    ],
   },
   {
     categorySlug: 'pinglin-wenshan',
@@ -56,7 +58,9 @@ export const seedProducts: SeedProduct[] = [
     images: [],
     status: 'published',
     origin: '坪林文山',
-    variants: [{ weightGrams: 150, label: null, sku: 'WSBZ-150', price: 520, stock: 0 }],
+    variants: [
+      { weightGrams: 150, label: null, sku: 'WSBZ-150', price: 520, stock: 0 },
+    ],
   },
   {
     categorySlug: 'dayuling',
@@ -66,7 +70,15 @@ export const seedProducts: SeedProduct[] = [
     images: ['spot-tea.jpg'],
     status: 'published',
     origin: '大禹嶺',
-    variants: [{ weightGrams: 300, label: '禮盒組', sku: 'DYL-GIFT-300', price: 3200, stock: 5 }],
+    variants: [
+      {
+        weightGrams: 300,
+        label: '禮盒組',
+        sku: 'DYL-GIFT-300',
+        price: 3200,
+        stock: 5,
+      },
+    ],
   },
 ];
 

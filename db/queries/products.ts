@@ -66,4 +66,6 @@ export const getPublishedProductBySlug = unstable_cache(
   },
 );
 
-export type ProductWithDetails = Awaited<ReturnType<typeof listPublishedProducts>>[number];
+export type ProductWithDetails = Awaited<
+  ReturnType<typeof listPublishedProducts>
+>[number];

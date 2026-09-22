@@ -12,7 +12,11 @@ const links = [
   },
 ];
 
-export default function UserLayout({ children }: { children: React.ReactNode }) {
+export default function UserLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <SiteChrome>
       <div className="flex flex-col gap-6 md:flex-row md:gap-8">

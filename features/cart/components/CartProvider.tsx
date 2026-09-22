@@ -1,6 +1,13 @@
 'use client';
 
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import {
   CART_STORAGE_KEY,
   addCartItem,
@@ -28,7 +35,11 @@ type CartContextValue = {
 
 const CartContext = createContext<CartContextValue | null>(null);
 
-export default function CartProvider({ children }: { children: React.ReactNode }) {
+export default function CartProvider({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const [items, setItems] = useState<CartItem[]>([]);
   const [isHydrated, setIsHydrated] = useState(false);
 
@@ -82,7 +93,15 @@ export default function CartProvider({ children }: { children: React.ReactNode }
       updatePrices,
       clearCart,
     }),
-    [items, isHydrated, addItem, updateQuantity, removeItem, updatePrices, clearCart],
+    [
+      items,
+      isHydrated,
+      addItem,
+      updateQuantity,
+      removeItem,
+      updatePrices,
+      clearCart,
+    ],
   );
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;

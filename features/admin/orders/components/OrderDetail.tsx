@@ -37,11 +37,19 @@ export default function OrderDetail({ order }: OrderDetailProps) {
             <TableBody>
               {order.items.map((item) => (
                 <TableRow key={item.id}>
-                  <TableCell className="font-medium">{item.productName}</TableCell>
-                  <TableCell className="text-muted-foreground">{item.variantName}</TableCell>
-                  <TableCell className="text-right">{formatPriceTWD(item.unitPrice)}</TableCell>
+                  <TableCell className="font-medium">
+                    {item.productName}
+                  </TableCell>
+                  <TableCell className="text-muted-foreground">
+                    {item.variantName}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    {formatPriceTWD(item.unitPrice)}
+                  </TableCell>
                   <TableCell className="text-right">{item.quantity}</TableCell>
-                  <TableCell className="text-right">{formatPriceTWD(item.subtotal)}</TableCell>
+                  <TableCell className="text-right">
+                    {formatPriceTWD(item.subtotal)}
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
@@ -56,7 +64,11 @@ export default function OrderDetail({ order }: OrderDetailProps) {
             </div>
             <div className="flex items-center justify-between text-muted-foreground">
               <span>運費</span>
-              <span>{order.shippingFee === 0 ? '免運' : formatPriceTWD(order.shippingFee)}</span>
+              <span>
+                {order.shippingFee === 0
+                  ? '免運'
+                  : formatPriceTWD(order.shippingFee)}
+              </span>
             </div>
             <div className="flex items-center justify-between">
               <span>合計</span>

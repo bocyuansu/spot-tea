@@ -2,7 +2,10 @@ import { and, eq } from 'drizzle-orm';
 import { getDatabase } from '@/db/client';
 import { order, orderEvent } from '@/db/schema';
 import { ecpayEnv } from '@/env';
-import { verifyCheckMacValue, type EcpayParams } from '@/features/payments/ecpay';
+import {
+  verifyCheckMacValue,
+  type EcpayParams,
+} from '@/features/payments/ecpay';
 
 /** 綠界的回呼都是 application/x-www-form-urlencoded，檔案欄位不會出現，只留字串 */
 export async function readEcpayParams(request: Request): Promise<EcpayParams> {
@@ -28,8 +31,14 @@ export async function readEcpayParams(request: Request): Promise<EcpayParams> {
 export async function applyEcpayResult(params: EcpayParams) {
   const { merchantId, hashKey, hashIv } = ecpayEnv();
 
-  if (!(await verifyCheckMacValue(params, hashKey, hashIv)) || params.MerchantID !== merchantId) {
-    console.error('[ecpay] CheckMacValue 或 MerchantID 驗證失敗', params.MerchantTradeNo);
+  if (
+    !(await verifyCheckMacValue(params, hashKey, hashIv)) ||
+    params.MerchantID !== merchantId
+  ) {
+    console.error(
+      '[ecpay] CheckMacValue 或 MerchantID 驗證失敗',
+      params.MerchantTradeNo,
+    );
     return null;
   }
 
@@ -38,7 +47,12 @@ export async function applyEcpayResult(params: EcpayParams) {
   // AIO 的 RtnCode 走 form POST，是字串 '1'。其他代碼（例如 10300066 待確認）
   // 不代表一定失敗，官方要求人工到後台確認，所以只處理成功，不把訂單標成 failed
   if (params.RtnCode !== '1') {
-    console.warn('[ecpay] 付款未成功', orderNumber, params.RtnCode, params.RtnMsg);
+    console.warn(
+      '[ecpay] 付款未成功',
+      orderNumber,
+      params.RtnCode,
+      params.RtnMsg,
+    );
     return { orderNumber, succeeded: false };
   }
 
@@ -58,7 +72,11 @@ export async function applyEcpayResult(params: EcpayParams) {
   const updated = await db.transaction(async (tx) => {
     const [row] = await tx
       .update(order)
-      .set({ paymentStatus: 'paid', paymentTransactionId: params.TradeNo, updatedById: null })
+      .set({
+        paymentStatus: 'paid',
+        paymentTransactionId: params.TradeNo,
+        updatedById: null,
+      })
       .where(
         and(
           eq(order.orderNumber, orderNumber),
@@ -71,14 +89,21 @@ export async function applyEcpayResult(params: EcpayParams) {
 
     if (!row) return false;
 
-    await tx.insert(orderEvent).values({ orderId: row.id, paymentStatus: 'paid', actorId: null });
+    await tx
+      .insert(orderEvent)
+      .values({ orderId: row.id, paymentStatus: 'paid', actorId: null });
 
     return true;
   });
 
   if (!updated) {
     // 多半是重送的通知；若訂單其實還是未付款，就是金額對不上，需要人工查帳
-    console.warn('[ecpay] 付款通知沒有更新任何訂單', orderNumber, params.TradeNo, params.TradeAmt);
+    console.warn(
+      '[ecpay] 付款通知沒有更新任何訂單',
+      orderNumber,
+      params.TradeNo,
+      params.TradeAmt,
+    );
   }
 
   return { orderNumber, succeeded: true };

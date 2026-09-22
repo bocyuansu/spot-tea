@@ -1,4 +1,7 @@
-import { applyEcpayResult, readEcpayParams } from '@/features/payments/ecpay-result';
+import {
+  applyEcpayResult,
+  readEcpayParams,
+} from '@/features/payments/ecpay-result';
 
 /**
  * 綠界 OrderResultURL：消費者付款後，綠界付款頁以 form POST 把瀏覽器帶回這裡。
@@ -29,7 +32,8 @@ export async function POST(request: Request) {
     `/checkout/complete/${encodeURIComponent(ecpayResult.orderNumber)}`,
     request.url,
   );
-  if (!ecpayResult.succeeded) destination.searchParams.set('payment', 'incomplete');
+  if (!ecpayResult.succeeded)
+    destination.searchParams.set('payment', 'incomplete');
 
   return Response.redirect(destination, 303);
 }

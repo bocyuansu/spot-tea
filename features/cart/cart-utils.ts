@@ -10,17 +10,25 @@ export function clampQuantity(quantity: number, stock: number) {
 
 // 同規格重複加入時累加數量，並以最新的商品資訊覆寫快照
 export function addCartItem(items: CartItem[], item: CartItem): CartItem[] {
-  const existing = items.find((cartItem) => cartItem.variantId === item.variantId);
+  const existing = items.find(
+    (cartItem) => cartItem.variantId === item.variantId,
+  );
 
   if (!existing) {
-    return [...items, { ...item, quantity: clampQuantity(item.quantity, item.stock) }];
+    return [
+      ...items,
+      { ...item, quantity: clampQuantity(item.quantity, item.stock) },
+    ];
   }
 
   return items.map((cartItem) =>
     cartItem.variantId === item.variantId
       ? {
           ...item,
-          quantity: clampQuantity(existing.quantity + item.quantity, item.stock),
+          quantity: clampQuantity(
+            existing.quantity + item.quantity,
+            item.stock,
+          ),
         }
       : cartItem,
   );
@@ -42,12 +50,17 @@ export function updateCartItemQuantity(
 
   return items
     .map((cartItem) =>
-      cartItem.variantId === variantId ? { ...cartItem, quantity: nextQuantity } : cartItem,
+      cartItem.variantId === variantId
+        ? { ...cartItem, quantity: nextQuantity }
+        : cartItem,
     )
     .filter((cartItem) => cartItem.quantity > 0);
 }
 
-export function removeCartItem(items: CartItem[], variantId: string): CartItem[] {
+export function removeCartItem(
+  items: CartItem[],
+  variantId: string,
+): CartItem[] {
   // 同上：購物車裡沒有這個規格時不製造新陣列
   if (!items.some((cartItem) => cartItem.variantId === variantId)) return items;
 
@@ -62,7 +75,9 @@ export function applyLatestPrices(
   return items.map((cartItem) => {
     const price = latestPrices[cartItem.variantId];
 
-    return price === undefined || price === cartItem.price ? cartItem : { ...cartItem, price };
+    return price === undefined || price === cartItem.price
+      ? cartItem
+      : { ...cartItem, price };
   });
 }
 
@@ -71,7 +86,10 @@ export function getCartCount(items: CartItem[]) {
 }
 
 export function getCartSubtotal(items: CartItem[]) {
-  return items.reduce((total, cartItem) => total + cartItem.price * cartItem.quantity, 0);
+  return items.reduce(
+    (total, cartItem) => total + cartItem.price * cartItem.quantity,
+    0,
+  );
 }
 
 // localStorage 的內容可能被竄改或是舊版格式，一律驗證後才放行

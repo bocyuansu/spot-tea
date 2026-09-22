@@ -31,10 +31,16 @@ export default function EcpayPaymentCard({
         )}
         <p className="text-muted-foreground">
           訂單已保留，請前往綠界科技付款頁以信用卡支付{' '}
-          <span className="font-medium text-foreground">{formatPriceTWD(totalAmount)}</span>
+          <span className="font-medium text-foreground">
+            {formatPriceTWD(totalAmount)}
+          </span>
           。付款完成後我們會盡快為您出貨。
         </p>
-        <EcpayPayButton orderNumber={orderNumber} size="lg" className="w-full sm:w-auto" />
+        <EcpayPayButton
+          orderNumber={orderNumber}
+          size="lg"
+          className="w-full sm:w-auto"
+        />
       </CardContent>
     </Card>
   );

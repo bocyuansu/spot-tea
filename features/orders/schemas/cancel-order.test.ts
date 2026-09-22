@@ -15,7 +15,11 @@ describe('cancelOrderSchema', () => {
   });
 
   it('rejects a reason longer than 200 characters', () => {
-    expect(cancelOrderSchema.safeParse({ reason: '茶'.repeat(200) }).success).toBe(true);
-    expect(cancelOrderSchema.safeParse({ reason: '茶'.repeat(201) }).success).toBe(false);
+    expect(
+      cancelOrderSchema.safeParse({ reason: '茶'.repeat(200) }).success,
+    ).toBe(true);
+    expect(
+      cancelOrderSchema.safeParse({ reason: '茶'.repeat(201) }).success,
+    ).toBe(false);
   });
 });

@@ -8,11 +8,15 @@ export default function CartList() {
   const { items, updateQuantity, removeItem } = useCart();
 
   const handleQuantityChange = useCallback(
-    (variantId: string, quantity: number) => updateQuantity(variantId, quantity),
+    (variantId: string, quantity: number) =>
+      updateQuantity(variantId, quantity),
     [updateQuantity],
   );
 
-  const handleRemove = useCallback((variantId: string) => removeItem(variantId), [removeItem]);
+  const handleRemove = useCallback(
+    (variantId: string) => removeItem(variantId),
+    [removeItem],
+  );
 
   return (
     <ul className="flex flex-col gap-3">

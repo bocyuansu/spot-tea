@@ -19,7 +19,10 @@ import { Loader2 } from 'lucide-react';
 /* React Hook Form */
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { cancelOrderSchema, type CancelOrderValues } from '@/features/orders/schemas/cancel-order';
+import {
+  cancelOrderSchema,
+  type CancelOrderValues,
+} from '@/features/orders/schemas/cancel-order';
 import { cancelOrder } from '@/features/orders/actions/orders';
 /* Nextjs */
 import { useState, useTransition } from 'react';
@@ -34,7 +37,10 @@ type CancelOrderDialogProps = {
  * 「我的訂單」裡出貨前的訂單卡片上的取消按鈕，按下去先填取消原因再確認。
  * 每張卡片各有一個實例，只服務那一筆訂單。
  */
-export default function CancelOrderDialog({ orderId, orderNumber }: CancelOrderDialogProps) {
+export default function CancelOrderDialog({
+  orderId,
+  orderNumber,
+}: CancelOrderDialogProps) {
   const [open, setOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
@@ -55,7 +61,11 @@ export default function CancelOrderDialog({ orderId, orderNumber }: CancelOrderD
       const result = await cancelOrder(orderId, values);
 
       if (!result.ok) {
-        toast.add({ type: 'error', description: result.message, priority: 'high' });
+        toast.add({
+          type: 'error',
+          description: result.message,
+          priority: 'high',
+        });
         return;
       }
 
@@ -73,7 +83,10 @@ export default function CancelOrderDialog({ orderId, orderNumber }: CancelOrderD
       </Button>
       <AlertDialog open={open} onOpenChange={handleOpenChange}>
         <AlertDialogContent>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4">
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="flex flex-col gap-4"
+          >
             <AlertDialogHeader>
               <AlertDialogTitle>確定要取消 {orderNumber} 嗎 ?</AlertDialogTitle>
               <AlertDialogDescription>
@@ -93,14 +106,20 @@ export default function CancelOrderDialog({ orderId, orderNumber }: CancelOrderD
                     rows={3}
                     {...field}
                   />
-                  {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
                 </Field>
               )}
             />
 
             <AlertDialogFooter>
               <AlertDialogCancel disabled={isPending}>返回</AlertDialogCancel>
-              <AlertDialogAction type="submit" variant="destructive" disabled={isPending}>
+              <AlertDialogAction
+                type="submit"
+                variant="destructive"
+                disabled={isPending}
+              >
                 {isPending ? (
                   <>
                     <Loader2 className="size-4 animate-spin" />

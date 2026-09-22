@@ -20,7 +20,9 @@ const roleLabels: Record<string, string> = {
 
 // 停權到期後 admin plugin 是等會員下次登入才解除，所以列表還是會看到已停權
 function banNote(user: AdminUser) {
-  const period = user.banExpires ? `${formatDateTW(user.banExpires)} 解除` : '永久停權';
+  const period = user.banExpires
+    ? `${formatDateTW(user.banExpires)} 解除`
+    : '永久停權';
   return user.banReason ? `${period}・${user.banReason}` : period;
 }
 
@@ -59,11 +61,15 @@ export default function UserTable({ users, currentUserId }: UserTableProps) {
                 <TableCell>
                   <div className="flex flex-col">
                     <span className="font-medium">{user.name}</span>
-                    <span className="text-xs text-muted-foreground">{user.email}</span>
+                    <span className="text-xs text-muted-foreground">
+                      {user.email}
+                    </span>
                   </div>
                 </TableCell>
                 <TableCell>
-                  <Badge variant={user.role === 'admin' ? 'default' : 'secondary'}>
+                  <Badge
+                    variant={user.role === 'admin' ? 'default' : 'secondary'}
+                  >
                     {roleLabels[user.role ?? ''] ?? '一般會員'}
                   </Badge>
                 </TableCell>

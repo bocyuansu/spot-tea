@@ -6,7 +6,10 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { formatPriceTWD } from '@/lib/format';
 import { useCart } from '@/features/cart/components/CartProvider';
-import { calculateShippingFee, getAmountToFreeShipping } from '@/features/orders/shipping';
+import {
+  calculateShippingFee,
+  getAmountToFreeShipping,
+} from '@/features/orders/shipping';
 
 export default function CartSummary() {
   const { totalQuantity, subtotal, clearCart } = useCart();
@@ -29,7 +32,9 @@ export default function CartSummary() {
         </div>
         <div className="flex items-center justify-between text-sm text-muted-foreground">
           <span>運費</span>
-          <span>{shippingFee === 0 ? '免運' : formatPriceTWD(shippingFee)}</span>
+          <span>
+            {shippingFee === 0 ? '免運' : formatPriceTWD(shippingFee)}
+          </span>
         </div>
 
         <Separator />
@@ -46,7 +51,10 @@ export default function CartSummary() {
           </p>
         )}
 
-        <Link href="/checkout" className={buttonVariants({ size: 'lg', className: 'w-full' })}>
+        <Link
+          href="/checkout"
+          className={buttonVariants({ size: 'lg', className: 'w-full' })}
+        >
           前往結帳
         </Link>
         <Button type="button" variant="ghost" size="sm" onClick={clearCart}>

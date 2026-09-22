@@ -39,19 +39,45 @@ describe('generateCheckMacValue', () => {
   });
 
   it.each([
-    ["Tom's Shop", '100', 'CF0A3D4901D99459D8641516EC57210700E8A5C9AB26B1D021301E9CB93EF78D'],
-    ['Test~Product', '200', 'CEEAE01D2F9A8E74D4AC0DCE7735B046D73F35A5EC99558A31A2EE03159DA1C9'],
-    ['My Test Product', '300', '7712A5E6EDC3B57086063C88568084C66CE882A21D40E74DE5ACA3B478C6F316'],
-  ])('handles special characters in %s', async (itemName, totalAmount, expected) => {
-    const params = { MerchantID: '3002607', ItemName: itemName, TotalAmount: totalAmount };
+    [
+      "Tom's Shop",
+      '100',
+      'CF0A3D4901D99459D8641516EC57210700E8A5C9AB26B1D021301E9CB93EF78D',
+    ],
+    [
+      'Test~Product',
+      '200',
+      'CEEAE01D2F9A8E74D4AC0DCE7735B046D73F35A5EC99558A31A2EE03159DA1C9',
+    ],
+    [
+      'My Test Product',
+      '300',
+      '7712A5E6EDC3B57086063C88568084C66CE882A21D40E74DE5ACA3B478C6F316',
+    ],
+  ])(
+    'handles special characters in %s',
+    async (itemName, totalAmount, expected) => {
+      const params = {
+        MerchantID: '3002607',
+        ItemName: itemName,
+        TotalAmount: totalAmount,
+      };
 
-    expect(await generateCheckMacValue(params, HASH_KEY, HASH_IV)).toBe(expected);
-  });
+      expect(await generateCheckMacValue(params, HASH_KEY, HASH_IV)).toBe(
+        expected,
+      );
+    },
+  );
 });
 
 describe('verifyCheckMacValue', () => {
-  const params = { MerchantID: '3002607', ItemName: 'My Test Product', TotalAmount: '300' };
-  const checkMacValue = '7712A5E6EDC3B57086063C88568084C66CE882A21D40E74DE5ACA3B478C6F316';
+  const params = {
+    MerchantID: '3002607',
+    ItemName: 'My Test Product',
+    TotalAmount: '300',
+  };
+  const checkMacValue =
+    '7712A5E6EDC3B57086063C88568084C66CE882A21D40E74DE5ACA3B478C6F316';
 
   it('accepts a matching value regardless of case', async () => {
     await expect(
@@ -74,7 +100,9 @@ describe('verifyCheckMacValue', () => {
   });
 
   it('rejects a missing value', async () => {
-    await expect(verifyCheckMacValue(params, HASH_KEY, HASH_IV)).resolves.toBe(false);
+    await expect(verifyCheckMacValue(params, HASH_KEY, HASH_IV)).resolves.toBe(
+      false,
+    );
   });
 });
 
@@ -99,7 +127,9 @@ describe('buildMerchantTradeNo', () => {
 describe('formatMerchantTradeDate', () => {
   it('formats in Taipei time', () => {
     // UTC 2026-09-20 16:05:09 = 台北 2026-09-21 00:05:09
-    expect(formatMerchantTradeDate(new Date('2026-09-20T16:05:09Z'))).toBe('2026/09/21 00:05:09');
+    expect(formatMerchantTradeDate(new Date('2026-09-20T16:05:09Z'))).toBe(
+      '2026/09/21 00:05:09',
+    );
   });
 });
 

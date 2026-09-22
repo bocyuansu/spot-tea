@@ -2,39 +2,22 @@
   "version": "8",
   "dialect": "postgres",
   "id": "b747b334-6c20-4a23-ba79-f59586d2ce1a",
-  "prevIds": [
-    "850c11fc-f3e4-49d2-a76a-89dcddfa1d0b"
-  ],
+  "prevIds": ["850c11fc-f3e4-49d2-a76a-89dcddfa1d0b"],
   "ddl": [
     {
-      "values": [
-        "draft",
-        "published",
-        "archived"
-      ],
+      "values": ["draft", "published", "archived"],
       "name": "product_status",
       "entityType": "enums",
       "schema": "public"
     },
     {
-      "values": [
-        "pending",
-        "processing",
-        "shipped",
-        "completed",
-        "cancelled"
-      ],
+      "values": ["pending", "processing", "shipped", "completed", "cancelled"],
       "name": "order_status",
       "entityType": "enums",
       "schema": "public"
     },
     {
-      "values": [
-        "unpaid",
-        "paid",
-        "failed",
-        "refunded"
-      ],
+      "values": ["unpaid", "paid", "failed", "refunded"],
       "name": "payment_status",
       "entityType": "enums",
       "schema": "public"
@@ -1520,14 +1503,10 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "user_id"
-      ],
+      "columns": ["user_id"],
       "schemaTo": "public",
       "tableTo": "user",
-      "columnsTo": [
-        "id"
-      ],
+      "columnsTo": ["id"],
       "onUpdate": "NO ACTION",
       "onDelete": "CASCADE",
       "name": "account_user_id_user_id_fk",
@@ -1537,14 +1516,10 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "user_id"
-      ],
+      "columns": ["user_id"],
       "schemaTo": "public",
       "tableTo": "user",
-      "columnsTo": [
-        "id"
-      ],
+      "columnsTo": ["id"],
       "onUpdate": "NO ACTION",
       "onDelete": "CASCADE",
       "name": "session_user_id_user_id_fk",
@@ -1554,14 +1529,10 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "category_id"
-      ],
+      "columns": ["category_id"],
       "schemaTo": "public",
       "tableTo": "category",
-      "columnsTo": [
-        "id"
-      ],
+      "columnsTo": ["id"],
       "onUpdate": "NO ACTION",
       "onDelete": "SET NULL",
       "name": "product_category_id_category_id_fk",
@@ -1571,14 +1542,10 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "product_id"
-      ],
+      "columns": ["product_id"],
       "schemaTo": "public",
       "tableTo": "product",
-      "columnsTo": [
-        "id"
-      ],
+      "columnsTo": ["id"],
       "onUpdate": "NO ACTION",
       "onDelete": "CASCADE",
       "name": "product_variant_product_id_product_id_fk",
@@ -1588,14 +1555,10 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "user_id"
-      ],
+      "columns": ["user_id"],
       "schemaTo": "public",
       "tableTo": "user",
-      "columnsTo": [
-        "id"
-      ],
+      "columnsTo": ["id"],
       "onUpdate": "NO ACTION",
       "onDelete": "NO ACTION",
       "name": "order_user_id_user_id_fk",
@@ -1605,14 +1568,10 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "updated_by_id"
-      ],
+      "columns": ["updated_by_id"],
       "schemaTo": "public",
       "tableTo": "user",
-      "columnsTo": [
-        "id"
-      ],
+      "columnsTo": ["id"],
       "onUpdate": "NO ACTION",
       "onDelete": "NO ACTION",
       "name": "order_updated_by_id_user_id_fkey",
@@ -1622,14 +1581,10 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "order_id"
-      ],
+      "columns": ["order_id"],
       "schemaTo": "public",
       "tableTo": "order",
-      "columnsTo": [
-        "id"
-      ],
+      "columnsTo": ["id"],
       "onUpdate": "NO ACTION",
       "onDelete": "CASCADE",
       "name": "order_event_order_id_order_id_fkey",
@@ -1639,14 +1594,10 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "actor_id"
-      ],
+      "columns": ["actor_id"],
       "schemaTo": "public",
       "tableTo": "user",
-      "columnsTo": [
-        "id"
-      ],
+      "columnsTo": ["id"],
       "onUpdate": "NO ACTION",
       "onDelete": "NO ACTION",
       "name": "order_event_actor_id_user_id_fkey",
@@ -1656,14 +1607,10 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "order_id"
-      ],
+      "columns": ["order_id"],
       "schemaTo": "public",
       "tableTo": "order",
-      "columnsTo": [
-        "id"
-      ],
+      "columnsTo": ["id"],
       "onUpdate": "NO ACTION",
       "onDelete": "CASCADE",
       "name": "order_item_order_id_order_id_fk",
@@ -1673,14 +1620,10 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "product_variant_id"
-      ],
+      "columns": ["product_variant_id"],
       "schemaTo": "public",
       "tableTo": "product_variant",
-      "columnsTo": [
-        "id"
-      ],
+      "columnsTo": ["id"],
       "onUpdate": "NO ACTION",
       "onDelete": "SET NULL",
       "name": "order_item_product_variant_id_product_variant_id_fk",
@@ -1689,9 +1632,7 @@
       "table": "order_item"
     },
     {
-      "columns": [
-        "id"
-      ],
+      "columns": ["id"],
       "nameExplicit": false,
       "name": "account_pkey",
       "schema": "public",
@@ -1699,9 +1640,7 @@
       "entityType": "pks"
     },
     {
-      "columns": [
-        "id"
-      ],
+      "columns": ["id"],
       "nameExplicit": false,
       "name": "session_pkey",
       "schema": "public",
@@ -1709,9 +1648,7 @@
       "entityType": "pks"
     },
     {
-      "columns": [
-        "id"
-      ],
+      "columns": ["id"],
       "nameExplicit": false,
       "name": "user_pkey",
       "schema": "public",
@@ -1719,9 +1656,7 @@
       "entityType": "pks"
     },
     {
-      "columns": [
-        "id"
-      ],
+      "columns": ["id"],
       "nameExplicit": false,
       "name": "verification_pkey",
       "schema": "public",
@@ -1729,9 +1664,7 @@
       "entityType": "pks"
     },
     {
-      "columns": [
-        "id"
-      ],
+      "columns": ["id"],
       "nameExplicit": false,
       "name": "category_pkey",
       "schema": "public",
@@ -1739,9 +1672,7 @@
       "entityType": "pks"
     },
     {
-      "columns": [
-        "id"
-      ],
+      "columns": ["id"],
       "nameExplicit": false,
       "name": "product_pkey",
       "schema": "public",
@@ -1749,9 +1680,7 @@
       "entityType": "pks"
     },
     {
-      "columns": [
-        "id"
-      ],
+      "columns": ["id"],
       "nameExplicit": false,
       "name": "product_variant_pkey",
       "schema": "public",
@@ -1759,9 +1688,7 @@
       "entityType": "pks"
     },
     {
-      "columns": [
-        "id"
-      ],
+      "columns": ["id"],
       "nameExplicit": false,
       "name": "order_pkey",
       "schema": "public",
@@ -1769,9 +1696,7 @@
       "entityType": "pks"
     },
     {
-      "columns": [
-        "id"
-      ],
+      "columns": ["id"],
       "nameExplicit": false,
       "name": "order_event_pkey",
       "schema": "public",
@@ -1779,9 +1704,7 @@
       "entityType": "pks"
     },
     {
-      "columns": [
-        "id"
-      ],
+      "columns": ["id"],
       "nameExplicit": false,
       "name": "order_item_pkey",
       "schema": "public",
@@ -1790,9 +1713,7 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "token"
-      ],
+      "columns": ["token"],
       "nullsNotDistinct": false,
       "name": "session_token_unique",
       "schema": "public",
@@ -1801,9 +1722,7 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "email"
-      ],
+      "columns": ["email"],
       "nullsNotDistinct": false,
       "name": "user_email_unique",
       "schema": "public",
@@ -1812,9 +1731,7 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "slug"
-      ],
+      "columns": ["slug"],
       "nullsNotDistinct": false,
       "name": "category_slug_unique",
       "schema": "public",
@@ -1823,9 +1740,7 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "slug"
-      ],
+      "columns": ["slug"],
       "nullsNotDistinct": false,
       "name": "product_slug_unique",
       "schema": "public",
@@ -1834,9 +1749,7 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "sku"
-      ],
+      "columns": ["sku"],
       "nullsNotDistinct": false,
       "name": "product_variant_sku_unique",
       "schema": "public",
@@ -1845,9 +1758,7 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "order_number"
-      ],
+      "columns": ["order_number"],
       "nullsNotDistinct": false,
       "name": "order_order_number_unique",
       "schema": "public",

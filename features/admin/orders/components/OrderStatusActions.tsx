@@ -33,7 +33,10 @@ const orderStepLabels: Record<Exclude<OrderStatus, 'pending'>, string> = {
   cancelled: '取消訂單',
 };
 
-const paymentStepLabels: Record<Exclude<PaymentStatus, 'unpaid' | 'failed'>, string> = {
+const paymentStepLabels: Record<
+  Exclude<PaymentStatus, 'unpaid' | 'failed'>,
+  string
+> = {
   paid: '標記為已付款',
   refunded: '標記為已退款',
 };
@@ -74,7 +77,8 @@ type OrderStatusActionsProps = {
 export default function OrderStatusActions({ order }: OrderStatusActionsProps) {
   const orderSteps = orderStatusTransitions[order.status];
   const paymentSteps = getPaymentSteps(order);
-  const awaitingPrepayment = isAwaitingPrepayment(order) && order.status === 'pending';
+  const awaitingPrepayment =
+    isAwaitingPrepayment(order) && order.status === 'pending';
 
   return (
     <Card className="[--card-spacing:--spacing(6)]">
@@ -157,14 +161,17 @@ export default function OrderStatusActions({ order }: OrderStatusActionsProps) {
               ))}
             </div>
           )}
-          <p className="text-sm text-muted-foreground">{getPaymentHint(order)}</p>
+          <p className="text-sm text-muted-foreground">
+            {getPaymentHint(order)}
+          </p>
         </section>
 
         {order.updatedBy && (
           <>
             <Separator />
             <p className="text-sm text-muted-foreground">
-              最後由 {order.updatedBy.name} 於 {formatDateTimeTW(order.updatedAt)} 更新
+              最後由 {order.updatedBy.name} 於{' '}
+              {formatDateTimeTW(order.updatedAt)} 更新
             </p>
           </>
         )}

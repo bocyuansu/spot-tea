@@ -13,7 +13,10 @@ import {
   formatOrderDateStamp,
   nextOrderSequence,
 } from '@/features/orders/order-number';
-import { createOrderSchema, type CreateOrderInput } from '@/features/checkout/schemas/checkout';
+import {
+  createOrderSchema,
+  type CreateOrderInput,
+} from '@/features/checkout/schemas/checkout';
 
 export type CreateOrderResult =
   | { ok: true; orderNumber: string }
@@ -35,7 +38,10 @@ class PriceChangedError extends CheckoutError {
 }
 
 function isDuplicateOrderNumber(error: unknown) {
-  const { code, cause } = (error ?? {}) as { code?: string; cause?: { code?: string } };
+  const { code, cause } = (error ?? {}) as {
+    code?: string;
+    cause?: { code?: string };
+  };
 
   return code === UNIQUE_VIOLATION || cause?.code === UNIQUE_VIOLATION;
 }
@@ -47,7 +53,9 @@ function isDuplicateOrderNumber(error: unknown) {
  * 所以這裡要自己確認身分。購物車存在 localStorage，client 只送規格與數量，
  * 品名、單價與庫存一律從資料庫重撈 —— 送進來的金額一概不採用。
  */
-export async function createOrder(input: CreateOrderInput): Promise<CreateOrderResult> {
+export async function createOrder(
+  input: CreateOrderInput,
+): Promise<CreateOrderResult> {
   const auth = await createAuth();
 
   const session = await auth.api.getSession({ headers: await headers() });
@@ -55,7 +63,8 @@ export async function createOrder(input: CreateOrderInput): Promise<CreateOrderR
   if (!session) return { ok: false, message: '請先登入再結帳 !' };
 
   const parsed = createOrderSchema.safeParse(input);
-  if (!parsed.success) return { ok: false, message: '欄位格式有誤，請重新檢查 !' };
+  if (!parsed.success)
+    return { ok: false, message: '欄位格式有誤，請重新檢查 !' };
 
   const {
     items: requestedItems,
@@ -100,7 +109,9 @@ export async function createOrder(input: CreateOrderInput): Promise<CreateOrderR
 
           // 這裡先擋一次是為了早點給出明確訊息，真正的防超賣在後面的扣庫存
           if (row.stock < item.quantity) {
-            throw new CheckoutError(`「${row.productName}」庫存不足，請調整數量 !`);
+            throw new CheckoutError(
+              `「${row.productName}」庫存不足，請調整數量 !`,
+            );
           }
 
           return {
@@ -113,13 +124,18 @@ export async function createOrder(input: CreateOrderInput): Promise<CreateOrderR
           };
         });
 
-        const subtotalAmount = items.reduce((total, item) => total + item.subtotal, 0);
+        const subtotalAmount = items.reduce(
+          (total, item) => total + item.subtotal,
+          0,
+        );
         const shippingFee = calculateShippingFee(subtotalAmount);
 
         // 運費也是由小計算出來的，所以比合計就涵蓋了改價造成的運費變化
         if (subtotalAmount + shippingFee !== expectedTotal) {
           throw new PriceChangedError(
-            Object.fromEntries(items.map((item) => [item.variantId, item.unitPrice])),
+            Object.fromEntries(
+              items.map((item) => [item.variantId, item.unitPrice]),
+            ),
           );
         }
 
@@ -133,7 +149,10 @@ export async function createOrder(input: CreateOrderInput): Promise<CreateOrderR
           .orderBy(desc(order.orderNumber))
           .limit(1);
 
-        const nextOrderNumber = buildOrderNumber(stamp, nextOrderSequence(latest?.orderNumber));
+        const nextOrderNumber = buildOrderNumber(
+          stamp,
+          nextOrderSequence(latest?.orderNumber),
+        );
 
         // status 與 paymentStatus 走 schema 的預設值（pending / unpaid）：
         // 訂單流程從待處理開始，付款與否是另一條線：綠界信用卡由付款通知回寫，
@@ -177,12 +196,17 @@ export async function createOrder(input: CreateOrderInput): Promise<CreateOrderR
             .update(productVariant)
             .set({ stock: sql`${productVariant.stock} - ${item.quantity}` })
             .where(
-              and(eq(productVariant.id, item.variantId), gte(productVariant.stock, item.quantity)),
+              and(
+                eq(productVariant.id, item.variantId),
+                gte(productVariant.stock, item.quantity),
+              ),
             )
             .returning({ id: productVariant.id });
 
           if (!updated) {
-            throw new CheckoutError(`「${item.productName}」庫存不足，請調整數量 !`);
+            throw new CheckoutError(
+              `「${item.productName}」庫存不足，請調整數量 !`,
+            );
           }
         }
 
@@ -196,9 +220,14 @@ export async function createOrder(input: CreateOrderInput): Promise<CreateOrderR
     } catch (error) {
       // 購物車本身有問題，重試也不會變好
       if (error instanceof PriceChangedError) {
-        return { ok: false, message: error.message, latestPrices: error.latestPrices };
+        return {
+          ok: false,
+          message: error.message,
+          latestPrices: error.latestPrices,
+        };
       }
-      if (error instanceof CheckoutError) return { ok: false, message: error.message };
+      if (error instanceof CheckoutError)
+        return { ok: false, message: error.message };
 
       if (isDuplicateOrderNumber(error) && attempt < MAX_ATTEMPTS) continue;
 

@@ -47,14 +47,20 @@ describe('addCartItem', () => {
   });
 
   it('merges the quantity of an existing variant', () => {
-    const items = addCartItem([createItem({ quantity: 2 })], createItem({ quantity: 3 }));
+    const items = addCartItem(
+      [createItem({ quantity: 2 })],
+      createItem({ quantity: 3 }),
+    );
 
     expect(items).toHaveLength(1);
     expect(items[0].quantity).toBe(5);
   });
 
   it('does not merge different variants of the same product', () => {
-    const items = addCartItem([createItem()], createItem({ variantId: 'var-2' }));
+    const items = addCartItem(
+      [createItem()],
+      createItem({ variantId: 'var-2' }),
+    );
 
     expect(items).toHaveLength(2);
   });
@@ -71,13 +77,21 @@ describe('addCartItem', () => {
 
 describe('updateCartItemQuantity', () => {
   it('caps the quantity at the stock', () => {
-    const items = updateCartItemQuantity([createItem({ stock: 3 })], 'var-1', 99);
+    const items = updateCartItemQuantity(
+      [createItem({ stock: 3 })],
+      'var-1',
+      99,
+    );
 
     expect(items[0].quantity).toBe(3);
   });
 
   it('removes the item when the variant is sold out', () => {
-    const items = updateCartItemQuantity([createItem({ stock: 0 })], 'var-1', 1);
+    const items = updateCartItemQuantity(
+      [createItem({ stock: 0 })],
+      'var-1',
+      1,
+    );
 
     expect(items).toHaveLength(0);
   });
@@ -85,7 +99,10 @@ describe('updateCartItemQuantity', () => {
 
 describe('removeCartItem', () => {
   it('removes only the matching variant', () => {
-    const items = removeCartItem([createItem(), createItem({ variantId: 'var-2' })], 'var-1');
+    const items = removeCartItem(
+      [createItem(), createItem({ variantId: 'var-2' })],
+      'var-1',
+    );
 
     expect(items).toHaveLength(1);
     expect(items[0].variantId).toBe('var-2');
@@ -95,7 +112,10 @@ describe('removeCartItem', () => {
 describe('applyLatestPrices', () => {
   it('replaces the stored price with the latest one', () => {
     const items = applyLatestPrices(
-      [createItem({ price: 680 }), createItem({ variantId: 'var-2', price: 2280 })],
+      [
+        createItem({ price: 680 }),
+        createItem({ variantId: 'var-2', price: 2280 }),
+      ],
       { 'var-1': 720 },
     );
 
@@ -128,7 +148,9 @@ describe('parseStoredCart', () => {
 
   it('rejects the whole cart when an item has been tampered with', () => {
     const missingField = JSON.stringify([{ variantId: 'var-1' }]);
-    const wrongType = JSON.stringify([createItem({ price: 'abc' as unknown as number })]);
+    const wrongType = JSON.stringify([
+      createItem({ price: 'abc' as unknown as number }),
+    ]);
     const invalidQuantity = JSON.stringify([createItem({ quantity: 0 })]);
 
     expect(parseStoredCart(missingField)).toEqual([]);
@@ -137,7 +159,10 @@ describe('parseStoredCart', () => {
   });
 
   it('returns the items when the stored cart is valid', () => {
-    const items = [createItem(), createItem({ variantId: 'var-2', quantity: 3 })];
+    const items = [
+      createItem(),
+      createItem({ variantId: 'var-2', quantity: 3 }),
+    ];
 
     expect(parseStoredCart(JSON.stringify(items))).toEqual(items);
   });

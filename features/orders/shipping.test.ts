@@ -10,7 +10,9 @@ describe('calculateShippingFee', () => {
   it('charges the flat fee below the threshold', () => {
     expect(calculateShippingFee(1)).toBe(SHIPPING_FEE);
     expect(calculateShippingFee(680)).toBe(SHIPPING_FEE);
-    expect(calculateShippingFee(FREE_SHIPPING_THRESHOLD - 1)).toBe(SHIPPING_FEE);
+    expect(calculateShippingFee(FREE_SHIPPING_THRESHOLD - 1)).toBe(
+      SHIPPING_FEE,
+    );
   });
 
   it('is free at and above the threshold', () => {

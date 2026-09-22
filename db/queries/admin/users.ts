@@ -10,10 +10,15 @@ export async function listAdminUsers() {
   // 訂單數另外用 group by 撈再併回來，避免把每位會員的訂單整包拉出來
   const [users, orderCounts] = await Promise.all([
     db.query.user.findMany({ orderBy: { createdAt: 'desc' } }),
-    db.select({ userId: order.userId, orderCount: count() }).from(order).groupBy(order.userId),
+    db
+      .select({ userId: order.userId, orderCount: count() })
+      .from(order)
+      .groupBy(order.userId),
   ]);
 
-  const orderCountByUserId = new Map(orderCounts.map((row) => [row.userId, row.orderCount]));
+  const orderCountByUserId = new Map(
+    orderCounts.map((row) => [row.userId, row.orderCount]),
+  );
 
   return users.map((row) => ({
     ...row,

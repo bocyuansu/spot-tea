@@ -15,11 +15,15 @@ type ShippingPaymentDetailsProps = {
   order: OrderWithItems;
 };
 
-export default function ShippingPaymentDetails({ order }: ShippingPaymentDetailsProps) {
+export default function ShippingPaymentDetails({
+  order,
+}: ShippingPaymentDetailsProps) {
   const { createdAt } = order;
-  const { recipientName, phone, postalCode, city, district, addressLine } = order.shippingAddress;
+  const { recipientName, phone, postalCode, city, district, addressLine } =
+    order.shippingAddress;
   // 舊資料的 paymentProvider 可能不在清單裡，查不到說明就不顯示那一行
-  const paymentDescription = paymentMethodDescriptions[order.paymentProvider as PaymentMethod];
+  const paymentDescription =
+    paymentMethodDescriptions[order.paymentProvider as PaymentMethod];
 
   return (
     <div className="w-full flex justify-between">

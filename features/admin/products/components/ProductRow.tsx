@@ -47,7 +47,10 @@ export default function ProductRow({ product, columnCount }: ProductRowProps) {
   const [expanded, setExpanded] = useState(false);
 
   const productImgUrl = product.images?.[0] ?? null;
-  const totalStock = product.variants.reduce((total, variant) => total + variant.stock, 0);
+  const totalStock = product.variants.reduce(
+    (total, variant) => total + variant.stock,
+    0,
+  );
   const hasVariants = product.variants.length > 0;
 
   return (
@@ -62,7 +65,12 @@ export default function ProductRow({ product, columnCount }: ProductRowProps) {
             aria-label={`${expanded ? '收合' : '展開'} ${product.name} 的規格`}
             onClick={() => setExpanded(!expanded)}
           >
-            <ChevronRight className={cn('size-4 transition-transform', expanded && 'rotate-90')} />
+            <ChevronRight
+              className={cn(
+                'size-4 transition-transform',
+                expanded && 'rotate-90',
+              )}
+            />
           </Button>
         </TableCell>
 
@@ -87,22 +95,32 @@ export default function ProductRow({ product, columnCount }: ProductRowProps) {
         <TableCell>
           <div className="flex flex-col">
             <span className="font-medium">{product.name}</span>
-            <span className="text-xs text-muted-foreground">{product.slug}</span>
+            <span className="text-xs text-muted-foreground">
+              {product.slug}
+            </span>
           </div>
         </TableCell>
         <TableCell className="text-muted-foreground">
           {product.category?.name ?? '未分類'}
         </TableCell>
         <TableCell>
-          <Badge variant={product.status === 'published' ? 'default' : 'outline'}>
+          <Badge
+            variant={product.status === 'published' ? 'default' : 'outline'}
+          >
             {productStatusLabels[product.status]}
           </Badge>
         </TableCell>
         <TableCell className="text-right text-muted-foreground">
           {product.variants.length}
         </TableCell>
-        <TableCell className="text-right">{formatPriceRange(product.variants)}</TableCell>
-        <TableCell className={totalStock === 0 ? 'text-right text-destructive' : 'text-right'}>
+        <TableCell className="text-right">
+          {formatPriceRange(product.variants)}
+        </TableCell>
+        <TableCell
+          className={
+            totalStock === 0 ? 'text-right text-destructive' : 'text-right'
+          }
+        >
           {totalStock}
         </TableCell>
         <TableCell>
@@ -125,15 +143,27 @@ export default function ProductRow({ product, columnCount }: ProductRowProps) {
               </TableHeader>
               <TableBody>
                 {product.variants.map((variant) => (
-                  <TableRow key={variant.id} className="border-0 hover:bg-transparent">
-                    <TableCell className="pl-14 font-medium">{variantName(variant)}</TableCell>
-                    <TableCell className="text-muted-foreground">{variant.weightGrams}g</TableCell>
+                  <TableRow
+                    key={variant.id}
+                    className="border-0 hover:bg-transparent"
+                  >
+                    <TableCell className="pl-14 font-medium">
+                      {variantName(variant)}
+                    </TableCell>
+                    <TableCell className="text-muted-foreground">
+                      {variant.weightGrams}g
+                    </TableCell>
                     <TableCell className="font-mono text-xs text-muted-foreground">
                       {variant.sku}
                     </TableCell>
-                    <TableCell className="text-right">{formatPriceTWD(variant.price)}</TableCell>
+                    <TableCell className="text-right">
+                      {formatPriceTWD(variant.price)}
+                    </TableCell>
                     <TableCell
-                      className={cn('pr-6 text-right', variant.stock === 0 && 'text-destructive')}
+                      className={cn(
+                        'pr-6 text-right',
+                        variant.stock === 0 && 'text-destructive',
+                      )}
                     >
                       {variant.stock === 0 ? '售完' : variant.stock}
                     </TableCell>

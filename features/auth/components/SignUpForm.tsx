@@ -11,7 +11,13 @@ import { signUpSchema } from '@/features/auth/schemas/signup';
 import { z } from 'zod';
 import { authClient } from '@/lib/auth-client';
 import { Loader2 } from 'lucide-react';
-import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field';
+import {
+  Field,
+  FieldDescription,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from '@/components/ui/field';
 import { toast } from '@/components/ui/toast';
 import Link from 'next/link';
 import { getErrorMessage } from '@/lib/auth-errors';
@@ -71,8 +77,14 @@ export default function SignUpForm() {
               render={({ field, fieldState }) => (
                 <Field>
                   <FieldLabel>用戶名稱</FieldLabel>
-                  <Input aria-invalid={fieldState.invalid} placeholder="username" {...field} />
-                  {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                  <Input
+                    aria-invalid={fieldState.invalid}
+                    placeholder="username"
+                    {...field}
+                  />
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
                 </Field>
               )}
             />
@@ -88,7 +100,9 @@ export default function SignUpForm() {
                     type="email"
                     {...field}
                   />
-                  {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
                 </Field>
               )}
             />
@@ -104,7 +118,9 @@ export default function SignUpForm() {
                     type="password"
                     {...field}
                   />
-                  {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
                 </Field>
               )}
             />

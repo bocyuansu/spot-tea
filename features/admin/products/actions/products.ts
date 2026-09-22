@@ -25,7 +25,10 @@ function toProductColumns(values: ProductFormValues) {
   };
 }
 
-function toVariantColumns(variant: ProductFormValues['variants'][number], productId: string) {
+function toVariantColumns(
+  variant: ProductFormValues['variants'][number],
+  productId: string,
+) {
   return {
     productId,
     weightGrams: variant.weightGrams,
@@ -39,11 +42,15 @@ function toVariantColumns(variant: ProductFormValues['variants'][number], produc
 /** 商品在編輯途中被刪掉時，要給出和「slug 重複」不一樣的訊息 */
 class ProductNotFound extends Error {}
 
-export async function createProduct(values: ProductFormValues): Promise<ActionResult> {
-  if (!(await isAdmin())) return { ok: false, message: '沒有權限執行這個操作 !' };
+export async function createProduct(
+  values: ProductFormValues,
+): Promise<ActionResult> {
+  if (!(await isAdmin()))
+    return { ok: false, message: '沒有權限執行這個操作 !' };
 
   const parsed = productFormSchema.safeParse(values);
-  if (!parsed.success) return { ok: false, message: '欄位格式有誤，請重新檢查 !' };
+  if (!parsed.success)
+    return { ok: false, message: '欄位格式有誤，請重新檢查 !' };
 
   const db = await getDatabase('fresh');
 
@@ -56,7 +63,11 @@ export async function createProduct(values: ProductFormValues): Promise<ActionRe
 
       await tx
         .insert(productVariant)
-        .values(parsed.data.variants.map((variant) => toVariantColumns(variant, created.id)));
+        .values(
+          parsed.data.variants.map((variant) =>
+            toVariantColumns(variant, created.id),
+          ),
+        );
     });
   } catch {
     // slug 與 sku 都有 unique 限制，實務上撞到的幾乎都是這兩個
@@ -70,11 +81,16 @@ export async function createProduct(values: ProductFormValues): Promise<ActionRe
   return { ok: true };
 }
 
-export async function updateProduct(id: string, values: ProductFormValues): Promise<ActionResult> {
-  if (!(await isAdmin())) return { ok: false, message: '沒有權限執行這個操作 !' };
+export async function updateProduct(
+  id: string,
+  values: ProductFormValues,
+): Promise<ActionResult> {
+  if (!(await isAdmin()))
+    return { ok: false, message: '沒有權限執行這個操作 !' };
 
   const parsed = productFormSchema.safeParse(values);
-  if (!parsed.success) return { ok: false, message: '欄位格式有誤，請重新檢查 !' };
+  if (!parsed.success)
+    return { ok: false, message: '欄位格式有誤，請重新檢查 !' };
 
   const db = await getDatabase('fresh');
 
@@ -97,7 +113,9 @@ export async function updateProduct(id: string, values: ProductFormValues): Prom
       // 查不到代表商品已經被刪除；繼續往下 update 會是 no-op 卻回報成功
       if (!previous) throw new ProductNotFound();
 
-      removedImages = (previous.images ?? []).filter((url) => !columns.images.includes(url));
+      removedImages = (previous.images ?? []).filter(
+        (url) => !columns.images.includes(url),
+      );
 
       await tx.update(product).set(columns).where(eq(product.id, id));
 
@@ -105,7 +123,10 @@ export async function updateProduct(id: string, values: ProductFormValues): Prom
         .delete(productVariant)
         .where(
           keptIds.length > 0
-            ? and(eq(productVariant.productId, id), notInArray(productVariant.id, keptIds))
+            ? and(
+                eq(productVariant.productId, id),
+                notInArray(productVariant.id, keptIds),
+              )
             : eq(productVariant.productId, id),
         );
 
@@ -138,7 +159,8 @@ export async function updateProduct(id: string, values: ProductFormValues): Prom
 }
 
 export async function deleteProduct(id: string): Promise<ActionResult> {
-  if (!(await isAdmin())) return { ok: false, message: '沒有權限執行這個操作 !' };
+  if (!(await isAdmin()))
+    return { ok: false, message: '沒有權限執行這個操作 !' };
 
   const db = await getDatabase('fresh');
 

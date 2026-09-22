@@ -52,11 +52,15 @@ export default function OrderTable({ orders }: OrderTableProps) {
           <TableBody>
             {orders.map((order) => (
               <TableRow key={order.id}>
-                <TableCell className="font-medium">{order.orderNumber}</TableCell>
+                <TableCell className="font-medium">
+                  {order.orderNumber}
+                </TableCell>
                 <TableCell>
                   <div className="flex flex-col">
                     <span>{order.user.name}</span>
-                    <span className="text-xs text-muted-foreground">{order.user.email}</span>
+                    <span className="text-xs text-muted-foreground">
+                      {order.user.email}
+                    </span>
                   </div>
                 </TableCell>
                 <TableCell>
@@ -69,7 +73,9 @@ export default function OrderTable({ orders }: OrderTableProps) {
                     <Badge variant={paymentStatusVariants[order.paymentStatus]}>
                       {paymentStatusLabels[order.paymentStatus]}
                     </Badge>
-                    {isAwaitingRefund(order) && <Badge variant="destructive">待退款</Badge>}
+                    {isAwaitingRefund(order) && (
+                      <Badge variant="destructive">待退款</Badge>
+                    )}
                   </div>
                 </TableCell>
                 <TableCell className="text-muted-foreground">
@@ -82,7 +88,10 @@ export default function OrderTable({ orders }: OrderTableProps) {
                   {formatPriceTWD(order.totalAmount)}
                 </TableCell>
                 <TableCell>
-                  <OrderMenu orderId={order.id} orderNumber={order.orderNumber} />
+                  <OrderMenu
+                    orderId={order.id}
+                    orderNumber={order.orderNumber}
+                  />
                 </TableCell>
               </TableRow>
             ))}

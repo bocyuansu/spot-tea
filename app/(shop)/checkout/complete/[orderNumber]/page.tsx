@@ -72,7 +72,10 @@ export default async function CheckoutCompletePage({
         <Link href="/user/orders" className={buttonVariants({ size: 'lg' })}>
           查看我的訂單
         </Link>
-        <Link href="/products" className={buttonVariants({ variant: 'outline', size: 'lg' })}>
+        <Link
+          href="/products"
+          className={buttonVariants({ variant: 'outline', size: 'lg' })}
+        >
           繼續購物
         </Link>
       </div>

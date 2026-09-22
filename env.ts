@@ -32,7 +32,9 @@ export function postgresEnv() {
 export function imagekitEnv() {
   const parsed = z
     .object({
-      IMAGEKIT_URL_ENDPOINT: z.url('IMAGEKIT_URL_ENDPOINT 必須是完整的 URL endpoint !'),
+      IMAGEKIT_URL_ENDPOINT: z.url(
+        'IMAGEKIT_URL_ENDPOINT 必須是完整的 URL endpoint !',
+      ),
     })
     .parse(process.env);
 

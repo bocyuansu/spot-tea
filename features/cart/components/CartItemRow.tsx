@@ -48,7 +48,9 @@ const CartItemRow = memo(function CartItemRow({
           <div className="flex items-center justify-between gap-2">
             <div className="flex flex-col">
               <span className="font-medium">{item.productName}</span>
-              <span className="text-xs text-muted-foreground">規格：{item.variantLabel}</span>
+              <span className="text-xs text-muted-foreground">
+                規格：{item.variantLabel}
+              </span>
               <span className="text-xs text-muted-foreground">
                 單價：{formatPriceTWD(item.price)}
               </span>
@@ -68,7 +70,9 @@ const CartItemRow = memo(function CartItemRow({
             <QuantityStepper
               value={item.quantity}
               max={item.stock}
-              onChange={(quantity) => onQuantityChange(item.variantId, quantity)}
+              onChange={(quantity) =>
+                onQuantityChange(item.variantId, quantity)
+              }
             />
             <span className="font-semibold text-primary">
               {formatPriceTWD(item.price * item.quantity)}

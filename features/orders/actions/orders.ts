@@ -6,9 +6,15 @@ import { and, eq, inArray } from 'drizzle-orm';
 import { getDatabase } from '@/db/client';
 import { order, orderEvent } from '@/db/schema';
 import { createAuth } from '@/lib/auth';
-import { getPreviousStatuses, orderStatusTransitions } from '@/features/orders/order-status';
+import {
+  getPreviousStatuses,
+  orderStatusTransitions,
+} from '@/features/orders/order-status';
 import { restoreOrderStock } from '@/features/orders/restore-stock';
-import { cancelOrderSchema, type CancelOrderValues } from '@/features/orders/schemas/cancel-order';
+import {
+  cancelOrderSchema,
+  type CancelOrderValues,
+} from '@/features/orders/schemas/cancel-order';
 
 export type CancelOrderResult = { ok: true } | { ok: false; message: string };
 
@@ -34,7 +40,8 @@ export async function cancelOrder(
   if (!session) return { ok: false, message: '請先登入再取消訂單 !' };
 
   const parsed = cancelOrderSchema.safeParse(values);
-  if (!parsed.success) return { ok: false, message: '欄位格式有誤，請重新檢查 !' };
+  if (!parsed.success)
+    return { ok: false, message: '欄位格式有誤，請重新檢查 !' };
 
   const db = await getDatabase('fresh');
 
@@ -42,25 +49,35 @@ export async function cancelOrder(
     const cancelled = await db.transaction(async (tx) => {
       const [row] = await tx
         .update(order)
-        .set({ status: 'cancelled', cancelReason: parsed.data.reason, updatedById: null })
+        .set({
+          status: 'cancelled',
+          cancelReason: parsed.data.reason,
+          updatedById: null,
+        })
         .where(
           and(
             eq(order.id, orderId),
             eq(order.userId, session.user.id),
-            inArray(order.status, getPreviousStatuses(orderStatusTransitions, 'cancelled')),
+            inArray(
+              order.status,
+              getPreviousStatuses(orderStatusTransitions, 'cancelled'),
+            ),
           ),
         )
         .returning({ id: order.id });
 
       if (!row) return false;
 
-      await tx.insert(orderEvent).values({ orderId: row.id, status: 'cancelled', actorId: null });
+      await tx
+        .insert(orderEvent)
+        .values({ orderId: row.id, status: 'cancelled', actorId: null });
       await restoreOrderStock(tx, row.id);
 
       return true;
     });
 
-    if (!cancelled) return { ok: false, message: '訂單狀態已經變更，請重新整理後再試 !' };
+    if (!cancelled)
+      return { ok: false, message: '訂單狀態已經變更，請重新整理後再試 !' };
   } catch {
     return { ok: false, message: '取消失敗，請稍後再試 !' };
   }

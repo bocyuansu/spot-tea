@@ -1,7 +1,13 @@
 'use client';
 
 /* UI */
-import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field';
+import {
+  Field,
+  FieldDescription,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from '@/components/ui/field';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -27,15 +33,23 @@ import {
 import ProductImagesField from '@/features/admin/products/components/ProductImagesField';
 import ProductVariantMatrix from '@/features/admin/products/components/ProductVariantMatrix';
 /* Server actions */
-import { createProduct, updateProduct } from '@/features/admin/products/actions/products';
+import {
+  createProduct,
+  updateProduct,
+} from '@/features/admin/products/actions/products';
 import { uploadProductImages } from '@/features/admin/products/upload-product-images';
 import { productStatusLabels } from '@/features/products/product-status';
 /* Nextjs */
 import { useTransition } from 'react';
 import { useRouter } from 'next/navigation';
-import type { AdminCategory, AdminProductDetail } from '@/db/queries/admin/products';
+import type {
+  AdminCategory,
+  AdminProductDetail,
+} from '@/db/queries/admin/products';
 
-function toFormValues(product: AdminProductDetail | undefined): ProductFormValues {
+function toFormValues(
+  product: AdminProductDetail | undefined,
+): ProductFormValues {
   if (!product) {
     return {
       name: '',
@@ -86,7 +100,9 @@ export default function ProductForm({ categories, product }: ProductFormProps) {
   // Select 的 items 讓 SelectValue 顯示標籤而不是原始的值
   const categoryItems: Record<string, string> = {
     [UNCATEGORIZED]: '未分類',
-    ...Object.fromEntries(categories.map((category) => [category.id, category.name])),
+    ...Object.fromEntries(
+      categories.map((category) => [category.id, category.name]),
+    ),
   };
 
   function onSubmit(values: ProductFormValues) {
@@ -97,7 +113,11 @@ export default function ProductForm({ categories, product }: ProductFormProps) {
       form.setValue('images', upload.images);
 
       if (!upload.ok) {
-        toast.add({ type: 'error', description: upload.message, priority: 'high' });
+        toast.add({
+          type: 'error',
+          description: upload.message,
+          priority: 'high',
+        });
         return;
       }
 
@@ -106,18 +126,28 @@ export default function ProductForm({ categories, product }: ProductFormProps) {
         : await createProduct({ ...values, images: upload.images });
 
       if (!result.ok) {
-        toast.add({ type: 'error', description: result.message, priority: 'high' });
+        toast.add({
+          type: 'error',
+          description: result.message,
+          priority: 'high',
+        });
         return;
       }
 
-      toast.add({ type: 'success', description: product ? '商品已更新 !' : '商品已新增 !' });
+      toast.add({
+        type: 'success',
+        description: product ? '商品已更新 !' : '商品已新增 !',
+      });
 
       router.push('/admin/products');
     });
   }
 
   return (
-    <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-6">
+    <form
+      onSubmit={form.handleSubmit(onSubmit)}
+      className="flex flex-col gap-6"
+    >
       <Card className="[--card-spacing:--spacing(6)]">
         <CardHeader>
           <CardTitle className="text-xl">基本資料</CardTitle>
@@ -135,7 +165,9 @@ export default function ProductForm({ categories, product }: ProductFormProps) {
                     placeholder="阿里山高山烏龍"
                     {...field}
                   />
-                  {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
                 </Field>
               )}
             />
@@ -151,8 +183,12 @@ export default function ProductForm({ categories, product }: ProductFormProps) {
                     placeholder="alishan-oolong"
                     {...field}
                   />
-                  <FieldDescription>前台網址會是 /products/{field.value || '...'}</FieldDescription>
-                  {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                  <FieldDescription>
+                    前台網址會是 /products/{field.value || '...'}
+                  </FieldDescription>
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
                 </Field>
               )}
             />
@@ -167,7 +203,9 @@ export default function ProductForm({ categories, product }: ProductFormProps) {
                     <Select
                       items={categoryItems}
                       value={field.value}
-                      onValueChange={(value) => field.onChange(value ?? UNCATEGORIZED)}
+                      onValueChange={(value) =>
+                        field.onChange(value ?? UNCATEGORIZED)
+                      }
                     >
                       <SelectTrigger className="w-full">
                         <SelectValue />
@@ -193,17 +231,21 @@ export default function ProductForm({ categories, product }: ProductFormProps) {
                     <Select
                       items={productStatusLabels}
                       value={field.value}
-                      onValueChange={(value) => field.onChange(value ?? 'draft')}
+                      onValueChange={(value) =>
+                        field.onChange(value ?? 'draft')
+                      }
                     >
                       <SelectTrigger className="w-full">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        {Object.entries(productStatusLabels).map(([value, label]) => (
-                          <SelectItem key={value} value={value}>
-                            {label}
-                          </SelectItem>
-                        ))}
+                        {Object.entries(productStatusLabels).map(
+                          ([value, label]) => (
+                            <SelectItem key={value} value={value}>
+                              {label}
+                            </SelectItem>
+                          ),
+                        )}
                       </SelectContent>
                     </Select>
                   </Field>
@@ -217,8 +259,14 @@ export default function ProductForm({ categories, product }: ProductFormProps) {
               render={({ field, fieldState }) => (
                 <Field>
                   <FieldLabel>產地</FieldLabel>
-                  <Input aria-invalid={fieldState.invalid} placeholder="南投鹿谷" {...field} />
-                  {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                  <Input
+                    aria-invalid={fieldState.invalid}
+                    placeholder="南投鹿谷"
+                    {...field}
+                  />
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
                 </Field>
               )}
             />
@@ -229,8 +277,14 @@ export default function ProductForm({ categories, product }: ProductFormProps) {
               render={({ field, fieldState }) => (
                 <Field>
                   <FieldLabel>商品描述</FieldLabel>
-                  <Textarea aria-invalid={fieldState.invalid} rows={4} {...field} />
-                  {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                  <Textarea
+                    aria-invalid={fieldState.invalid}
+                    rows={4}
+                    {...field}
+                  />
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
                 </Field>
               )}
             />
@@ -267,7 +321,11 @@ export default function ProductForm({ categories, product }: ProductFormProps) {
             <span>{product ? '儲存變更' : '新增商品'}</span>
           )}
         </Button>
-        <Button type="button" variant="outline" onClick={() => router.push('/admin/products')}>
+        <Button
+          type="button"
+          variant="outline"
+          onClick={() => router.push('/admin/products')}
+        >
           取消
         </Button>
       </div>

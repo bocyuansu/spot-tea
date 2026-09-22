@@ -15,7 +15,9 @@ const SALT_BYTES = 16;
 const KEY_BITS = 256;
 
 function toHex(bytes: Uint8Array) {
-  return Array.from(bytes, (byte) => byte.toString(16).padStart(2, '0')).join('');
+  return Array.from(bytes, (byte) => byte.toString(16).padStart(2, '0')).join(
+    '',
+  );
 }
 
 function fromHex(hex: string) {
@@ -44,7 +46,11 @@ function timingSafeEqual(a: string, b: string) {
 }
 
 // salt 標成 Uint8Array<ArrayBuffer>：BufferSource 不收可能背靠 SharedArrayBuffer 的 Uint8Array
-async function deriveKey(password: string, salt: Uint8Array<ArrayBuffer>, iterations: number) {
+async function deriveKey(
+  password: string,
+  salt: Uint8Array<ArrayBuffer>,
+  iterations: number,
+) {
   const key = await crypto.subtle.importKey(
     'raw',
     // NFKC 沿用 Better Auth 預設實作，同一個密碼的不同 Unicode 正規化形式才驗得過
@@ -78,7 +84,11 @@ export async function verifyPassword(data: { hash: string; password: string }) {
     return false;
   }
 
-  const target = await deriveKey(data.password, fromHex(salt), Number(iterations));
+  const target = await deriveKey(
+    data.password,
+    fromHex(salt),
+    Number(iterations),
+  );
 
   return timingSafeEqual(toHex(target), key);
 }

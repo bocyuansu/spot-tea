@@ -5,7 +5,12 @@ import { useRouter } from 'next/navigation';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field';
+import {
+  Field,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from '@/components/ui/toast';
@@ -18,14 +23,19 @@ import {
   paymentMethods,
 } from '@/features/orders/order-status';
 import { createOrder } from '@/features/checkout/actions/checkout';
-import { checkoutFormSchema, type CheckoutFormValues } from '@/features/checkout/schemas/checkout';
+import {
+  checkoutFormSchema,
+  type CheckoutFormValues,
+} from '@/features/checkout/schemas/checkout';
 import CheckoutSummary from '@/features/checkout/components/CheckoutSummary';
 
 type CheckoutFormProps = {
   defaultRecipientName: string;
 };
 
-export default function CheckoutForm({ defaultRecipientName }: CheckoutFormProps) {
+export default function CheckoutForm({
+  defaultRecipientName,
+}: CheckoutFormProps) {
   const { items, subtotal, updatePrices } = useCart();
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
@@ -52,7 +62,10 @@ export default function CheckoutForm({ defaultRecipientName }: CheckoutFormProps
     startTransition(async () => {
       const result = await createOrder({
         ...values,
-        items: items.map((item) => ({ variantId: item.variantId, quantity: item.quantity })),
+        items: items.map((item) => ({
+          variantId: item.variantId,
+          quantity: item.quantity,
+        })),
         expectedTotal: totalAmount,
       });
 
@@ -60,13 +73,20 @@ export default function CheckoutForm({ defaultRecipientName }: CheckoutFormProps
         // 價格變了：換上最新單價，右側的訂單明細會跟著重算，顧客確認後再送一次
         if (result.latestPrices) updatePrices(result.latestPrices);
 
-        toast.add({ type: 'error', description: result.message, priority: 'high' });
+        toast.add({
+          type: 'error',
+          description: result.message,
+          priority: 'high',
+        });
         return;
       }
 
       toast.add({
         type: 'success',
-        description: values.paymentMethod === 'ecpay' ? '訂單已成立，請完成付款 !' : '訂單已成立 !',
+        description:
+          values.paymentMethod === 'ecpay'
+            ? '訂單已成立，請完成付款 !'
+            : '訂單已成立 !',
       });
 
       // 不能用 server 端 redirect（見 proxy.ts 的 1101 說明），一律 client 端導頁。
@@ -95,8 +115,14 @@ export default function CheckoutForm({ defaultRecipientName }: CheckoutFormProps
                 render={({ field, fieldState }) => (
                   <Field>
                     <FieldLabel>收件人姓名</FieldLabel>
-                    <Input aria-invalid={fieldState.invalid} placeholder="王小明" {...field} />
-                    {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                    <Input
+                      aria-invalid={fieldState.invalid}
+                      placeholder="王小明"
+                      {...field}
+                    />
+                    {fieldState.invalid && (
+                      <FieldError errors={[fieldState.error]} />
+                    )}
                   </Field>
                 )}
               />
@@ -114,7 +140,9 @@ export default function CheckoutForm({ defaultRecipientName }: CheckoutFormProps
                       placeholder="0912345678"
                       {...field}
                     />
-                    {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                    {fieldState.invalid && (
+                      <FieldError errors={[fieldState.error]} />
+                    )}
                   </Field>
                 )}
               />
@@ -132,7 +160,9 @@ export default function CheckoutForm({ defaultRecipientName }: CheckoutFormProps
                         placeholder="106"
                         {...field}
                       />
-                      {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                      {fieldState.invalid && (
+                        <FieldError errors={[fieldState.error]} />
+                      )}
                     </Field>
                   )}
                 />
@@ -143,8 +173,14 @@ export default function CheckoutForm({ defaultRecipientName }: CheckoutFormProps
                   render={({ field, fieldState }) => (
                     <Field>
                       <FieldLabel>縣市</FieldLabel>
-                      <Input aria-invalid={fieldState.invalid} placeholder="台北市" {...field} />
-                      {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                      <Input
+                        aria-invalid={fieldState.invalid}
+                        placeholder="台北市"
+                        {...field}
+                      />
+                      {fieldState.invalid && (
+                        <FieldError errors={[fieldState.error]} />
+                      )}
                     </Field>
                   )}
                 />
@@ -155,8 +191,14 @@ export default function CheckoutForm({ defaultRecipientName }: CheckoutFormProps
                   render={({ field, fieldState }) => (
                     <Field>
                       <FieldLabel>鄉鎮市區</FieldLabel>
-                      <Input aria-invalid={fieldState.invalid} placeholder="大安區" {...field} />
-                      {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                      <Input
+                        aria-invalid={fieldState.invalid}
+                        placeholder="大安區"
+                        {...field}
+                      />
+                      {fieldState.invalid && (
+                        <FieldError errors={[fieldState.error]} />
+                      )}
                     </Field>
                   )}
                 />
@@ -173,7 +215,9 @@ export default function CheckoutForm({ defaultRecipientName }: CheckoutFormProps
                       placeholder="信義路四段 1 號 8 樓"
                       {...field}
                     />
-                    {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                    {fieldState.invalid && (
+                      <FieldError errors={[fieldState.error]} />
+                    )}
                   </Field>
                 )}
               />
@@ -190,7 +234,9 @@ export default function CheckoutForm({ defaultRecipientName }: CheckoutFormProps
                       placeholder="例如：請用禮盒包裝"
                       {...field}
                     />
-                    {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                    {fieldState.invalid && (
+                      <FieldError errors={[fieldState.error]} />
+                    )}
                   </Field>
                 )}
               />
@@ -207,7 +253,11 @@ export default function CheckoutForm({ defaultRecipientName }: CheckoutFormProps
               name="paymentMethod"
               control={form.control}
               render={({ field }) => (
-                <div role="radiogroup" aria-label="付款方式" className="flex flex-col gap-2">
+                <div
+                  role="radiogroup"
+                  aria-label="付款方式"
+                  className="flex flex-col gap-2"
+                >
                   {paymentMethods.map((method) => (
                     <button
                       key={method}
@@ -222,7 +272,9 @@ export default function CheckoutForm({ defaultRecipientName }: CheckoutFormProps
                           : 'border-border hover:bg-muted',
                       )}
                     >
-                      <span className="font-medium">{paymentMethodLabels[method]}</span>
+                      <span className="font-medium">
+                        {paymentMethodLabels[method]}
+                      </span>
                       <span className="block text-xs text-muted-foreground">
                         {paymentMethodDescriptions[method]}
                       </span>

@@ -32,4 +32,6 @@ export async function getAdminOrderById(id: string) {
 }
 
 export type AdminOrder = Awaited<ReturnType<typeof listAdminOrders>>[number];
-export type AdminOrderDetail = NonNullable<Awaited<ReturnType<typeof getAdminOrderById>>>;
+export type AdminOrderDetail = NonNullable<
+  Awaited<ReturnType<typeof getAdminOrderById>>
+>;

@@ -18,7 +18,9 @@ export const metadata: Metadata = {
 };
 
 // 導覽列與 Footer 交給各 route group 的 layout，這裡只留全站共用的外殼。
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+export default function RootLayout({
+  children,
+}: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="zh-Hant-TW" className={cn('font-serif', notoSerif.variable)}>
       <body>

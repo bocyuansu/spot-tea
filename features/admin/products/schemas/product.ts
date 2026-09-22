@@ -6,7 +6,9 @@ const requiredNumber = (message: string) => z.number({ error: message });
 export const productVariantSchema = z.object({
   // 既有規格帶著 id 回來，新增的規格留空
   id: z.string().optional(),
-  weightGrams: requiredNumber('請輸入淨重 !').int().positive('淨重必須大於 0 !'),
+  weightGrams: requiredNumber('請輸入淨重 !')
+    .int()
+    .positive('淨重必須大於 0 !'),
   label: z.string().max(20, '顯示名稱不得超過 20 個字 !'),
   sku: z.string().min(1, '請輸入 SKU !').max(40, 'SKU 不得超過 40 個字 !'),
   price: requiredNumber('請輸入價格 !').int().min(0, '價格不得小於 0 !'),
@@ -20,7 +22,10 @@ export const productVariantSchema = z.object({
  * file 留到表單送出時才真的傳上物件儲存，屆時 url 會換成公開網址。
  */
 export const productImageSchema = z.object({
-  url: z.string().min(1, '圖片網址不正確 !').max(300, '圖片網址不得超過 300 個字 !'),
+  url: z
+    .string()
+    .min(1, '圖片網址不正確 !')
+    .max(300, '圖片網址不得超過 300 個字 !'),
   file: z.instanceof(File).optional(),
 });
 
@@ -28,12 +33,18 @@ export const productImageSchema = z.object({
 export const UNCATEGORIZED = '';
 
 export const productFormSchema = z.object({
-  name: z.string().min(1, '請輸入商品名稱 !').max(60, '商品名稱不得超過 60 個字 !'),
+  name: z
+    .string()
+    .min(1, '請輸入商品名稱 !')
+    .max(60, '商品名稱不得超過 60 個字 !'),
   slug: z
     .string()
     .min(1, '請輸入網址代稱 !')
     .max(60, '網址代稱不得超過 60 個字 !')
-    .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, '網址代稱只能使用小寫英文、數字與連字號 !'),
+    .regex(
+      /^[a-z0-9]+(?:-[a-z0-9]+)*$/,
+      '網址代稱只能使用小寫英文、數字與連字號 !',
+    ),
   // 可以是 UNCATEGORIZED
   categoryId: z.string(),
   status: z.enum(['draft', 'published', 'archived']),

@@ -41,7 +41,11 @@ export default function OrderStepButton({
       const result = await onRun();
 
       if (!result.ok) {
-        toast.add({ type: 'error', description: result.message, priority: 'high' });
+        toast.add({
+          type: 'error',
+          description: result.message,
+          priority: 'high',
+        });
         return;
       }
 
@@ -71,18 +75,28 @@ export default function OrderStepButton({
 
   return (
     <>
-      <Button variant={variant} disabled={disabled} onClick={() => setOpen(true)}>
+      <Button
+        variant={variant}
+        disabled={disabled}
+        onClick={() => setOpen(true)}
+      >
         {label}
       </Button>
       <AlertDialog open={open} onOpenChange={setOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>{confirm.title}</AlertDialogTitle>
-            <AlertDialogDescription>{confirm.description}</AlertDialogDescription>
+            <AlertDialogDescription>
+              {confirm.description}
+            </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel disabled={isPending}>返回</AlertDialogCancel>
-            <AlertDialogAction variant={variant} disabled={isPending} onClick={run}>
+            <AlertDialogAction
+              variant={variant}
+              disabled={isPending}
+              onClick={run}
+            >
               {content}
             </AlertDialogAction>
           </AlertDialogFooter>

@@ -1,7 +1,13 @@
 'use client';
 
 /* UI */
-import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field';
+import {
+  Field,
+  FieldDescription,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from '@/components/ui/field';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from '@/components/ui/toast';
@@ -78,14 +84,23 @@ export default function ProfileForm({ defaultName }: ProfileFormProps) {
               render={({ field, fieldState }) => (
                 <Field>
                   <FieldLabel>用戶名稱</FieldLabel>
-                  <Input aria-invalid={fieldState.invalid} placeholder="username" {...field} />
-                  {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                  <Input
+                    aria-invalid={fieldState.invalid}
+                    placeholder="username"
+                    {...field}
+                  />
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
                 </Field>
               )}
             />
             <Field>
               <FieldDescription>電子信箱註冊後無法修改</FieldDescription>
-              <Button type="submit" disabled={isPending || !form.formState.isDirty}>
+              <Button
+                type="submit"
+                disabled={isPending || !form.formState.isDirty}
+              >
                 {isPending ? (
                   <>
                     <Loader2 className="size-4 animate-spin" />

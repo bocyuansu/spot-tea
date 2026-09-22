@@ -1,6 +1,9 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { getAdminProductById, listAdminCategories } from '@/db/queries/admin/products';
+import {
+  getAdminProductById,
+  listAdminCategories,
+} from '@/db/queries/admin/products';
 import ProductForm from '@/features/admin/products/components/ProductForm';
 
 export const metadata: Metadata = {
@@ -11,10 +14,15 @@ type AdminProductEditPageProps = {
   params: Promise<{ id: string }>;
 };
 
-export default async function AdminProductEditPage({ params }: AdminProductEditPageProps) {
+export default async function AdminProductEditPage({
+  params,
+}: AdminProductEditPageProps) {
   const { id } = await params;
 
-  const [product, categories] = await Promise.all([getAdminProductById(id), listAdminCategories()]);
+  const [product, categories] = await Promise.all([
+    getAdminProductById(id),
+    listAdminCategories(),
+  ]);
 
   if (!product) notFound();
 

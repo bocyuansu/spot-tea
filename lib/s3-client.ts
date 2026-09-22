@@ -26,4 +26,5 @@ export const client = new S3Client({
 });
 
 // 型別綁在 neon.ts 的 buckets 上，打錯或是刪掉宣告都會編譯失敗
-export const STORAGE_BUCKET: keyof NonNullable<typeof config.buckets> = 'images';
+export const STORAGE_BUCKET: keyof NonNullable<typeof config.buckets> =
+  'images';

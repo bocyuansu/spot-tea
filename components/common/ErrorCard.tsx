@@ -32,7 +32,10 @@ export default function ErrorCard({
           <Button type="button" size="lg" onClick={onRetry}>
             重新載入
           </Button>
-          <Link href={homeHref} className={buttonVariants({ size: 'lg', variant: 'outline' })}>
+          <Link
+            href={homeHref}
+            className={buttonVariants({ size: 'lg', variant: 'outline' })}
+          >
             {homeLabel}
           </Link>
         </div>

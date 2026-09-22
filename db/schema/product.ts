@@ -1,8 +1,19 @@
-import { pgTable, text, timestamp, index, integer, pgEnum } from 'drizzle-orm/pg-core';
+import {
+  pgTable,
+  text,
+  timestamp,
+  index,
+  integer,
+  pgEnum,
+} from 'drizzle-orm/pg-core';
 
 import { InferSelectModel } from 'drizzle-orm';
 
-export const productStatusEnum = pgEnum('product_status', ['draft', 'published', 'archived']);
+export const productStatusEnum = pgEnum('product_status', [
+  'draft',
+  'published',
+  'archived',
+]);
 
 export const category = pgTable('category', {
   id: text('id')

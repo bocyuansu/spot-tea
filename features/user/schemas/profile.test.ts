@@ -10,6 +10,8 @@ describe('updateProfileSchema', () => {
 
   it('rejects names outside the length limits', () => {
     expect(updateProfileSchema.safeParse({ name: '找' }).success).toBe(false);
-    expect(updateProfileSchema.safeParse({ name: '找'.repeat(21) }).success).toBe(false);
+    expect(
+      updateProfileSchema.safeParse({ name: '找'.repeat(21) }).success,
+    ).toBe(false);
   });
 });

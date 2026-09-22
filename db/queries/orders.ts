@@ -17,7 +17,10 @@ export async function listUserOrders(userId: string) {
 }
 
 // 訂單完成頁用。查詢綁著 userId，別人的訂單編號自然查不到，頁面就回 404
-export async function getUserOrderByNumber(userId: string, orderNumber: string) {
+export async function getUserOrderByNumber(
+  userId: string,
+  orderNumber: string,
+) {
   const db = await getDatabase('fresh');
 
   return db.query.order.findFirst({

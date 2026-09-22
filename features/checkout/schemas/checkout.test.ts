@@ -1,7 +1,13 @@
 import { describe, expect, it } from 'vitest';
-import { checkoutFormSchema, createOrderSchema, type CheckoutFormValues } from './checkout';
+import {
+  checkoutFormSchema,
+  createOrderSchema,
+  type CheckoutFormValues,
+} from './checkout';
 
-function createFormValues(overrides: Partial<CheckoutFormValues> = {}): CheckoutFormValues {
+function createFormValues(
+  overrides: Partial<CheckoutFormValues> = {},
+): CheckoutFormValues {
   return {
     recipientName: 'Cyuan Su',
     phone: '0912345678',
@@ -21,24 +27,34 @@ describe('checkoutFormSchema', () => {
   });
 
   it('accepts a 6 digit postal code', () => {
-    expect(checkoutFormSchema.safeParse(createFormValues({ postalCode: '106001' })).success).toBe(
-      true,
-    );
+    expect(
+      checkoutFormSchema.safeParse(createFormValues({ postalCode: '106001' }))
+        .success,
+    ).toBe(true);
   });
 
   it('rejects a phone number that is not a Taiwan mobile', () => {
-    expect(checkoutFormSchema.safeParse(createFormValues({ phone: '0912' })).success).toBe(false);
-    expect(checkoutFormSchema.safeParse(createFormValues({ phone: '0212345678' })).success).toBe(
-      false,
-    );
-    expect(checkoutFormSchema.safeParse(createFormValues({ phone: '09123456789' })).success).toBe(
-      false,
-    );
+    expect(
+      checkoutFormSchema.safeParse(createFormValues({ phone: '0912' })).success,
+    ).toBe(false);
+    expect(
+      checkoutFormSchema.safeParse(createFormValues({ phone: '0212345678' }))
+        .success,
+    ).toBe(false);
+    expect(
+      checkoutFormSchema.safeParse(createFormValues({ phone: '09123456789' }))
+        .success,
+    ).toBe(false);
   });
 
   it('rejects an empty required address field', () => {
-    expect(checkoutFormSchema.safeParse(createFormValues({ city: '' })).success).toBe(false);
-    expect(checkoutFormSchema.safeParse(createFormValues({ addressLine: '' })).success).toBe(false);
+    expect(
+      checkoutFormSchema.safeParse(createFormValues({ city: '' })).success,
+    ).toBe(false);
+    expect(
+      checkoutFormSchema.safeParse(createFormValues({ addressLine: '' }))
+        .success,
+    ).toBe(false);
   });
 
   it('rejects an unknown payment method', () => {
@@ -95,7 +111,10 @@ describe('createOrderSchema', () => {
   });
 
   it('requires the total the customer saw', () => {
-    const input = { ...createFormValues(), items: [{ variantId: 'var-1', quantity: 2 }] };
+    const input = {
+      ...createFormValues(),
+      items: [{ variantId: 'var-1', quantity: 2 }],
+    };
 
     expect(createOrderSchema.safeParse(input).success).toBe(false);
   });

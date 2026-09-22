@@ -15,7 +15,10 @@ export function proxy(request: NextRequest) {
   // 沒登入就帶去登入頁，並記住原本要去的地方，例如從購物車按「前往結帳」
   if (!getSessionCookie(request)) {
     const loginUrl = new URL('/login', request.url);
-    loginUrl.searchParams.set('next', `${request.nextUrl.pathname}${request.nextUrl.search}`);
+    loginUrl.searchParams.set(
+      'next',
+      `${request.nextUrl.pathname}${request.nextUrl.search}`,
+    );
 
     return NextResponse.redirect(loginUrl);
   }

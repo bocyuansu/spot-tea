@@ -1,7 +1,13 @@
 'use client';
 
 /* UI */
-import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field';
+import {
+  Field,
+  FieldDescription,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from '@/components/ui/field';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -98,10 +104,15 @@ export default function UserCreateDialog() {
         <span>新增會員</span>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
-        <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4">
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="flex flex-col gap-4"
+        >
           <DialogHeader>
             <DialogTitle>新增會員</DialogTitle>
-            <DialogDescription>直接建立一個已經可以登入的帳號</DialogDescription>
+            <DialogDescription>
+              直接建立一個已經可以登入的帳號
+            </DialogDescription>
           </DialogHeader>
 
           <FieldGroup className="gap-y-4">
@@ -111,8 +122,14 @@ export default function UserCreateDialog() {
               render={({ field, fieldState }) => (
                 <Field>
                   <FieldLabel>用戶名稱</FieldLabel>
-                  <Input aria-invalid={fieldState.invalid} placeholder="username" {...field} />
-                  {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                  <Input
+                    aria-invalid={fieldState.invalid}
+                    placeholder="username"
+                    {...field}
+                  />
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
                 </Field>
               )}
             />
@@ -130,7 +147,9 @@ export default function UserCreateDialog() {
                     {...field}
                   />
                   <FieldDescription>建立之後無法修改</FieldDescription>
-                  {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
                 </Field>
               )}
             />
@@ -141,8 +160,14 @@ export default function UserCreateDialog() {
               render={({ field, fieldState }) => (
                 <Field>
                   <FieldLabel>密碼</FieldLabel>
-                  <Input type="password" aria-invalid={fieldState.invalid} {...field} />
-                  {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                  <Input
+                    type="password"
+                    aria-invalid={fieldState.invalid}
+                    {...field}
+                  />
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
                 </Field>
               )}
             />
@@ -156,17 +181,21 @@ export default function UserCreateDialog() {
                   <Select
                     items={adminUserRoleLabels}
                     value={field.value}
-                    onValueChange={(value) => field.onChange(value ?? 'customer')}
+                    onValueChange={(value) =>
+                      field.onChange(value ?? 'customer')
+                    }
                   >
                     <SelectTrigger className="w-full">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      {Object.entries(adminUserRoleLabels).map(([value, label]) => (
-                        <SelectItem key={value} value={value}>
-                          {label}
-                        </SelectItem>
-                      ))}
+                      {Object.entries(adminUserRoleLabels).map(
+                        ([value, label]) => (
+                          <SelectItem key={value} value={value}>
+                            {label}
+                          </SelectItem>
+                        ),
+                      )}
                     </SelectContent>
                   </Select>
                 </Field>
@@ -175,7 +204,10 @@ export default function UserCreateDialog() {
           </FieldGroup>
 
           <DialogFooter>
-            <DialogClose disabled={isPending} render={<Button variant="outline" />}>
+            <DialogClose
+              disabled={isPending}
+              render={<Button variant="outline" />}
+            >
               取消
             </DialogClose>
             <Button type="submit" disabled={isPending}>

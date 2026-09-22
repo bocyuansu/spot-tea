@@ -40,11 +40,13 @@ export async function transitionOrderStatus(
   if (!admin) return { ok: false, message: '沒有權限執行這個操作 !' };
 
   const parsed = adminOrderStatusSchema.safeParse(next);
-  if (!parsed.success) return { ok: false, message: '欄位格式有誤，請重新檢查 !' };
+  if (!parsed.success)
+    return { ok: false, message: '欄位格式有誤，請重新檢查 !' };
 
   // 待處理是起點，沒有任何一步能走回去
   const from = getPreviousStatuses(orderStatusTransitions, parsed.data);
-  if (from.length === 0) return { ok: false, message: '訂單狀態不能這樣變更 !' };
+  if (from.length === 0)
+    return { ok: false, message: '訂單狀態不能這樣變更 !' };
 
   const db = await getDatabase('fresh');
 
@@ -58,7 +60,10 @@ export async function transitionOrderStatus(
             eq(order.id, id),
             inArray(order.status, from),
             parsed.data === 'processing'
-              ? or(eq(order.paymentProvider, 'cod'), eq(order.paymentStatus, 'paid'))
+              ? or(
+                  eq(order.paymentProvider, 'cod'),
+                  eq(order.paymentStatus, 'paid'),
+                )
               : undefined,
           ),
         )
@@ -103,11 +108,13 @@ export async function transitionPaymentStatus(
   if (!admin) return { ok: false, message: '沒有權限執行這個操作 !' };
 
   const parsed = adminPaymentStatusSchema.safeParse(next);
-  if (!parsed.success) return { ok: false, message: '欄位格式有誤，請重新檢查 !' };
+  if (!parsed.success)
+    return { ok: false, message: '欄位格式有誤，請重新檢查 !' };
 
   // 未付款與付款失敗是起點，沒有任何一步能走回去
   const from = getPreviousStatuses(paymentStatusTransitions, parsed.data);
-  if (from.length === 0) return { ok: false, message: '付款狀態不能這樣變更 !' };
+  if (from.length === 0)
+    return { ok: false, message: '付款狀態不能這樣變更 !' };
 
   const db = await getDatabase('fresh');
 
@@ -129,7 +136,11 @@ export async function transitionPaymentStatus(
 
       await tx
         .insert(orderEvent)
-        .values({ orderId: row.id, paymentStatus: parsed.data, actorId: admin.id });
+        .values({
+          orderId: row.id,
+          paymentStatus: parsed.data,
+          actorId: admin.id,
+        });
 
       return true;
     });

@@ -71,7 +71,9 @@ export default function ProductImagesField({ form }: ProductImagesFieldProps) {
   return (
     <div className="flex flex-col gap-3">
       {images.fields.length === 0 ? (
-        <p className="text-sm text-muted-foreground">還沒有圖片，前台會顯示預設的茶葉圖示</p>
+        <p className="text-sm text-muted-foreground">
+          還沒有圖片，前台會顯示預設的茶葉圖示
+        </p>
       ) : (
         <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
           {images.fields.map((imageField, index) => (
@@ -93,7 +95,10 @@ export default function ProductImagesField({ form }: ProductImagesFieldProps) {
                   {index === 0 ? '封面' : `第 ${index + 1} 張`}
                 </Badge>
                 {imageField.file && (
-                  <Badge variant="outline" className="absolute top-1.5 right-1.5 bg-background">
+                  <Badge
+                    variant="outline"
+                    className="absolute top-1.5 right-1.5 bg-background"
+                  >
                     待上傳
                   </Badge>
                 )}
@@ -136,8 +141,8 @@ export default function ProductImagesField({ form }: ProductImagesFieldProps) {
       )}
 
       <FieldDescription>
-        第一張會用在商品列表的封面，用箭頭調整順序。圖片會在儲存時才上傳，單張上限 5MB，支援
-        JPG、PNG、WebP、AVIF
+        第一張會用在商品列表的封面，用箭頭調整順序。圖片會在儲存時才上傳，單張上限
+        5MB，支援 JPG、PNG、WebP、AVIF
       </FieldDescription>
 
       <input

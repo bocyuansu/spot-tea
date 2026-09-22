@@ -10,7 +10,9 @@ type CheckoutViewProps = {
   defaultRecipientName: string;
 };
 
-export default function CheckoutView({ defaultRecipientName }: CheckoutViewProps) {
+export default function CheckoutView({
+  defaultRecipientName,
+}: CheckoutViewProps) {
   const { items, isHydrated } = useCart();
 
   if (!isHydrated) {
@@ -21,7 +23,9 @@ export default function CheckoutView({ defaultRecipientName }: CheckoutViewProps
     return (
       <div className="flex flex-col items-center gap-4 py-16 text-center">
         <Leaf className="size-12 text-muted-foreground/50" />
-        <p className="text-muted-foreground">購物車還是空的，先挑一款好茶吧！</p>
+        <p className="text-muted-foreground">
+          購物車還是空的，先挑一款好茶吧！
+        </p>
         <Link href="/products" className={buttonVariants({ size: 'lg' })}>
           去逛逛商品
         </Link>

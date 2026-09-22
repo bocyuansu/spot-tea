@@ -8,14 +8,20 @@ import {
 
 describe('formatOrderDateStamp', () => {
   it('formats the date as YYYYMMDD', () => {
-    expect(formatOrderDateStamp(new Date('2026-09-19T04:00:00Z'))).toBe('20260919');
+    expect(formatOrderDateStamp(new Date('2026-09-19T04:00:00Z'))).toBe(
+      '20260919',
+    );
   });
 
   it('uses the Taipei date, not the runtime timezone', () => {
     // 台北時間 2026-09-20 00:30，UTC 還在 09-19
-    expect(formatOrderDateStamp(new Date('2026-09-19T16:30:00Z'))).toBe('20260920');
+    expect(formatOrderDateStamp(new Date('2026-09-19T16:30:00Z'))).toBe(
+      '20260920',
+    );
     // 台北時間 2026-09-19 07:59，UTC 還在前一天
-    expect(formatOrderDateStamp(new Date('2026-09-18T23:59:00Z'))).toBe('20260919');
+    expect(formatOrderDateStamp(new Date('2026-09-18T23:59:00Z'))).toBe(
+      '20260919',
+    );
   });
 });
 
@@ -31,9 +37,11 @@ describe('buildOrderNumber', () => {
   });
 
   it('shares the prefix used to look up the latest order of the day', () => {
-    expect(buildOrderNumber('20260919', 1).startsWith(buildOrderNumberPrefix('20260919'))).toBe(
-      true,
-    );
+    expect(
+      buildOrderNumber('20260919', 1).startsWith(
+        buildOrderNumberPrefix('20260919'),
+      ),
+    ).toBe(true);
   });
 });
 

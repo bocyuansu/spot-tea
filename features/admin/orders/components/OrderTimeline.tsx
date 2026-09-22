@@ -1,5 +1,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { orderStatusLabels, paymentStatusLabels } from '@/features/orders/order-status';
+import {
+  orderStatusLabels,
+  paymentStatusLabels,
+} from '@/features/orders/order-status';
 import { formatDateTimeTW } from '@/lib/format';
 import type { AdminOrderDetail } from '@/db/queries/admin/orders';
 
@@ -12,7 +15,8 @@ type OrderTimelineProps = {
 // 每筆事件只會有 status 或 paymentStatus 其中一個（資料庫的 check 限制保證）
 function describeEvent(event: OrderEvent) {
   if (event.status) return `訂單狀態改為${orderStatusLabels[event.status]}`;
-  if (event.paymentStatus) return `付款狀態改為${paymentStatusLabels[event.paymentStatus]}`;
+  if (event.paymentStatus)
+    return `付款狀態改為${paymentStatusLabels[event.paymentStatus]}`;
   return '狀態變更';
 }
 
@@ -45,7 +49,8 @@ export default function OrderTimeline({ order }: OrderTimelineProps) {
             <li key={event.id} className="flex flex-col gap-0.5">
               <span>{describeEvent(event)}</span>
               <span className="text-xs text-muted-foreground">
-                {formatDateTimeTW(event.createdAt)}・{describeActor(event, order.user.name)}
+                {formatDateTimeTW(event.createdAt)}・
+                {describeActor(event, order.user.name)}
               </span>
             </li>
           ))}

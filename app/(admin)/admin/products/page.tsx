@@ -22,7 +22,11 @@ export default async function AdminProductsPage() {
           </p>
         </div>
 
-        <Link href="/admin/products/new" prefetch={false} className={buttonVariants()}>
+        <Link
+          href="/admin/products/create"
+          prefetch={false}
+          className={buttonVariants()}
+        >
           <Plus className="size-4" />
           <span>新增商品</span>
         </Link>

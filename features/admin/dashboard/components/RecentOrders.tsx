@@ -29,7 +29,9 @@ export default function RecentOrders({ orders }: RecentOrdersProps) {
       </CardHeader>
       <CardContent>
         {orders.length === 0 ? (
-          <p className="py-6 text-center text-muted-foreground">目前還沒有任何訂單</p>
+          <p className="py-6 text-center text-muted-foreground">
+            目前還沒有任何訂單
+          </p>
         ) : (
           <Table>
             <TableHeader>
@@ -45,11 +47,15 @@ export default function RecentOrders({ orders }: RecentOrdersProps) {
             <TableBody>
               {orders.map((order) => (
                 <TableRow key={order.id}>
-                  <TableCell className="font-medium">{order.orderNumber}</TableCell>
+                  <TableCell className="font-medium">
+                    {order.orderNumber}
+                  </TableCell>
                   <TableCell>
                     <div className="flex flex-col">
                       <span>{order.user.name}</span>
-                      <span className="text-xs text-muted-foreground">{order.user.email}</span>
+                      <span className="text-xs text-muted-foreground">
+                        {order.user.email}
+                      </span>
                     </div>
                   </TableCell>
                   <TableCell>

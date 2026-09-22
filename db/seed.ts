@@ -5,14 +5,28 @@ import { Client } from 'pg';
 
 import { postgresEnv } from '@/env';
 import { imageUrl } from '@/lib/imagekit';
-import { seedCategories, seedOrderUserEmail, seedOrders, seedProducts } from './seed-data';
-import { category, order, orderItem, product, productVariant, user } from './schema';
+import {
+  seedCategories,
+  seedOrderUserEmail,
+  seedOrders,
+  seedProducts,
+} from './seed-data';
+import {
+  category,
+  order,
+  orderItem,
+  product,
+  productVariant,
+  user,
+} from './schema';
 
 // 加入 override: true 強制覆蓋已經被外部工具注入的環境變數
 config({ path: '.env.local', override: true });
 
 const main = async () => {
-  const client = new Client({ connectionString: postgresEnv().databaseUrlUnpooled });
+  const client = new Client({
+    connectionString: postgresEnv().databaseUrlUnpooled,
+  });
 
   try {
     // 和 Neon 建立連線
@@ -30,17 +44,23 @@ const main = async () => {
       })
       .returning({ id: category.id, slug: category.slug });
 
-    const categoryIdBySlug = new Map(insertedCategories.map((row) => [row.slug, row.id]));
+    const categoryIdBySlug = new Map(
+      insertedCategories.map((row) => [row.slug, row.id]),
+    );
 
     for (const seedProduct of seedProducts) {
       const categoryId = categoryIdBySlug.get(seedProduct.categorySlug);
 
       if (!categoryId) {
-        throw new Error(`找不到分類 ${seedProduct.categorySlug}，請確認 seed 資料`);
+        throw new Error(
+          `找不到分類 ${seedProduct.categorySlug}，請確認 seed 資料`,
+        );
       }
 
       // seed 資料只記檔名，存進資料庫的要跟後台上傳一樣是 ImageKit 的網址
-      const images = seedProduct.images.map((fileName) => imageUrl('products', fileName));
+      const images = seedProduct.images.map((fileName) =>
+        imageUrl('products', fileName),
+      );
 
       const [insertedProduct] = await db
         .insert(product)
@@ -136,7 +156,10 @@ const main = async () => {
           };
         });
 
-        const subtotalAmount = items.reduce((sum, item) => sum + item.subtotal, 0);
+        const subtotalAmount = items.reduce(
+          (sum, item) => sum + item.subtotal,
+          0,
+        );
 
         const [insertedOrder] = await db
           .insert(order)
@@ -174,10 +197,14 @@ const main = async () => {
           .returning({ id: order.id });
 
         // 訂單明細沒有自然鍵可以 upsert，重跑時整批換掉最單純
-        await db.delete(orderItem).where(eq(orderItem.orderId, insertedOrder.id));
+        await db
+          .delete(orderItem)
+          .where(eq(orderItem.orderId, insertedOrder.id));
         await db
           .insert(orderItem)
-          .values(items.map((item) => ({ orderId: insertedOrder.id, ...item })));
+          .values(
+            items.map((item) => ({ orderId: insertedOrder.id, ...item })),
+          );
 
         seededOrderCount += 1;
       }

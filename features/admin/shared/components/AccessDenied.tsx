@@ -19,7 +19,10 @@ export default function AccessDenied() {
           <Link href="/login" className={buttonVariants({ size: 'lg' })}>
             重新登入
           </Link>
-          <Link href="/" className={buttonVariants({ size: 'lg', variant: 'outline' })}>
+          <Link
+            href="/"
+            className={buttonVariants({ size: 'lg', variant: 'outline' })}
+          >
             回到首頁
           </Link>
         </div>

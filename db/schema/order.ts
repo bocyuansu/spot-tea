@@ -23,7 +23,12 @@ export const orderStatusEnum = pgEnum('order_status', [
 ]);
 
 // 付款狀態只描述「錢」的去向，包含退款
-export const paymentStatusEnum = pgEnum('payment_status', ['unpaid', 'paid', 'failed', 'refunded']);
+export const paymentStatusEnum = pgEnum('payment_status', [
+  'unpaid',
+  'paid',
+  'failed',
+  'refunded',
+]);
 
 export const order = pgTable(
   'order',
@@ -38,7 +43,9 @@ export const order = pgTable(
       .notNull()
       .references(() => user.id),
     status: orderStatusEnum('status').default('pending').notNull(),
-    paymentStatus: paymentStatusEnum('payment_status').default('unpaid').notNull(),
+    paymentStatus: paymentStatusEnum('payment_status')
+      .default('unpaid')
+      .notNull(),
     paymentProvider: text('payment_provider'),
     paymentTransactionId: text('payment_transaction_id'),
     subtotalAmount: integer('subtotal_amount').notNull(),
@@ -81,9 +88,12 @@ export const orderItem = pgTable(
     orderId: text('order_id')
       .notNull()
       .references(() => order.id, { onDelete: 'cascade' }),
-    productVariantId: text('product_variant_id').references(() => productVariant.id, {
-      onDelete: 'set null',
-    }),
+    productVariantId: text('product_variant_id').references(
+      () => productVariant.id,
+      {
+        onDelete: 'set null',
+      },
+    ),
     // 商品/規格名稱與售價快照，避免商品之後改名改價影響歷史訂單
     productName: text('product_name').notNull(),
     variantName: text('variant_name').notNull(),
@@ -119,6 +129,9 @@ export const orderEvent = pgTable(
   },
   (table) => [
     index('orderEvent_orderId_idx').on(table.orderId),
-    check('order_event_one_change', sql`num_nonnulls(${table.status}, ${table.paymentStatus}) = 1`),
+    check(
+      'order_event_one_change',
+      sql`num_nonnulls(${table.status}, ${table.paymentStatus}) = 1`,
+    ),
   ],
 );

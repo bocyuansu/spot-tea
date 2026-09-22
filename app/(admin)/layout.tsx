@@ -4,7 +4,11 @@ import { AdminHeader } from '@/components/layout/admin/AdminHeader';
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 import AccessDenied from '@/features/admin/shared/components/AccessDenied';
 
-export default async function AdminLayout({ children }: { children: React.ReactNode }) {
+export default async function AdminLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const session = await getSession();
 
   // proxy.ts 只樂觀確認 cookie 在不在，真正的角色判斷在這一層
@@ -14,7 +18,11 @@ export default async function AdminLayout({ children }: { children: React.ReactN
 
   return (
     <SidebarProvider
-      style={{ '--header-height': 'calc(var(--spacing) * 14)' } as React.CSSProperties}
+      style={
+        {
+          '--header-height': 'calc(var(--spacing) * 14)',
+        } as React.CSSProperties
+      }
     >
       <AdminSidebar user={session.user} />
 

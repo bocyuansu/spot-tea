@@ -11,7 +11,9 @@ import { objectKeyFromUrl } from '@/lib/imagekit';
  * 一次請求最多 1000 個 key，商品圖片遠遠用不到，不另外分批。
  */
 export async function deleteProductImages(urls: string[]) {
-  const keys = urls.map((url) => objectKeyFromUrl('products', url)).filter((key) => key !== null);
+  const keys = urls
+    .map((url) => objectKeyFromUrl('products', url))
+    .filter((key) => key !== null);
   if (keys.length === 0) return;
 
   try {

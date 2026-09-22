@@ -9,7 +9,9 @@ config({ path: '.env.local', override: true });
 
 const main = async () => {
   // 有型別的 env：少了 DATABASE_URL_UNPOOLED 會直接報錯，不會拿 undefined 去連線
-  const client = new Client({ connectionString: postgresEnv().databaseUrlUnpooled });
+  const client = new Client({
+    connectionString: postgresEnv().databaseUrlUnpooled,
+  });
 
   try {
     // 和 Neon 建立連線

@@ -20,7 +20,11 @@ export const productImageUploadSchema = z.object({
   contentType: z.enum(productImageContentTypes, {
     error: '只接受 JPG、PNG、WebP 或 AVIF 圖片 !',
   }),
-  size: z.number().int().positive('檔案是空的 !').max(productImageMaxBytes, '圖片不能超過 5MB !'),
+  size: z
+    .number()
+    .int()
+    .positive('檔案是空的 !')
+    .max(productImageMaxBytes, '圖片不能超過 5MB !'),
 });
 
 /** 瀏覽器直接把 File 的欄位丟過來，還沒驗之前不能假設 contentType 是允許的那幾種 */

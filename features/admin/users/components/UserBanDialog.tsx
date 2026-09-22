@@ -11,7 +11,13 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field';
+import {
+  Field,
+  FieldDescription,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from '@/components/ui/field';
 import {
   Select,
   SelectContent,
@@ -82,7 +88,10 @@ export default function UserBanDialog() {
       }
 
       onOpenChange(false);
-      toast.add({ type: 'success', description: banned ? '會員已解除停權 !' : '會員已停權 !' });
+      toast.add({
+        type: 'success',
+        description: banned ? '會員已解除停權 !' : '會員已停權 !',
+      });
       router.refresh();
     });
   }
@@ -90,10 +99,15 @@ export default function UserBanDialog() {
   return (
     <AlertDialog open={open} onOpenChange={handleOpenChange}>
       <AlertDialogContent>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4">
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="flex flex-col gap-4"
+        >
           <AlertDialogHeader>
             <AlertDialogTitle>
-              {banned ? `確定要解除「${user.name}」的停權嗎 ?` : `確定要停權「${user.name}」嗎 ?`}
+              {banned
+                ? `確定要解除「${user.name}」的停權嗎 ?`
+                : `確定要停權「${user.name}」嗎 ?`}
             </AlertDialogTitle>
             <AlertDialogDescription>
               {banned
@@ -113,20 +127,26 @@ export default function UserBanDialog() {
                     <Select
                       items={adminBanDurationLabels}
                       value={field.value}
-                      onValueChange={(value) => field.onChange(value ?? 'permanent')}
+                      onValueChange={(value) =>
+                        field.onChange(value ?? 'permanent')
+                      }
                     >
                       <SelectTrigger className="w-full">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        {Object.entries(adminBanDurationLabels).map(([value, label]) => (
-                          <SelectItem key={value} value={value}>
-                            {label}
-                          </SelectItem>
-                        ))}
+                        {Object.entries(adminBanDurationLabels).map(
+                          ([value, label]) => (
+                            <SelectItem key={value} value={value}>
+                              {label}
+                            </SelectItem>
+                          ),
+                        )}
                       </SelectContent>
                     </Select>
-                    <FieldDescription>期限到了會員就能自己重新登入</FieldDescription>
+                    <FieldDescription>
+                      期限到了會員就能自己重新登入
+                    </FieldDescription>
                   </Field>
                 )}
               />
@@ -143,7 +163,9 @@ export default function UserBanDialog() {
                       rows={3}
                       {...field}
                     />
-                    {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                    {fieldState.invalid && (
+                      <FieldError errors={[fieldState.error]} />
+                    )}
                   </Field>
                 )}
               />

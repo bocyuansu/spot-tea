@@ -1,6 +1,9 @@
 import CancelOrderDialog from '@/features/orders/components/CancelOrderDialog';
 import EcpayPayButton from '@/features/payments/components/EcpayPayButton';
-import { isAwaitingEcpayPayment, isCancellable } from '@/features/orders/order-status';
+import {
+  isAwaitingEcpayPayment,
+  isCancellable,
+} from '@/features/orders/order-status';
 import type { OrderWithItems } from '@/db/queries/orders';
 
 type OrderActionsProps = {
@@ -16,8 +19,12 @@ export default function OrderActions({ order }: OrderActionsProps) {
 
   return (
     <div className="flex w-full justify-end gap-2">
-      {cancellable && <CancelOrderDialog orderId={order.id} orderNumber={order.orderNumber} />}
-      {awaitingPayment && <EcpayPayButton orderNumber={order.orderNumber} size="sm" />}
+      {cancellable && (
+        <CancelOrderDialog orderId={order.id} orderNumber={order.orderNumber} />
+      )}
+      {awaitingPayment && (
+        <EcpayPayButton orderNumber={order.orderNumber} size="sm" />
+      )}
     </div>
   );
 }

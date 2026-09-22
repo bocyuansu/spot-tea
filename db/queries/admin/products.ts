@@ -34,6 +34,12 @@ export async function listAdminCategories() {
   return db.query.category.findMany({ orderBy: { name: 'asc' } });
 }
 
-export type AdminProduct = Awaited<ReturnType<typeof listAdminProducts>>[number];
-export type AdminProductDetail = NonNullable<Awaited<ReturnType<typeof getAdminProductById>>>;
-export type AdminCategory = Awaited<ReturnType<typeof listAdminCategories>>[number];
+export type AdminProduct = Awaited<
+  ReturnType<typeof listAdminProducts>
+>[number];
+export type AdminProductDetail = NonNullable<
+  Awaited<ReturnType<typeof getAdminProductById>>
+>;
+export type AdminCategory = Awaited<
+  ReturnType<typeof listAdminCategories>
+>[number];

@@ -1,4 +1,7 @@
-import { applyEcpayResult, readEcpayParams } from '@/features/payments/ecpay-result';
+import {
+  applyEcpayResult,
+  readEcpayParams,
+} from '@/features/payments/ecpay-result';
 
 /**
  * 綠界 ReturnURL：付款結果的 server 對 server 通知。

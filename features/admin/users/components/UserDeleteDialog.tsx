@@ -53,7 +53,11 @@ export default function UserDeleteDialog() {
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel disabled={isPending}>取消</AlertDialogCancel>
-          <AlertDialogAction variant="destructive" disabled={isPending} onClick={onConfirm}>
+          <AlertDialogAction
+            variant="destructive"
+            disabled={isPending}
+            onClick={onConfirm}
+          >
             {isPending ? (
               <>
                 <Loader2 className="size-4 animate-spin" />

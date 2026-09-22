@@ -4,7 +4,9 @@ import { getSafeRedirectPath } from './safe-redirect';
 describe('getSafeRedirectPath', () => {
   it('keeps same-site paths, including the query string', () => {
     expect(getSafeRedirectPath('/checkout')).toBe('/checkout');
-    expect(getSafeRedirectPath('/user/orders?page=2')).toBe('/user/orders?page=2');
+    expect(getSafeRedirectPath('/user/orders?page=2')).toBe(
+      '/user/orders?page=2',
+    );
   });
 
   it('falls back to the home page when there is nothing to return to', () => {

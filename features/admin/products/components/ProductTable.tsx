@@ -1,7 +1,13 @@
 import Link from 'next/link';
 import { buttonVariants } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Table, TableBody, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import {
+  Table,
+  TableBody,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 import type { AdminProduct } from '@/db/queries/admin/products';
 import ProductRow from '@/features/admin/products/components/ProductRow';
 
@@ -17,7 +23,7 @@ export default function ProductTable({ products }: ProductTableProps) {
     return (
       <div className="flex min-h-64 flex-col items-center justify-center gap-2 text-center text-muted-foreground">
         <p>資料庫裡還沒有任何商品</p>
-        <Link href="/admin/products/new" className={buttonVariants()}>
+        <Link href="/admin/products/create" className={buttonVariants()}>
           新增第一項商品
         </Link>
       </div>
@@ -45,7 +51,11 @@ export default function ProductTable({ products }: ProductTableProps) {
           </TableHeader>
           <TableBody>
             {products.map((product) => (
-              <ProductRow key={product.id} product={product} columnCount={COLUMN_COUNT} />
+              <ProductRow
+                key={product.id}
+                product={product}
+                columnCount={COLUMN_COUNT}
+              />
             ))}
           </TableBody>
         </Table>

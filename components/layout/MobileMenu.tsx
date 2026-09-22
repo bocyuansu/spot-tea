@@ -28,13 +28,21 @@ type MobileMenuProps = {
   isAdmin: boolean;
 };
 
-export default function MobileMenu({ user, isLoggedIn, isAdmin }: MobileMenuProps) {
+export default function MobileMenu({
+  user,
+  isLoggedIn,
+  isAdmin,
+}: MobileMenuProps) {
   return (
     <SidebarProvider className="min-h-0">
       <Sheet>
         <SheetTrigger
           render={
-            <Button variant="link" aria-label="切換選單" className="border-0 p-2">
+            <Button
+              variant="link"
+              aria-label="切換選單"
+              className="border-0 p-2"
+            >
               <Menu className="size-6" />
             </Button>
           }
@@ -109,7 +117,9 @@ export default function MobileMenu({ user, isLoggedIn, isAdmin }: MobileMenuProp
               />
             )}
           </div>
-          <SheetFooter>{user ? <NavUser user={user} /> : <LoginButton />}</SheetFooter>
+          <SheetFooter>
+            {user ? <NavUser user={user} /> : <LoginButton />}
+          </SheetFooter>
         </SheetContent>
       </Sheet>
     </SidebarProvider>

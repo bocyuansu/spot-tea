@@ -22,7 +22,13 @@ const extensions: Record<string, string> = {
  * 保留原檔名當前綴方便在 bucket 裡辨認，後面補亂數避免同名互相覆蓋。
  * 副檔名一律由 content type 決定，不沿用使用者給的那一段。
  */
-function toFileName({ fileName, contentType }: { fileName: string; contentType: string }) {
+function toFileName({
+  fileName,
+  contentType,
+}: {
+  fileName: string;
+  contentType: string;
+}) {
   const name =
     fileName
       .replace(/\.[^.]*$/, '')
@@ -37,11 +43,13 @@ function toFileName({ fileName, contentType }: { fileName: string; contentType: 
 export async function createProductImageUploadUrl(
   input: ProductImageUploadInput,
 ): Promise<ProductImageUploadTicket> {
-  if (!(await isAdmin())) return { ok: false, message: '沒有權限執行這個操作 !' };
+  if (!(await isAdmin()))
+    return { ok: false, message: '沒有權限執行這個操作 !' };
 
   const parsed = productImageUploadSchema.safeParse(input);
   // 這裡的錯誤是使用者挑錯檔案，訊息要講清楚是哪一種
-  if (!parsed.success) return { ok: false, message: parsed.error.issues[0].message };
+  if (!parsed.success)
+    return { ok: false, message: parsed.error.issues[0].message };
 
   const fileName = toFileName(parsed.data);
 

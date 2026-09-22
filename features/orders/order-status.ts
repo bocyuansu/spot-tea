@@ -26,7 +26,10 @@ export const paymentStatusLabels: Record<Order['paymentStatus'], string> = {
  * 取消只在出貨前；出貨後的退貨一律在付款狀態上標記退款。
  * 目標型別排除了起點（待處理、未付款、付款失敗），型別上就不可能有一步走回去。
  */
-export const orderStatusTransitions: Record<OrderStatus, Exclude<OrderStatus, 'pending'>[]> = {
+export const orderStatusTransitions: Record<
+  OrderStatus,
+  Exclude<OrderStatus, 'pending'>[]
+> = {
   pending: ['processing', 'cancelled'],
   processing: ['shipped', 'cancelled'],
   shipped: ['completed'],
@@ -51,7 +54,9 @@ export function getPreviousStatuses<S extends string>(
   transitions: Record<S, readonly S[]>,
   next: S,
 ): S[] {
-  return (Object.keys(transitions) as S[]).filter((from) => transitions[from].includes(next));
+  return (Object.keys(transitions) as S[]).filter((from) =>
+    transitions[from].includes(next),
+  );
 }
 
 // 顧客在「我的訂單」能不能自己取消，和後台一樣看 orderStatusTransitions：只在出貨前
@@ -61,21 +66,29 @@ export function isCancellable(order: Pick<Order, 'status'>) {
 
 // 後台這筆訂單的付款狀態能往哪走：訂單取消後就不再收款，不能手動標記已付款。
 // 綠界的付款通知不受這條限制，取消後才付款成功的錢照實記成已付款（見 isAwaitingRefund）
-export function getPaymentSteps(order: Pick<Order, 'status' | 'paymentStatus'>) {
+export function getPaymentSteps(
+  order: Pick<Order, 'status' | 'paymentStatus'>,
+) {
   const steps = paymentStatusTransitions[order.paymentStatus];
 
-  return order.status === 'cancelled' ? steps.filter((next) => next !== 'paid') : steps;
+  return order.status === 'cancelled'
+    ? steps.filter((next) => next !== 'paid')
+    : steps;
 }
 
 // 信用卡與 ATM 匯款要先收到錢才能開始備貨；貨到付款本來就是送達時才收錢。
 // paymentProvider 是自由文字，沒填或不認得的一律當成要先付款
-export function isAwaitingPrepayment(order: Pick<Order, 'paymentProvider' | 'paymentStatus'>) {
+export function isAwaitingPrepayment(
+  order: Pick<Order, 'paymentProvider' | 'paymentStatus'>,
+) {
   return order.paymentProvider !== 'cod' && order.paymentStatus !== 'paid';
 }
 
 // 訂單取消了錢卻已經進來，例如顧客停在綠界付款頁時訂單被取消、之後才付款成功。
 // 把錢記成已付款是對的，但後台要看得出這筆還欠顧客一次退款
-export function isAwaitingRefund(order: Pick<Order, 'status' | 'paymentStatus'>) {
+export function isAwaitingRefund(
+  order: Pick<Order, 'status' | 'paymentStatus'>,
+) {
   return order.status === 'cancelled' && order.paymentStatus === 'paid';
 }
 
@@ -114,7 +127,10 @@ export const orderStatusVariants: Record<Order['status'], BadgeVariant> = {
   cancelled: 'destructive',
 };
 
-export const paymentStatusVariants: Record<Order['paymentStatus'], BadgeVariant> = {
+export const paymentStatusVariants: Record<
+  Order['paymentStatus'],
+  BadgeVariant
+> = {
   unpaid: 'outline',
   paid: 'default',
   failed: 'destructive',

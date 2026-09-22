@@ -6,7 +6,11 @@ import { Separator } from '@/components/ui/separator';
 import ShippingPaymentDetails from '@/components/common/ShippingPaymentDetails';
 import type { OrderWithItems } from '@/db/queries/orders';
 import { formatPriceTWD } from '@/lib/format';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/components/ui/collapsible';
 import { Button } from '@/components/ui/button';
 import { ChevronDownIcon } from 'lucide-react';
 
@@ -41,14 +45,19 @@ export default function OrderCard({ order, action }: OrderCardProps) {
 
             <ul className="w-full flex flex-col gap-2">
               {order.items.map((item) => (
-                <li key={item.id} className="w-full flex justify-between gap-3 text-sm">
+                <li
+                  key={item.id}
+                  className="w-full flex justify-between gap-3 text-sm"
+                >
                   <div className="flex flex-col w-full">
                     <span className="truncate">{item.productName}</span>
                     <span>規格：{item.variantName}</span>
                     <span>單價：{formatPriceTWD(item.unitPrice)}</span>
                     <div className="flex gap-4">
                       <span>數量：{item.quantity}</span>
-                      <span className="ml-auto">{formatPriceTWD(item.subtotal)}</span>
+                      <span className="ml-auto">
+                        {formatPriceTWD(item.subtotal)}
+                      </span>
                     </div>
                   </div>
                 </li>

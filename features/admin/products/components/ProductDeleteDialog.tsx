@@ -37,7 +37,11 @@ export default function ProductDeleteDialog({
       const result = await deleteProduct(productId);
 
       if (!result.ok) {
-        toast.add({ type: 'error', description: result.message, priority: 'high' });
+        toast.add({
+          type: 'error',
+          description: result.message,
+          priority: 'high',
+        });
         return;
       }
 
@@ -58,7 +62,11 @@ export default function ProductDeleteDialog({
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel disabled={isPending}>取消</AlertDialogCancel>
-          <AlertDialogAction variant="destructive" disabled={isPending} onClick={onConfirm}>
+          <AlertDialogAction
+            variant="destructive"
+            disabled={isPending}
+            onClick={onConfirm}
+          >
             {isPending ? (
               <>
                 <Loader2 className="size-4 animate-spin" />

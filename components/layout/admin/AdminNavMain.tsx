@@ -26,7 +26,9 @@ export function AdminNavMain({
           <SidebarMenu>
             {links.map((link) => (
               <SidebarMenuItem key={link.title}>
-                <SidebarMenuButton render={<Link href={link.url} prefetch={false} />}>
+                <SidebarMenuButton
+                  render={<Link href={link.url} prefetch={false} />}
+                >
                   {link.icon && <link.icon />}
                   <span>{link.title}</span>
                 </SidebarMenuButton>

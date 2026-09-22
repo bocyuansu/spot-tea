@@ -33,9 +33,12 @@ export default function ProductPurchasePanel({
 }: ProductPurchasePanelProps) {
   const { addItem } = useCart();
   // 尋找有存貨的商品規格
-  const firstAvailable = variants.find((variant) => variant.stock > 0) ?? variants[0];
+  const firstAvailable =
+    variants.find((variant) => variant.stock > 0) ?? variants[0];
   // 選擇有存貨的商品規格 ID
-  const [selectedVariantId, setSelectedVariantId] = useState(firstAvailable?.id);
+  const [selectedVariantId, setSelectedVariantId] = useState(
+    firstAvailable?.id,
+  );
   // 購買數量
   const [quantity, setQuantity] = useState(1);
   // 從 ID 找出選中的商品規格
@@ -95,7 +98,9 @@ export default function ProductPurchasePanel({
                 onClick={() => handleSelectVariant(variant)}
                 className={cn(
                   'flex flex-col items-start rounded-lg border px-3 py-2 text-left text-sm transition-colors',
-                  selected ? 'border-primary bg-primary/5' : 'border-border hover:bg-muted',
+                  selected
+                    ? 'border-primary bg-primary/5'
+                    : 'border-border hover:bg-muted',
                   soldOut && 'cursor-not-allowed opacity-50',
                 )}
               >
@@ -120,7 +125,9 @@ export default function ProductPurchasePanel({
             onChange={setQuantity}
           />
           {selectedVariant && !isSoldOut && (
-            <span className="text-xs text-muted-foreground">庫存 {selectedVariant.stock} 件</span>
+            <span className="text-xs text-muted-foreground">
+              庫存 {selectedVariant.stock} 件
+            </span>
           )}
         </div>
       </div>

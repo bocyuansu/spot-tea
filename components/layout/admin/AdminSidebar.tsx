@@ -1,7 +1,13 @@
 'use client';
 
 import Link from 'next/link';
-import { IconDashboard, IconLeaf, IconReceipt, IconUsers } from '@tabler/icons-react';
+import {
+  IconDashboard,
+  IconLeaf,
+  IconLeaf2,
+  IconReceipt,
+  IconUsers,
+} from '@tabler/icons-react';
 import {
   Sidebar,
   SidebarContent,
@@ -25,6 +31,11 @@ const navMain = [
     title: '商品管理',
     url: '/admin/products',
     icon: IconLeaf,
+  },
+  {
+    title: '商品分類',
+    url: '/admin/categories',
+    icon: IconLeaf2,
   },
   {
     title: '訂單管理',

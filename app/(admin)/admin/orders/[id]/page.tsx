@@ -14,7 +14,9 @@ type AdminOrderDetailPageProps = {
   params: Promise<{ id: string }>;
 };
 
-export default async function AdminOrderDetailPage({ params }: AdminOrderDetailPageProps) {
+export default async function AdminOrderDetailPage({
+  params,
+}: AdminOrderDetailPageProps) {
   const { id } = await params;
 
   const order = await getAdminOrderById(id);
@@ -24,8 +26,12 @@ export default async function AdminOrderDetailPage({ params }: AdminOrderDetailP
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h1 className="font-heading text-3xl md:text-4xl">{order.orderNumber}</h1>
-        <p className="mt-1 text-muted-foreground">下單日期：{formatDateTW(order.createdAt)}</p>
+        <h1 className="font-heading text-3xl md:text-4xl">
+          {order.orderNumber}
+        </h1>
+        <p className="mt-1 text-muted-foreground">
+          下單日期：{formatDateTW(order.createdAt)}
+        </p>
       </div>
 
       <div className="grid gap-6 xl:grid-cols-[2fr_1fr] xl:items-start">

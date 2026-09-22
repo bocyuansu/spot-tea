@@ -39,25 +39,37 @@ export default function StoreLocationPage() {
             <h2 className="text-lg">聯繫我們</h2>
             <p>
               LINE｜
-              <Link href="https://line.me/R/ti/p/@737drhqn" className="text-amber-400">
+              <Link
+                href="https://line.me/R/ti/p/@737drhqn"
+                className="text-amber-400"
+              >
                 @Spot-tea
               </Link>
             </p>
             <p>
               Instagram｜
-              <Link href="https://www.instagram.com/spottea_tw" className="text-amber-400">
+              <Link
+                href="https://www.instagram.com/spottea_tw"
+                className="text-amber-400"
+              >
                 spottea_tw
               </Link>
             </p>
             <p>
               Facebook｜
-              <Link href="https://www.facebook.com/SpotTeaTW" className="text-amber-400">
+              <Link
+                href="https://www.facebook.com/SpotTeaTW"
+                className="text-amber-400"
+              >
                 找茶．歡迎來Tea館！
               </Link>
             </p>
             <p>
               Email｜
-              <Link href="mailto:spotteatw@gmail.com" className="text-amber-400">
+              <Link
+                href="mailto:spotteatw@gmail.com"
+                className="text-amber-400"
+              >
                 spotteatw@gmail.com
               </Link>
             </p>

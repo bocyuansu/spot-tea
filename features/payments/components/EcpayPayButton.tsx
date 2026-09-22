@@ -18,7 +18,11 @@ type EcpayPayButtonProps = {
  * 綠界要求由瀏覽器把表單 submit 到付款頁（整頁跳轉，不能 fetch、不能 iframe），
  * 所以拿到 server 算好的欄位後，臨時組一個隱藏表單送出。
  */
-export default function EcpayPayButton({ orderNumber, size, className }: EcpayPayButtonProps) {
+export default function EcpayPayButton({
+  orderNumber,
+  size,
+  className,
+}: EcpayPayButtonProps) {
   const [isPending, startTransition] = useTransition();
   const [isRedirecting, setIsRedirecting] = useState(false);
 
@@ -27,7 +31,11 @@ export default function EcpayPayButton({ orderNumber, size, className }: EcpayPa
       const result = await startEcpayPayment(orderNumber);
 
       if (!result.ok) {
-        toast.add({ type: 'error', description: result.message, priority: 'high' });
+        toast.add({
+          type: 'error',
+          description: result.message,
+          priority: 'high',
+        });
         return;
       }
 
@@ -65,7 +73,12 @@ export default function EcpayPayButton({ orderNumber, size, className }: EcpayPa
   const isBusy = isPending || isRedirecting;
 
   return (
-    <Button size={size} className={className} disabled={isBusy} onClick={handlePay}>
+    <Button
+      size={size}
+      className={className}
+      disabled={isBusy}
+      onClick={handlePay}
+    >
       {isBusy ? (
         <>
           <Loader2 className="animate-spin" />

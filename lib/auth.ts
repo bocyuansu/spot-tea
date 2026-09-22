@@ -25,10 +25,15 @@ export async function createAuth() {
       },
     },
     baseURL: {
-      allowedHosts: ['localhost:3000', 'localhost:8787', 'spot-tea.cyuan.workers.dev'],
+      allowedHosts: [
+        'localhost:3000',
+        'localhost:8787',
+        'spot-tea.cyuan.workers.dev',
+      ],
       protocol: 'auto',
     },
     advanced: {
+      // 避免 Cloudflare Network connection lost
       backgroundTasks: { handler: waitUntil },
     },
     plugins: [

@@ -10,7 +10,10 @@ type CategoriesProps = {
   activeCategorySlug?: string;
 };
 
-export default function Categories({ categories, activeCategorySlug }: CategoriesProps) {
+export default function Categories({
+  categories,
+  activeCategorySlug,
+}: CategoriesProps) {
   if (categories.length === 0) return null;
 
   return (
@@ -35,7 +38,8 @@ export default function Categories({ categories, activeCategorySlug }: Categorie
           prefetch={false}
           className={cn(
             buttonVariants({
-              variant: activeCategorySlug === category.slug ? 'default' : 'outline',
+              variant:
+                activeCategorySlug === category.slug ? 'default' : 'outline',
               size: 'sm',
             }),
             'rounded-full',

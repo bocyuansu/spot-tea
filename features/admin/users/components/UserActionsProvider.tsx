@@ -53,7 +53,11 @@ export default function UserActionsProvider({
     };
   }, [user, currentUserId, activeDialog]);
 
-  return <UserActionsContext.Provider value={value}>{children}</UserActionsContext.Provider>;
+  return (
+    <UserActionsContext.Provider value={value}>
+      {children}
+    </UserActionsContext.Provider>
+  );
 }
 
 export function useUserActions() {
@@ -73,6 +77,7 @@ export function useUserDialog(dialog: UserDialogName) {
   return {
     ...context,
     open: context.activeDialog === dialog,
-    onOpenChange: (open: boolean) => context.setActiveDialog(open ? dialog : null),
+    onOpenChange: (open: boolean) =>
+      context.setActiveDialog(open ? dialog : null),
   };
 }

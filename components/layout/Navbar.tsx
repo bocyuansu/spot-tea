@@ -59,7 +59,11 @@ export default async function Navbar() {
         </div>
         <div className="flex items-center md:hidden">
           {/* <AuthButton initialSession={session} /> */}
-          <MobileMenu user={session?.user} isLoggedIn={!!session} isAdmin={isAdmin} />
+          <MobileMenu
+            user={session?.user}
+            isLoggedIn={!!session}
+            isAdmin={isAdmin}
+          />
         </div>
       </div>
     </nav>

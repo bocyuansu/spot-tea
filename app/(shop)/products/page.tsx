@@ -12,7 +12,9 @@ type ProductsPageProps = {
   searchParams: Promise<{ category?: string }>;
 };
 
-export default async function ProductsPage({ searchParams }: ProductsPageProps) {
+export default async function ProductsPage({
+  searchParams,
+}: ProductsPageProps) {
   const { category } = await searchParams;
 
   const [categories, products] = await Promise.all([

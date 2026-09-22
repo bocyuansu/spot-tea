@@ -40,8 +40,12 @@ export default function StatCards({ overview }: StatCardsProps) {
               <stat.icon className="size-5" />
             </div>
             <div className="flex min-w-0 flex-col">
-              <span className="text-xs text-muted-foreground">{stat.label}</span>
-              <span className="truncate font-heading text-xl">{stat.value}</span>
+              <span className="text-xs text-muted-foreground">
+                {stat.label}
+              </span>
+              <span className="truncate font-heading text-xl">
+                {stat.value}
+              </span>
             </div>
           </CardContent>
         </Card>

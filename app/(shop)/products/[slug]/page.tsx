@@ -9,7 +9,9 @@ type ProductPageProps = {
   params: Promise<{ slug: string }>;
 };
 
-export async function generateMetadata({ params }: ProductPageProps): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: ProductPageProps): Promise<Metadata> {
   const { slug } = await params;
   const product = await getPublishedProductBySlug(slug);
 
@@ -42,10 +44,14 @@ export default async function ProductPage({ params }: ProductPageProps) {
         <div className="flex flex-col gap-1">
           <h1 className="font-heading text-2xl md:text-3xl">{product.name}</h1>
           {product.category && (
-            <span className="text-sm text-muted-foreground">種類：{product.category.name}</span>
+            <span className="text-sm text-muted-foreground">
+              種類：{product.category.name}
+            </span>
           )}
           {product.origin && (
-            <span className="text-sm text-muted-foreground">產地：{product.origin}</span>
+            <span className="text-sm text-muted-foreground">
+              產地：{product.origin}
+            </span>
           )}
         </div>
 
@@ -58,7 +64,9 @@ export default async function ProductPage({ params }: ProductPageProps) {
         </p>
 
         {product.description && (
-          <p className="leading-relaxed text-muted-foreground">{product.description}</p>
+          <p className="leading-relaxed text-muted-foreground">
+            {product.description}
+          </p>
         )}
 
         <ProductPurchasePanel

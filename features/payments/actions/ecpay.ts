@@ -24,7 +24,9 @@ export type StartEcpayPaymentResult =
  * 所以這裡只負責算出帶 CheckMacValue 的欄位；HashKey / HashIV 不會離開 server。
  * 金額與品項一律從資料庫讀，client 只送訂單編號。
  */
-export async function startEcpayPayment(orderNumber: string): Promise<StartEcpayPaymentResult> {
+export async function startEcpayPayment(
+  orderNumber: string,
+): Promise<StartEcpayPaymentResult> {
   const auth = await createAuth();
   const requestHeaders = await headers();
 
@@ -37,7 +39,8 @@ export async function startEcpayPayment(orderNumber: string): Promise<StartEcpay
   // 回呼網址跟著使用者實際造訪的網域走：瀏覽器送出的 server action 一定帶 Origin，
   // 本機用 tunnel 測試時也會自動變成 tunnel 的網址（綠界只能打 80/443 的公開網址）
   const origin = requestHeaders.get('origin');
-  if (!origin) return { ok: false, message: '無法建立付款，請重新整理後再試 !' };
+  if (!origin)
+    return { ok: false, message: '無法建立付款，請重新整理後再試 !' };
 
   // 綁著 userId 查，別人的訂單編號自然查不到
   const order = await db.query.order.findFirst({
@@ -48,8 +51,10 @@ export async function startEcpayPayment(orderNumber: string): Promise<StartEcpay
   if (!order || order.paymentProvider !== 'ecpay') {
     return { ok: false, message: '找不到這筆訂單 !' };
   }
-  if (order.paymentStatus === 'paid') return { ok: false, message: '這筆訂單已經付款完成 !' };
-  if (order.status === 'cancelled') return { ok: false, message: '這筆訂單已取消，無法付款 !' };
+  if (order.paymentStatus === 'paid')
+    return { ok: false, message: '這筆訂單已經付款完成 !' };
+  if (order.status === 'cancelled')
+    return { ok: false, message: '這筆訂單已取消，無法付款 !' };
 
   const { merchantId, hashKey, hashIv, mode } = ecpayEnv();
 

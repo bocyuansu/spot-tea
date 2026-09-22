@@ -3,7 +3,9 @@ import { hashPassword, verifyPassword } from './password';
 
 describe('hashPassword', () => {
   it('produces a self-describing pbkdf2 hash', async () => {
-    const [algorithm, iterations, salt, key] = (await hashPassword('secret123')).split('$');
+    const [algorithm, iterations, salt, key] = (
+      await hashPassword('secret123')
+    ).split('$');
 
     expect(algorithm).toBe('pbkdf2_sha256');
     expect(iterations).toBe('100000');
@@ -39,7 +41,11 @@ describe('verifyPassword', () => {
   it('returns false for a hash it cannot read instead of throwing', async () => {
     const legacyScrypt = `${'a'.repeat(32)}:${'b'.repeat(128)}`;
 
-    expect(await verifyPassword({ hash: '', password: 'secret123' })).toBe(false);
-    expect(await verifyPassword({ hash: legacyScrypt, password: 'secret123' })).toBe(false);
+    expect(await verifyPassword({ hash: '', password: 'secret123' })).toBe(
+      false,
+    );
+    expect(
+      await verifyPassword({ hash: legacyScrypt, password: 'secret123' }),
+    ).toBe(false);
   });
 });

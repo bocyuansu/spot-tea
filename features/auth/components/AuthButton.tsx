@@ -16,7 +16,12 @@ import { toast } from '@/components/ui/toast';
 import { Button } from '@/components/ui/button';
 import { authClient } from '@/lib/auth-client';
 import { useRouter } from 'next/navigation';
-import { IconMapPin, IconReceipt, IconShoppingBag, IconUserCircle } from '@tabler/icons-react';
+import {
+  IconMapPin,
+  IconReceipt,
+  IconShoppingBag,
+  IconUserCircle,
+} from '@tabler/icons-react';
 import Link from 'next/link';
 
 type AuthButtonProps = {
@@ -146,7 +151,12 @@ function DropdownMenuAvatar({ user }: { user: UserSummary }) {
           </Button>
         }
       />
-      <DropdownMenuContent className="min-w-56" side="bottom" align="end" sideOffset={8}>
+      <DropdownMenuContent
+        className="min-w-56"
+        side="bottom"
+        align="end"
+        sideOffset={8}
+      >
         <DropdownMenuGroup>
           <DropdownMenuLabel className="p-0 font-normal">
             <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
@@ -158,7 +168,9 @@ function DropdownMenuAvatar({ user }: { user: UserSummary }) {
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-medium">{user.name}</span>
-                <span className="truncate text-xs text-muted-foreground">{user.email}</span>
+                <span className="truncate text-xs text-muted-foreground">
+                  {user.email}
+                </span>
               </div>
             </div>
           </DropdownMenuLabel>
@@ -170,7 +182,9 @@ function DropdownMenuAvatar({ user }: { user: UserSummary }) {
             <IconUserCircle />
             <span>會員中心</span>
           </DropdownMenuItem>
-          <DropdownMenuItem render={<Link href="/user/orders" prefetch={false} />}>
+          <DropdownMenuItem
+            render={<Link href="/user/orders" prefetch={false} />}
+          >
             <IconReceipt />
             <span>訂單資料</span>
           </DropdownMenuItem>
@@ -181,7 +195,9 @@ function DropdownMenuAvatar({ user }: { user: UserSummary }) {
             <IconShoppingBag />
             <span>所有商品</span>
           </DropdownMenuItem>
-          <DropdownMenuItem render={<Link href="/store-location" prefetch={false} />}>
+          <DropdownMenuItem
+            render={<Link href="/store-location" prefetch={false} />}
+          >
             <IconMapPin />
             <span>門市資訊</span>
           </DropdownMenuItem>

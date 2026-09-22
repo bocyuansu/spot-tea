@@ -45,7 +45,11 @@ export function ecpayUrlEncode(source: string) {
     .replaceAll('%29', ')');
 }
 
-export async function generateCheckMacValue(params: EcpayParams, hashKey: string, hashIv: string) {
+export async function generateCheckMacValue(
+  params: EcpayParams,
+  hashKey: string,
+  hashIv: string,
+) {
   // PHP SDK 用 strcasecmp 排序：比的是轉小寫後的位元組順序，不能用會看 locale 的 localeCompare
   const query = Object.keys(params)
     .filter((key) => key !== 'CheckMacValue')
@@ -58,10 +62,17 @@ export async function generateCheckMacValue(params: EcpayParams, hashKey: string
     .map((key) => `${key}=${params[key]}`)
     .join('&');
 
-  const encoded = ecpayUrlEncode(`HashKey=${hashKey}&${query}&HashIV=${hashIv}`);
-  const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(encoded));
+  const encoded = ecpayUrlEncode(
+    `HashKey=${hashKey}&${query}&HashIV=${hashIv}`,
+  );
+  const digest = await crypto.subtle.digest(
+    'SHA-256',
+    new TextEncoder().encode(encoded),
+  );
 
-  return Array.from(new Uint8Array(digest), (byte) => byte.toString(16).padStart(2, '0'))
+  return Array.from(new Uint8Array(digest), (byte) =>
+    byte.toString(16).padStart(2, '0'),
+  )
     .join('')
     .toUpperCase();
 }
@@ -78,7 +89,11 @@ function timingSafeEqual(a: string, b: string) {
   return diff === 0;
 }
 
-export async function verifyCheckMacValue(params: EcpayParams, hashKey: string, hashIv: string) {
+export async function verifyCheckMacValue(
+  params: EcpayParams,
+  hashKey: string,
+  hashIv: string,
+) {
   const expected = await generateCheckMacValue(params, hashKey, hashIv);
 
   return timingSafeEqual((params.CheckMacValue ?? '').toUpperCase(), expected);

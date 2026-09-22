@@ -20,7 +20,11 @@ export default function ProductCard({ product }: ProductCardProps) {
     <Card className="gap-3 overflow-hidden pt-0">
       <div className="relative aspect-square overflow-hidden bg-muted">
         {image ? (
-          <Link href={`/products/${product.slug}`} prefetch={false} className="block">
+          <Link
+            href={`/products/${product.slug}`}
+            prefetch={false}
+            className="block"
+          >
             <Image
               src={image}
               alt={product.name}
@@ -44,10 +48,18 @@ export default function ProductCard({ product }: ProductCardProps) {
       </div>
       <CardContent className="flex flex-col gap-1">
         {product.category && (
-          <span className="text-xs text-muted-foreground">種類：{product.category.name}</span>
+          <span className="text-xs text-muted-foreground">
+            種類：{product.category.name}
+          </span>
         )}
-        {product.origin && <p className="text-xs text-muted-foreground">產地：{product.origin}</p>}
-        <h2 className="font-heading text-base leading-snug font-medium">{product.name}</h2>
+        {product.origin && (
+          <p className="text-xs text-muted-foreground">
+            產地：{product.origin}
+          </p>
+        )}
+        <h2 className="font-heading text-base leading-snug font-medium">
+          {product.name}
+        </h2>
         <p className="mt-1 text-sm font-semibold text-primary">
           {minPrice === null
             ? '價格洽詢'

@@ -29,7 +29,8 @@ async function uploadProductImage(image: ProductImage): Promise<UploadedImage> {
     size: image.file.size,
   });
 
-  if (!ticket.ok) return { image, message: `${image.file.name}：${ticket.message}` };
+  if (!ticket.ok)
+    return { image, message: `${image.file.name}：${ticket.message}` };
 
   // Content-Type 有被簽進網址，這裡必須送一模一樣的值
   const response = await fetch(ticket.uploadUrl, {
@@ -39,7 +40,8 @@ async function uploadProductImage(image: ProductImage): Promise<UploadedImage> {
     // 斷線時讓這一張自己收場，不能把其他張的結果一起帶走
   }).catch(() => null);
 
-  if (!response?.ok) return { image, message: `${image.file.name} 上傳失敗，請稍後再試 !` };
+  if (!response?.ok)
+    return { image, message: `${image.file.name} 上傳失敗，請稍後再試 !` };
 
   // 預覽的 blob 已經換成公開網址，可以還回去了
   URL.revokeObjectURL(image.url);
@@ -55,7 +57,9 @@ export async function uploadProductImages(
   images: ProductImages,
 ): Promise<UploadProductImagesResult> {
   // 每一張都自己吞掉錯誤，Promise.all 回來的順序仍是使用者排好的那個
-  const uploaded = await Promise.all(images.map((image) => uploadProductImage(image)));
+  const uploaded = await Promise.all(
+    images.map((image) => uploadProductImage(image)),
+  );
   const nextImages = uploaded.map((result) => result.image);
   const messages = uploaded
     .map((result) => result.message)
@@ -64,7 +68,9 @@ export async function uploadProductImages(
   if (messages.length > 0) {
     // 一起失敗的原因多半相同，講清楚第一張，其餘只報張數
     const message =
-      messages.length > 1 ? `${messages[0]}（另有 ${messages.length - 1} 張也失敗）` : messages[0];
+      messages.length > 1
+        ? `${messages[0]}（另有 ${messages.length - 1} 張也失敗）`
+        : messages[0];
 
     return { ok: false, message, images: nextImages };
   }

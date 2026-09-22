@@ -14,7 +14,10 @@ type Transaction = Parameters<Parameters<Database['transaction']>[0]>[0];
  */
 export async function restoreOrderStock(tx: Transaction, orderId: string) {
   const items = await tx
-    .select({ variantId: orderItem.productVariantId, quantity: orderItem.quantity })
+    .select({
+      variantId: orderItem.productVariantId,
+      quantity: orderItem.quantity,
+    })
     .from(orderItem)
     .where(eq(orderItem.orderId, orderId));
 

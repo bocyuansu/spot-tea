@@ -33,7 +33,9 @@ type ProductVariantMatrixProps = {
   form: UseFormReturn<ProductFormValues>;
 };
 
-export default function ProductVariantMatrix({ form }: ProductVariantMatrixProps) {
+export default function ProductVariantMatrix({
+  form,
+}: ProductVariantMatrixProps) {
   const variants = useFieldArray({ control: form.control, name: 'variants' });
 
   // 用 useFieldArray 給的 id 當 key，移除某一列之後選取狀態才不會錯位
@@ -41,15 +43,20 @@ export default function ProductVariantMatrix({ form }: ProductVariantMatrixProps
   const [batchPrice, setBatchPrice] = useState('');
   const [batchStock, setBatchStock] = useState('');
 
-  const selectedCount = variants.fields.filter((field) => selectedIds.includes(field.id)).length;
-  const allSelected = variants.fields.length > 0 && selectedCount === variants.fields.length;
+  const selectedCount = variants.fields.filter((field) =>
+    selectedIds.includes(field.id),
+  ).length;
+  const allSelected =
+    variants.fields.length > 0 && selectedCount === variants.fields.length;
   const price = toBatchValue(batchPrice);
   const stock = toBatchValue(batchStock);
   const canApply = price !== null || stock !== null;
 
   function toggleRow(id: string, checked: boolean) {
     setSelectedIds((previous) =>
-      checked ? [...previous, id] : previous.filter((selected) => selected !== id),
+      checked
+        ? [...previous, id]
+        : previous.filter((selected) => selected !== id),
     );
   }
 
@@ -106,7 +113,12 @@ export default function ProductVariantMatrix({ form }: ProductVariantMatrixProps
           />
         </Field>
 
-        <Button type="button" variant="outline" disabled={!canApply} onClick={applyBatch}>
+        <Button
+          type="button"
+          variant="outline"
+          disabled={!canApply}
+          onClick={applyBatch}
+        >
           <Wand2 className="size-4" />
           <span>
             {selectedCount === 0
@@ -147,7 +159,9 @@ export default function ProductVariantMatrix({ form }: ProductVariantMatrixProps
                   <Checkbox
                     aria-label={`選取規格 ${index + 1}`}
                     checked={selectedIds.includes(variantField.id)}
-                    onCheckedChange={(checked) => toggleRow(variantField.id, checked)}
+                    onCheckedChange={(checked) =>
+                      toggleRow(variantField.id, checked)
+                    }
                   />
                 </TableCell>
 
@@ -157,10 +171,15 @@ export default function ProductVariantMatrix({ form }: ProductVariantMatrixProps
                     className="w-24"
                     aria-label={`規格 ${index + 1} 的淨重`}
                     aria-invalid={Boolean(variantErrors?.weightGrams)}
-                    {...form.register(`variants.${index}.weightGrams`, { valueAsNumber: true })}
+                    {...form.register(`variants.${index}.weightGrams`, {
+                      valueAsNumber: true,
+                    })}
                   />
                   {variantErrors?.weightGrams && (
-                    <FieldError className="mt-1 text-xs" errors={[variantErrors.weightGrams]} />
+                    <FieldError
+                      className="mt-1 text-xs"
+                      errors={[variantErrors.weightGrams]}
+                    />
                   )}
                 </TableCell>
 
@@ -173,7 +192,10 @@ export default function ProductVariantMatrix({ form }: ProductVariantMatrixProps
                     {...form.register(`variants.${index}.label`)}
                   />
                   {variantErrors?.label && (
-                    <FieldError className="mt-1 text-xs" errors={[variantErrors.label]} />
+                    <FieldError
+                      className="mt-1 text-xs"
+                      errors={[variantErrors.label]}
+                    />
                   )}
                 </TableCell>
 
@@ -186,7 +208,10 @@ export default function ProductVariantMatrix({ form }: ProductVariantMatrixProps
                     {...form.register(`variants.${index}.sku`)}
                   />
                   {variantErrors?.sku && (
-                    <FieldError className="mt-1 text-xs" errors={[variantErrors.sku]} />
+                    <FieldError
+                      className="mt-1 text-xs"
+                      errors={[variantErrors.sku]}
+                    />
                   )}
                 </TableCell>
 
@@ -196,10 +221,15 @@ export default function ProductVariantMatrix({ form }: ProductVariantMatrixProps
                     className="w-24"
                     aria-label={`規格 ${index + 1} 的價格`}
                     aria-invalid={Boolean(variantErrors?.price)}
-                    {...form.register(`variants.${index}.price`, { valueAsNumber: true })}
+                    {...form.register(`variants.${index}.price`, {
+                      valueAsNumber: true,
+                    })}
                   />
                   {variantErrors?.price && (
-                    <FieldError className="mt-1 text-xs" errors={[variantErrors.price]} />
+                    <FieldError
+                      className="mt-1 text-xs"
+                      errors={[variantErrors.price]}
+                    />
                   )}
                 </TableCell>
 
@@ -209,10 +239,15 @@ export default function ProductVariantMatrix({ form }: ProductVariantMatrixProps
                     className="w-20"
                     aria-label={`規格 ${index + 1} 的庫存`}
                     aria-invalid={Boolean(variantErrors?.stock)}
-                    {...form.register(`variants.${index}.stock`, { valueAsNumber: true })}
+                    {...form.register(`variants.${index}.stock`, {
+                      valueAsNumber: true,
+                    })}
                   />
                   {variantErrors?.stock && (
-                    <FieldError className="mt-1 text-xs" errors={[variantErrors.stock]} />
+                    <FieldError
+                      className="mt-1 text-xs"
+                      errors={[variantErrors.stock]}
+                    />
                   )}
                 </TableCell>
 

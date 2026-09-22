@@ -6,7 +6,9 @@ import { relations } from '@/db/relations';
 export const getDatabase = async (mode: 'cached' | 'fresh' = 'cached') => {
   // 根據 mode 選擇對應的 Hyperdrive 連線字串
   const connectionString =
-    mode === 'fresh' ? env.HYPERDRIVE_FRESH.connectionString : env.HYPERDRIVE.connectionString;
+    mode === 'fresh'
+      ? env.HYPERDRIVE_FRESH.connectionString
+      : env.HYPERDRIVE.connectionString;
 
   // Create a new client instance for each request.
   const client = new Client({
