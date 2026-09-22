@@ -2,6 +2,7 @@ import { CalendarDays, Mail, User } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { formatDateTW } from '@/lib/format';
 import type { authClient } from '@/lib/auth-client';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 // admin plugin 的 defaultRole 是 customer，但舊資料仍可能沒有角色
 const roleLabels: Record<string, string> = {
@@ -17,9 +18,12 @@ export default function AccountSummary({ user }: AccountSummaryProps) {
   return (
     <Card>
       <CardContent className="flex flex-col gap-4 sm:flex-row sm:items-center">
-        <div className="flex size-16 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
-          <User className="size-8" />
-        </div>
+        <Avatar className="size-16">
+          <AvatarImage src={user.image ?? ''} alt={user.name} />
+          <AvatarFallback>
+            <User className="size-12" />
+          </AvatarFallback>
+        </Avatar>
 
         <div className="flex min-w-0 flex-col gap-1">
           <div className="flex flex-wrap items-center gap-2">

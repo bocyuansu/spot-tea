@@ -9,7 +9,6 @@ export const metadata: Metadata = {
 };
 
 export default async function AdminUsersPage() {
-  // (admin)/layout.tsx 已經讀過了，這裡會直接命中 cache()
   const [users, session] = await Promise.all([listAdminUsers(), getSession()]);
 
   return (
