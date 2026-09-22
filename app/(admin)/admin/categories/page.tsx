@@ -9,8 +9,8 @@ export const metadata: Metadata = {
 };
 
 export default async function AdminCategoriesPage() {
-  // layout 已經顯示 AccessDenied；這裡擋的是 RSC payload 裡的頁面資料
-  if (!(await getAdminUser())) return null;
+  const admin = await getAdminUser();
+  if (!admin) return null;
 
   const categories = await listAdminCategoriesWithCounts();
 

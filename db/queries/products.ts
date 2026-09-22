@@ -29,7 +29,8 @@ export const listPublishedProducts = unstable_cache(
       },
       with: {
         category: true,
-        variants: true,
+        // 不指定順序的話是 Postgres 的 heap 順序，後台每次儲存都 UPDATE 規格，按鈕順序就會亂跳
+        variants: { orderBy: { weightGrams: 'asc' } },
       },
       orderBy: { createdAt: 'desc' },
     });

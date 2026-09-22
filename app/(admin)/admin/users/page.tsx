@@ -9,8 +9,6 @@ export const metadata: Metadata = {
 };
 
 export default async function AdminUsersPage() {
-  // 不能和查詢一起 Promise.all：確認身分之前，會員清單一筆都不能撈出來。
-  // layout 已經顯示 AccessDenied；這裡擋的是 RSC payload 裡的頁面資料
   const admin = await getAdminUser();
   if (!admin) return null;
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import UserAvatar from '@/components/common/UserAvatar';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -141,13 +141,14 @@ function DropdownMenuAvatar({ user }: { user: UserSummary }) {
     <DropdownMenu>
       <DropdownMenuTrigger
         render={
-          <Button variant="ghost" size="icon" className="rounded-full">
-            <Avatar>
-              <AvatarImage src={user.image ?? ''} alt={user.name} />
-              <AvatarFallback>
-                <User className="size-5" />
-              </AvatarFallback>
-            </Avatar>
+          // 只有頭像的按鈕，名稱要由 aria-label 給：沒有圖片時頭像沒有 alt 可以依靠
+          <Button
+            variant="ghost"
+            size="icon"
+            className="rounded-full"
+            aria-label="會員選單"
+          >
+            <UserAvatar image={user.image} />
           </Button>
         }
       />
@@ -160,12 +161,7 @@ function DropdownMenuAvatar({ user }: { user: UserSummary }) {
         <DropdownMenuGroup>
           <DropdownMenuLabel className="p-0 font-normal">
             <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-              <Avatar>
-                <AvatarImage src={user.image ?? ''} alt={user.name} />
-                <AvatarFallback>
-                  <User className="size-5" />
-                </AvatarFallback>
-              </Avatar>
+              <UserAvatar image={user.image} />
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-medium">{user.name}</span>
                 <span className="truncate text-xs text-muted-foreground">

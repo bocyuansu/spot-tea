@@ -11,7 +11,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { toast } from '@/components/ui/toast';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import UserAvatar from '@/components/common/UserAvatar';
 import {
   SidebarMenu,
   SidebarMenuButton,
@@ -21,7 +21,6 @@ import {
 import { IconDotsVertical, IconLogout } from '@tabler/icons-react';
 import { authClient } from '@/lib/auth-client';
 import { useRouter } from 'next/navigation';
-import { User } from 'lucide-react';
 
 // 只需要顯示用的欄位，不必把整個 better-auth 的 user 型別拉進來
 export type UserSummary = {
@@ -40,12 +39,7 @@ type NavUserProps = {
 function UserInfo({ user }: { user: UserSummary }) {
   return (
     <>
-      <Avatar>
-        <AvatarImage src={user.image ?? ''} alt={user.name} />
-        <AvatarFallback>
-          <User className="size-5" />
-        </AvatarFallback>
-      </Avatar>
+      <UserAvatar image={user.image} />
       <div className="grid flex-1 text-left text-sm leading-tight">
         <span className="truncate font-medium">{user.name}</span>
         <span className="truncate text-xs text-muted-foreground">
