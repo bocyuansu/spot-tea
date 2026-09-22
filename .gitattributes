@@ -1,0 +1,6 @@
+# Drizzle 產生的 schema 快照 (Drizzle snapshots)
+# 每次 drizzle-kit generate 都會多一份上千行的 snapshot.json，下一次 generate 要拿它比對，
+# 所以必須留在 Git 裡、不能放進 .gitignore，只把它從 diff 中藏起來：
+# -diff              git diff / show / log -p 只顯示 Binary files differ，--stat 只顯示位元組數
+# linguist-generated GitHub 的 PR 與 commit 頁面預設摺疊，也不算進語言統計
+drizzle/*/snapshot.json -diff linguist-generated
