@@ -12,7 +12,7 @@ import { ChevronDownIcon } from 'lucide-react';
 
 type OrderCardProps = {
   order: OrderWithItems;
-  // 卡片底部的操作，例如「我的訂單」裡出貨前的取消按鈕、尚未付款訂單的付款按鈕
+  // 卡片底部的操作列，原樣放在最後面，排版與要不要顯示由傳入的元件決定（見 OrderActions）
   action?: ReactNode;
 };
 
@@ -75,7 +75,7 @@ export default function OrderCard({ order, action }: OrderCardProps) {
               <span>{formatPriceTWD(order.totalAmount)}</span>
             </div>
 
-            {action && <div className="flex w-full justify-end gap-2">{action}</div>}
+            {action}
           </CollapsibleContent>
         </Collapsible>
       </CardContent>
