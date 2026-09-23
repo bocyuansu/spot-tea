@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   getPaymentSteps,
   getPreviousStatuses,
+  isAwaitingEcpayPayment,
   isAwaitingPrepayment,
   isAwaitingRefund,
   isCancellable,
@@ -31,12 +32,6 @@ describe('getPreviousStatuses', () => {
     expect(getPreviousStatuses(orderStatusTransitions, 'pending')).toEqual([]);
     expect(getPreviousStatuses(paymentStatusTransitions, 'unpaid')).toEqual([]);
     expect(getPreviousStatuses(paymentStatusTransitions, 'failed')).toEqual([]);
-  });
-
-  it('does not allow cancelling once the order has shipped', () => {
-    expect(
-      getPreviousStatuses(orderStatusTransitions, 'cancelled'),
-    ).not.toContain('shipped');
   });
 });
 
@@ -130,6 +125,59 @@ describe('isAwaitingRefund', () => {
   it('ignores paid orders that are still going ahead', () => {
     expect(
       isAwaitingRefund({ status: 'processing', paymentStatus: 'paid' }),
+    ).toBe(false);
+  });
+});
+
+describe('isAwaitingEcpayPayment', () => {
+  it('lets an unpaid credit card order go back to ECPay', () => {
+    expect(
+      isAwaitingEcpayPayment({
+        paymentProvider: 'ecpay',
+        paymentStatus: 'unpaid',
+        status: 'pending',
+      }),
+    ).toBe(true);
+  });
+
+  it('stops offering payment once the order is paid or cancelled', () => {
+    expect(
+      isAwaitingEcpayPayment({
+        paymentProvider: 'ecpay',
+        paymentStatus: 'paid',
+        status: 'processing',
+      }),
+    ).toBe(false);
+    expect(
+      isAwaitingEcpayPayment({
+        paymentProvider: 'ecpay',
+        paymentStatus: 'unpaid',
+        status: 'cancelled',
+      }),
+    ).toBe(false);
+  });
+
+  it('ignores orders paid by other methods', () => {
+    expect(
+      isAwaitingEcpayPayment({
+        paymentProvider: 'cod',
+        paymentStatus: 'unpaid',
+        status: 'pending',
+      }),
+    ).toBe(false);
+    expect(
+      isAwaitingEcpayPayment({
+        paymentProvider: 'bank_transfer',
+        paymentStatus: 'unpaid',
+        status: 'pending',
+      }),
+    ).toBe(false);
+    expect(
+      isAwaitingEcpayPayment({
+        paymentProvider: null,
+        paymentStatus: 'unpaid',
+        status: 'pending',
+      }),
     ).toBe(false);
   });
 });

@@ -3,7 +3,7 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { useState, useTransition } from 'react';
+import { useTransition } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { signUpSchema } from '@/features/auth/schemas/signup';
@@ -20,14 +20,14 @@ import {
 import { toast } from '@/components/ui/toast';
 import Link from 'next/link';
 import { getErrorMessage } from '@/lib/auth-errors';
-import AuthNoticeCard from '@/features/auth/components/AuthNoticeCard';
+// import AuthNoticeCard from '@/features/auth/components/AuthNoticeCard';
 import { useRouter } from 'next/navigation';
 
 export default function SignUpForm() {
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
   // 送出成功後改顯示「請收信」，記下寄到哪個信箱
-  const [sentTo, setSentTo] = useState<string | null>(null);
+  // const [sentTo, setSentTo] = useState<string | null>(null);
 
   const form = useForm({
     resolver: zodResolver(signUpSchema),
@@ -65,18 +65,18 @@ export default function SignUpForm() {
     });
   }
 
-  if (sentTo) {
-    return (
-      <AuthNoticeCard
-        title="請到信箱完成驗證"
-        href="/login"
-        linkLabel="前往登入"
-      >
-        驗證信已寄到 {sentTo}，點擊信中的連結即可完成註冊。
-        沒收到的話請檢查垃圾郵件匣，或直接登入，系統會再寄一次。
-      </AuthNoticeCard>
-    );
-  }
+  // if (sentTo) {
+  //   return (
+  //     <AuthNoticeCard
+  //       title="請到信箱完成驗證"
+  //       href="/login"
+  //       linkLabel="前往登入"
+  //     >
+  //       驗證信已寄到 {sentTo}，點擊信中的連結即可完成註冊。
+  //       沒收到的話請檢查垃圾郵件匣，或直接登入，系統會再寄一次。
+  //     </AuthNoticeCard>
+  //   );
+  // }
 
   return (
     <Card className="w-full max-w-sm mx-auto my-8 [--card-spacing:--spacing(8)]">

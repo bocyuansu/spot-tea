@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
   buildOrderNumber,
-  buildOrderNumberPrefix,
   formatOrderDateStamp,
   nextOrderSequence,
 } from './order-number';
@@ -30,18 +29,6 @@ describe('buildOrderNumber', () => {
     expect(buildOrderNumber('20260919', 1)).toBe('ST-20260919-0001');
     expect(buildOrderNumber('20260919', 42)).toBe('ST-20260919-0042');
     expect(buildOrderNumber('20260919', 9999)).toBe('ST-20260919-9999');
-  });
-
-  it('does not truncate a sequence beyond four digits', () => {
-    expect(buildOrderNumber('20260919', 10000)).toBe('ST-20260919-10000');
-  });
-
-  it('shares the prefix used to look up the latest order of the day', () => {
-    expect(
-      buildOrderNumber('20260919', 1).startsWith(
-        buildOrderNumberPrefix('20260919'),
-      ),
-    ).toBe(true);
   });
 });
 

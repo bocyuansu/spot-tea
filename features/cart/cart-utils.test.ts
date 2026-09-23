@@ -95,6 +95,14 @@ describe('updateCartItemQuantity', () => {
 
     expect(items).toHaveLength(0);
   });
+
+  // CartProvider 靠同一個陣列跳過 memo 與 localStorage 寫入
+  it('returns the same array when nothing changes', () => {
+    const items = [createItem({ quantity: 3, stock: 3 })];
+
+    expect(updateCartItemQuantity(items, 'var-2', 5)).toBe(items);
+    expect(updateCartItemQuantity(items, 'var-1', 99)).toBe(items);
+  });
 });
 
 describe('removeCartItem', () => {
@@ -106,6 +114,12 @@ describe('removeCartItem', () => {
 
     expect(items).toHaveLength(1);
     expect(items[0].variantId).toBe('var-2');
+  });
+
+  it('returns the same array when the variant is not in the cart', () => {
+    const items = [createItem()];
+
+    expect(removeCartItem(items, 'var-2')).toBe(items);
   });
 });
 

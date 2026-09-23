@@ -110,6 +110,43 @@ describe('createOrderSchema', () => {
     expect(createOrderSchema.safeParse(fractional).success).toBe(false);
   });
 
+  it('rejects a quantity above 99', () => {
+    const atLimit = {
+      ...createFormValues(),
+      expectedTotal: 1480,
+      items: [{ variantId: 'var-1', quantity: 99 }],
+    };
+    const overLimit = {
+      ...createFormValues(),
+      expectedTotal: 1480,
+      items: [{ variantId: 'var-1', quantity: 100 }],
+    };
+
+    expect(createOrderSchema.safeParse(atLimit).success).toBe(true);
+    expect(createOrderSchema.safeParse(overLimit).success).toBe(false);
+  });
+
+  it('rejects more than 50 items', () => {
+    const createItems = (length: number) =>
+      Array.from({ length }, (_, index) => ({
+        variantId: `var-${index}`,
+        quantity: 1,
+      }));
+    const atLimit = {
+      ...createFormValues(),
+      expectedTotal: 1480,
+      items: createItems(50),
+    };
+    const overLimit = {
+      ...createFormValues(),
+      expectedTotal: 1480,
+      items: createItems(51),
+    };
+
+    expect(createOrderSchema.safeParse(atLimit).success).toBe(true);
+    expect(createOrderSchema.safeParse(overLimit).success).toBe(false);
+  });
+
   it('requires the total the customer saw', () => {
     const input = {
       ...createFormValues(),

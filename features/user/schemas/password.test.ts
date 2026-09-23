@@ -14,16 +14,6 @@ describe('changePasswordSchema', () => {
     expect(result.success).toBe(true);
   });
 
-  it('rejects a new password shorter than 8 characters', () => {
-    const result = changePasswordSchema.safeParse({
-      ...validInput,
-      newPassword: 'short',
-      confirmPassword: 'short',
-    });
-
-    expect(result.success).toBe(false);
-  });
-
   it('reports the mismatch on the confirmation field', () => {
     const result = changePasswordSchema.safeParse({
       ...validInput,

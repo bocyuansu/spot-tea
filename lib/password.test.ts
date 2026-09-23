@@ -32,10 +32,13 @@ describe('verifyPassword', () => {
   });
 
   it('matches across Unicode normalisation forms', async () => {
-    // 同一個 "é"：先組合字元，再拆成 e + combining acute accent
-    const hash = await hashPassword('cafépass');
+    // 同一個 "é"：先組合字元 U+00E9，再拆成 e + U+0301 combining acute accent。
+    // 用 escape 寫死，編輯器或複製貼上做了 NFC 正規化也不會讓兩邊變成同一個字串
+    const hash = await hashPassword('caf\u00e9pass');
 
-    expect(await verifyPassword({ hash, password: 'cafépass' })).toBe(true);
+    expect(await verifyPassword({ hash, password: 'cafe\u0301pass' })).toBe(
+      true,
+    );
   });
 
   it('returns false for a hash it cannot read instead of throwing', async () => {

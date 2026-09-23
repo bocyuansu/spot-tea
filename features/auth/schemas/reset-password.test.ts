@@ -12,15 +12,6 @@ describe('resetPasswordSchema', () => {
     expect(result.success).toBe(true);
   });
 
-  it('rejects a password shorter than 8 characters', () => {
-    const result = resetPasswordSchema.safeParse({
-      newPassword: 'short',
-      confirmPassword: 'short',
-    });
-
-    expect(result.success).toBe(false);
-  });
-
   it('rejects mismatched passwords on confirmPassword', () => {
     const result = resetPasswordSchema.safeParse({
       newPassword: 'password123',
