@@ -23,6 +23,11 @@
       "binding": "VINEXT_KV_CACHE",
       "id": "f6a58e7a8f414593a25d23e918f6d371",
     },
+    // Better Auth 的 secondaryStorage，用來快取 session（見 lib/auth-storage.ts）
+    {
+      "binding": "AUTH_KV",
+      "id": "a7728ec7982c4b6490dcb65ad6e01fdc",
+    },
   ],
   "assets": {
     "directory": "dist/client",

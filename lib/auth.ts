@@ -3,19 +3,33 @@ import { admin } from 'better-auth/plugins';
 import { betterAuth } from 'better-auth/minimal';
 import { drizzleAdapter } from '@better-auth/drizzle-adapter/relations-v2';
 import { getDatabase } from '@/db/client';
+import { kvSecondaryStorage } from '@/lib/auth-storage';
 import * as schema from '@/db/schema';
 import { hashPassword, verifyPassword } from '@/lib/password';
 import { adminRoles } from '@/lib/permissions';
 import { waitUntil } from 'cloudflare:workers';
 
 export async function createAuth() {
-  const db = await getDatabase();
+  const db = await getDatabase('fresh');
 
   return betterAuth({
     database: drizzleAdapter(db, {
       provider: 'pg',
       schema,
     }),
+    secondaryStorage: kvSecondaryStorage,
+    session: {
+      // DB 為主、KV 當快取：KV 查不到會回 DB 查，上線前登入的 session 不會失效
+      storeSessionInDatabase: true,
+    },
+    verification: {
+      // KV 沒有原子的 getAndDelete，驗證碼留在 DB
+      storeInDatabase: true,
+    },
+    rateLimit: {
+      // 有 secondaryStorage 時預設會改用它；KV 沒有原子 increment，每個請求寫一次也會耗光每日寫入額度
+      storage: 'memory',
+    },
     emailAndPassword: {
       enabled: true,
       // 預設的 scrypt 在 workerd 會撞到 CPU limit，改用 lib/password.ts 的 PBKDF2
