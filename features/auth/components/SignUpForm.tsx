@@ -3,8 +3,7 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { useTransition } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useTransition } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { signUpSchema } from '@/features/auth/schemas/signup';
@@ -21,10 +20,12 @@ import {
 import { toast } from '@/components/ui/toast';
 import Link from 'next/link';
 import { getErrorMessage } from '@/lib/auth-errors';
+import AuthNoticeCard from '@/features/auth/components/AuthNoticeCard';
 
 export default function SignUpForm() {
   const [isPending, startTransition] = useTransition();
-  const router = useRouter();
+  // 送出成功後改顯示「請收信」，記下寄到哪個信箱
+  const [sentTo, setSentTo] = useState<string | null>(null);
 
   const form = useForm({
     resolver: zodResolver(signUpSchema),
@@ -42,12 +43,10 @@ export default function SignUpForm() {
         name: data.name,
         password: data.password,
         fetchOptions: {
+          // 開了 requireEmailVerification，信箱已經註冊過也會回成功（防止被拿來查誰有帳號），
+          // 所以這裡只能說信寄出了，不能說帳號已建立
           onSuccess: () => {
-            toast.add({
-              type: 'success',
-              description: '註冊成功 !',
-            });
-            router.push('/login');
+            setSentTo(data.email);
           },
           onError: (ctx) => {
             // console.error(ctx.error);
@@ -61,6 +60,19 @@ export default function SignUpForm() {
         },
       });
     });
+  }
+
+  if (sentTo) {
+    return (
+      <AuthNoticeCard
+        title="請到信箱完成驗證"
+        href="/login"
+        linkLabel="前往登入"
+      >
+        驗證信已寄到 {sentTo}，點擊信中的連結即可完成註冊。
+        沒收到的話請檢查垃圾郵件匣，或直接登入，系統會再寄一次。
+      </AuthNoticeCard>
+    );
   }
 
   return (

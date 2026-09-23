@@ -17,8 +17,9 @@
 | `AWS_ENDPOINT_URL_S3` / `AWS_REGION` / `AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY` | Neon Object Storage，由 `neon env pull` 產生                             |
 | `IMAGEKIT_URL_ENDPOINT`                                                              | ImageKit 的 URL endpoint，商品圖片的公開網址前綴                         |
 | `BETTER_AUTH_SECRET` / `BETTER_AUTH_URL`                                             | Better Auth                                                              |
+| `RESEND_API_KEY` / `EMAIL_FROM`                                                      | Resend，寄註冊驗證信與重設密碼信；寄件網域要先在 Resend 驗證             |
 
-機密（`AWS_ACCESS_KEY_ID`、`AWS_SECRET_ACCESS_KEY`、`BETTER_AUTH_SECRET`）
+機密（`AWS_ACCESS_KEY_ID`、`AWS_SECRET_ACCESS_KEY`、`BETTER_AUTH_SECRET`、`RESEND_API_KEY`）
 本機放 `.dev.vars`，正式環境用 `wrangler secret put`，不要寫進 `wrangler.jsonc`。
 
 ## 資料庫

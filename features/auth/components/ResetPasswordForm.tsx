@@ -17,50 +17,48 @@ import { Loader2 } from 'lucide-react';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { loginSchema } from '@/features/auth/schemas/login';
+import { resetPasswordSchema } from '@/features/auth/schemas/reset-password';
 /* Better Auth */
 import { authClient } from '@/lib/auth-client';
 import { getErrorMessage } from '@/lib/auth-errors';
 /* Nextjs */
 import { useTransition } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
 
-type LoginFormProps = {
-  // 登入後要回去的站內路徑，由 login/page.tsx 驗證過
-  redirectTo: string;
+type ResetPasswordFormProps = {
+  // 重設密碼信裡的 token，由 reset-password/page.tsx 從 query string 取出
+  token: string;
 };
 
-export default function LoginForm({ redirectTo }: LoginFormProps) {
+export default function ResetPasswordForm({ token }: ResetPasswordFormProps) {
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
 
   const form = useForm({
-    resolver: zodResolver(loginSchema),
+    resolver: zodResolver(resetPasswordSchema),
     defaultValues: {
-      email: '',
-      password: '',
+      newPassword: '',
+      confirmPassword: '',
     },
   });
 
-  function onSubmit(data: z.infer<typeof loginSchema>) {
+  function onSubmit(data: z.infer<typeof resetPasswordSchema>) {
     startTransition(async () => {
-      await authClient.signIn.email({
-        email: data.email,
-        password: data.password,
+      await authClient.resetPassword({
+        newPassword: data.newPassword,
+        token,
         fetchOptions: {
           onSuccess: () => {
             form.reset();
 
             toast.add({
               type: 'success',
-              description: '登入成功 !',
+              description: '密碼已重設，請用新密碼登入 !',
             });
 
-            router.push(redirectTo);
+            router.push('/login');
           },
           onError: (ctx) => {
-            // console.error(ctx.error);
             const errorMessage = getErrorMessage(ctx.error.code, 'zh');
             toast.add({
               type: 'error',
@@ -76,21 +74,22 @@ export default function LoginForm({ redirectTo }: LoginFormProps) {
   return (
     <Card className="w-full max-w-sm mx-auto my-8 [--card-spacing:--spacing(8)]">
       <CardHeader>
-        <CardTitle className="text-3xl">會員登入</CardTitle>
+        <CardTitle className="text-3xl">重設密碼</CardTitle>
       </CardHeader>
       <CardContent>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <FieldGroup className="gap-y-4">
             <Controller
-              name="email"
+              name="newPassword"
               control={form.control}
               render={({ field, fieldState }) => (
                 <Field>
-                  <FieldLabel>電子信箱 (Email)</FieldLabel>
+                  <FieldLabel>新密碼</FieldLabel>
                   <Input
                     aria-invalid={fieldState.invalid}
-                    placeholder="example@gmail.com"
-                    type="email"
+                    placeholder="********"
+                    type="password"
+                    autoComplete="new-password"
                     {...field}
                   />
                   {fieldState.invalid && (
@@ -100,23 +99,16 @@ export default function LoginForm({ redirectTo }: LoginFormProps) {
               )}
             />
             <Controller
-              name="password"
+              name="confirmPassword"
               control={form.control}
               render={({ field, fieldState }) => (
                 <Field>
-                  <div className="flex items-center">
-                    <FieldLabel>密碼 (Password)</FieldLabel>
-                    <Link
-                      href="/forgot-password"
-                      className="ml-auto text-sm underline-offset-4 hover:underline"
-                    >
-                      忘記密碼？
-                    </Link>
-                  </div>
+                  <FieldLabel>確認新密碼</FieldLabel>
                   <Input
                     aria-invalid={fieldState.invalid}
                     placeholder="********"
                     type="password"
+                    autoComplete="new-password"
                     {...field}
                   />
                   {fieldState.invalid && (
@@ -126,22 +118,17 @@ export default function LoginForm({ redirectTo }: LoginFormProps) {
               )}
             />
             <Field>
+              <FieldDescription>密碼長度至少 8 碼</FieldDescription>
               <Button type="submit" disabled={isPending}>
                 {isPending ? (
                   <>
                     <Loader2 className="size-4 animate-spin" />
-                    <span>登入中</span>
+                    <span>更新中</span>
                   </>
                 ) : (
-                  <span>登入</span>
+                  <span>重設密碼</span>
                 )}
               </Button>
-              {/* <Button variant="outline" type="button">
-                Login with Google
-              </Button> */}
-              <FieldDescription className="text-center">
-                沒有帳號？ <Link href="/signup">註冊</Link>
-              </FieldDescription>
             </Field>
           </FieldGroup>
         </form>

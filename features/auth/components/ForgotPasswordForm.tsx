@@ -13,54 +13,42 @@ import { Input } from '@/components/ui/input';
 import { toast } from '@/components/ui/toast';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Loader2 } from 'lucide-react';
+import AuthNoticeCard from '@/features/auth/components/AuthNoticeCard';
 /* React Hook Form */
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { loginSchema } from '@/features/auth/schemas/login';
+import { forgotPasswordSchema } from '@/features/auth/schemas/forgot-password';
 /* Better Auth */
 import { authClient } from '@/lib/auth-client';
 import { getErrorMessage } from '@/lib/auth-errors';
 /* Nextjs */
-import { useTransition } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useTransition } from 'react';
 import Link from 'next/link';
 
-type LoginFormProps = {
-  // 登入後要回去的站內路徑，由 login/page.tsx 驗證過
-  redirectTo: string;
-};
-
-export default function LoginForm({ redirectTo }: LoginFormProps) {
+export default function ForgotPasswordForm() {
   const [isPending, startTransition] = useTransition();
-  const router = useRouter();
+  // 送出成功後改顯示「請收信」，記下寄到哪個信箱
+  const [sentTo, setSentTo] = useState<string | null>(null);
 
   const form = useForm({
-    resolver: zodResolver(loginSchema),
+    resolver: zodResolver(forgotPasswordSchema),
     defaultValues: {
       email: '',
-      password: '',
     },
   });
 
-  function onSubmit(data: z.infer<typeof loginSchema>) {
+  function onSubmit(data: z.infer<typeof forgotPasswordSchema>) {
     startTransition(async () => {
-      await authClient.signIn.email({
+      // 不傳 redirectTo：信裡的連結由 lib/auth.ts 用 token 直接組成 /reset-password
+      await authClient.requestPasswordReset({
         email: data.email,
-        password: data.password,
         fetchOptions: {
+          // 信箱沒註冊也會回成功（防止被拿來查誰有帳號），所以只能說「如果有註冊」
           onSuccess: () => {
-            form.reset();
-
-            toast.add({
-              type: 'success',
-              description: '登入成功 !',
-            });
-
-            router.push(redirectTo);
+            setSentTo(data.email);
           },
           onError: (ctx) => {
-            // console.error(ctx.error);
             const errorMessage = getErrorMessage(ctx.error.code, 'zh');
             toast.add({
               type: 'error',
@@ -73,10 +61,18 @@ export default function LoginForm({ redirectTo }: LoginFormProps) {
     });
   }
 
+  if (sentTo) {
+    return (
+      <AuthNoticeCard title="請到信箱收信" href="/login" linkLabel="回到登入">
+        如果 {sentTo} 有註冊找茶，重設密碼的連結已經寄出，連結在一小時內有效。
+      </AuthNoticeCard>
+    );
+  }
+
   return (
     <Card className="w-full max-w-sm mx-auto my-8 [--card-spacing:--spacing(8)]">
       <CardHeader>
-        <CardTitle className="text-3xl">會員登入</CardTitle>
+        <CardTitle className="text-3xl">忘記密碼</CardTitle>
       </CardHeader>
       <CardContent>
         <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -93,32 +89,9 @@ export default function LoginForm({ redirectTo }: LoginFormProps) {
                     type="email"
                     {...field}
                   />
-                  {fieldState.invalid && (
-                    <FieldError errors={[fieldState.error]} />
-                  )}
-                </Field>
-              )}
-            />
-            <Controller
-              name="password"
-              control={form.control}
-              render={({ field, fieldState }) => (
-                <Field>
-                  <div className="flex items-center">
-                    <FieldLabel>密碼 (Password)</FieldLabel>
-                    <Link
-                      href="/forgot-password"
-                      className="ml-auto text-sm underline-offset-4 hover:underline"
-                    >
-                      忘記密碼？
-                    </Link>
-                  </div>
-                  <Input
-                    aria-invalid={fieldState.invalid}
-                    placeholder="********"
-                    type="password"
-                    {...field}
-                  />
+                  <FieldDescription>
+                    輸入註冊時使用的信箱，我們會寄一封重設密碼的連結給你
+                  </FieldDescription>
                   {fieldState.invalid && (
                     <FieldError errors={[fieldState.error]} />
                   )}
@@ -130,17 +103,14 @@ export default function LoginForm({ redirectTo }: LoginFormProps) {
                 {isPending ? (
                   <>
                     <Loader2 className="size-4 animate-spin" />
-                    <span>登入中</span>
+                    <span>寄送中</span>
                   </>
                 ) : (
-                  <span>登入</span>
+                  <span>寄送重設連結</span>
                 )}
               </Button>
-              {/* <Button variant="outline" type="button">
-                Login with Google
-              </Button> */}
               <FieldDescription className="text-center">
-                沒有帳號？ <Link href="/signup">註冊</Link>
+                想起密碼了？ <Link href="/login">登入</Link>
               </FieldDescription>
             </Field>
           </FieldGroup>

@@ -76,6 +76,8 @@ export default function UserCreateDialog() {
         email,
         password,
         role,
+        // 註冊要驗證信箱才能登入；後台建的帳號由管理員擔保，直接標成已驗證
+        data: { emailVerified: true },
         fetchOptions: {
           onSuccess: () => {
             setOpen(false);

@@ -63,3 +63,18 @@ export function ecpayEnv() {
     mode: parsed.ECPAY_MODE,
   };
 }
+
+/**
+ * Resend 寄信（註冊驗證信、重設密碼信），同樣不在 neon.ts 的管轄內，用 zod 驗。
+ * API key 屬於機密；EMAIL_FROM 是 "名稱 <地址>" 格式的寄件人，網域必須先在 Resend 驗證過。
+ */
+export function resendEnv() {
+  const parsed = z
+    .object({
+      RESEND_API_KEY: z.string().min(1, 'RESEND_API_KEY 未設定 !'),
+      EMAIL_FROM: z.string().min(1, 'EMAIL_FROM 未設定 !'),
+    })
+    .parse(process.env);
+
+  return { apiKey: parsed.RESEND_API_KEY, from: parsed.EMAIL_FROM };
+}

@@ -63,6 +63,15 @@ const errorCodes = {
     en: 'Session expired. Re-authenticate to perform this action.',
     zh: '登入已過期，請重新登入 !',
   },
+  // lib/auth.ts 開了 sendOnSignIn，被擋下的同時已經重寄一封驗證信
+  EMAIL_NOT_VERIFIED: {
+    en: 'Email not verified',
+    zh: '信箱尚未驗證，已重新寄出驗證信，請至信箱收信 !',
+  },
+  INVALID_TOKEN: {
+    en: 'Invalid token',
+    zh: '重設連結無效或已過期，請重新申請 !',
+  },
 } satisfies ErrorTypes;
 
 export const getErrorMessage = (code: string, lang: 'en' | 'zh') => {
