@@ -41,7 +41,8 @@ export async function createAuth() {
     // 信裡的連結用 token 另外組，不用 Better Auth 給的 url（原因見 features/auth/emails.ts）
     emailAndPassword: {
       enabled: true,
-      requireEmailVerification: true,
+      // 目前沒自訂網域，先關閉 Email 驗證
+      requireEmailVerification: false,
       // 跟修改密碼的 revokeOtherSessions 同理：密碼換了，舊的 session 全部失效
       revokeSessionsOnPasswordReset: true,
       sendResetPassword: async ({ user, url, token }) => {
@@ -59,9 +60,9 @@ export async function createAuth() {
       },
     },
     emailVerification: {
-      sendOnSignUp: true,
-      // 沒驗證就登入會被擋下，同時自動再寄一封，等於「重寄驗證信」
-      sendOnSignIn: true,
+      // 目前沒自訂網域，先關閉 Email 驗證
+      sendOnSignUp: false,
+      sendOnSignIn: false,
       sendVerificationEmail: async ({ user, url, token }) => {
         waitUntil(
           sendEmail({

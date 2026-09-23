@@ -21,9 +21,11 @@ import { toast } from '@/components/ui/toast';
 import Link from 'next/link';
 import { getErrorMessage } from '@/lib/auth-errors';
 import AuthNoticeCard from '@/features/auth/components/AuthNoticeCard';
+import { useRouter } from 'next/navigation';
 
 export default function SignUpForm() {
   const [isPending, startTransition] = useTransition();
+  const router = useRouter();
   // 送出成功後改顯示「請收信」，記下寄到哪個信箱
   const [sentTo, setSentTo] = useState<string | null>(null);
 
@@ -46,7 +48,8 @@ export default function SignUpForm() {
           // 開了 requireEmailVerification，信箱已經註冊過也會回成功（防止被拿來查誰有帳號），
           // 所以這裡只能說信寄出了，不能說帳號已建立
           onSuccess: () => {
-            setSentTo(data.email);
+            router.push('/');
+            // setSentTo(data.email);
           },
           onError: (ctx) => {
             // console.error(ctx.error);
