@@ -25,7 +25,7 @@ import {
 
 type UserTableProps = {
   users: AdminUser[];
-  // 交給 UserActions 用來擋住「停權/刪除自己」這件事
+  // 交給 UserActions 用來擋住「停權自己」這件事
   currentUserId: string;
 };
 

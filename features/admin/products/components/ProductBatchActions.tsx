@@ -61,9 +61,7 @@ export default function ProductBatchActions({
   return (
     <div className="flex flex-wrap items-center justify-between gap-2">
       <p className="text-sm text-muted-foreground">
-        {products.length > 0
-          ? `已選取 ${products.length} 項商品`
-          : '勾選商品後可以批次上下架或刪除'}
+        {products.length > 0 && `已選取 ${products.length} 項商品`}
       </p>
 
       <div className="flex gap-2">

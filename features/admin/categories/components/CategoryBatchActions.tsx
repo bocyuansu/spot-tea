@@ -17,9 +17,7 @@ export default function CategoryBatchActions({
   return (
     <div className="flex flex-wrap items-center justify-between gap-2">
       <p className="text-sm text-muted-foreground">
-        {categories.length > 0
-          ? `已選取 ${categories.length} 個分類`
-          : '勾選分類後可以批次刪除'}
+        {categories.length > 0 && `已選取 ${categories.length} 個分類`}
       </p>
 
       <div className="flex gap-2">

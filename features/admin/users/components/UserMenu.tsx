@@ -7,13 +7,12 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { IconDotsVertical } from '@tabler/icons-react';
-import { Ban, Pencil, ShieldCheck, Trash2 } from 'lucide-react';
+import { Ban, Pencil, ShieldCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useUserActions } from '@/features/admin/users/components/UserActionsProvider';
 
 export default function UserMenu() {
-  const { user, isSelf, banned, deleteDisabledReason, setActiveDialog } =
-    useUserActions();
+  const { user, isSelf, banned, setActiveDialog } = useUserActions();
 
   return (
     <DropdownMenu>
@@ -47,14 +46,6 @@ export default function UserMenu() {
               <Ban className="size-4" /> 停權
             </>
           )}
-        </DropdownMenuItem>
-        <DropdownMenuItem
-          variant="destructive"
-          disabled={Boolean(deleteDisabledReason)}
-          aria-label={deleteDisabledReason ?? `刪除 ${user.name}`}
-          onClick={() => setActiveDialog('delete')}
-        >
-          <Trash2 className="size-4" /> 刪除
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

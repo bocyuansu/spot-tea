@@ -20,11 +20,11 @@ function banNote(user: AdminUser) {
 
 const columnHelper = createAppColumnHelper<AdminUser>();
 
-// currentUserId 交給 UserActions 用來擋住「停權/刪除自己」這件事，所以欄位要在元件裡依它建立
+// currentUserId 交給 UserActions 用來擋住「停權自己」這件事，所以欄位要在元件裡依它建立
 export function createUserColumns(currentUserId: string) {
   return columnHelper.columns([
     // 搜尋只比對名稱和 Email：都是表格上看得到的字，才看得出每筆結果為什麼符合。
-    // 兩者顯示在同一格，值把兩者接在一起才搜得到 Email；排序也就是先比名稱再比 Email
+    // 兩者顯示在同一格，值把兩者接在一起才搜得到 Email；排序也是先比名稱再比 Email
     columnHelper.accessor((user) => `${user.name} ${user.email}`, {
       id: 'member',
       header: '會員',
@@ -41,7 +41,7 @@ export function createUserColumns(currentUserId: string) {
     // 角色與狀態的值用畫面上的中文標籤，排序才會照看到的字排
     columnHelper.accessor((user) => roleLabels[user.role ?? ''] ?? '一般會員', {
       id: 'role',
-      header: '角色',
+      header: '權限',
       cell: ({ row, getValue }) => (
         <Badge
           variant={row.original.role === 'admin' ? 'default' : 'secondary'}
@@ -70,7 +70,7 @@ export function createUserColumns(currentUserId: string) {
       enableGlobalFilter: false,
     }),
     columnHelper.accessor('orderCount', {
-      header: '訂單數',
+      header: '訂單數量',
       enableGlobalFilter: false,
       meta: { className: 'text-right' },
     }),

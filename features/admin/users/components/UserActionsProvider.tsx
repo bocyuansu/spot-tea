@@ -3,32 +3,23 @@
 import { createContext, useContext, useMemo, useState } from 'react';
 import type { AdminUser } from '@/db/queries/admin/users';
 
-type UserDialogName = 'edit' | 'ban' | 'delete';
+type UserDialogName = 'edit' | 'ban';
 
 type UserActionsContextValue = {
   user: AdminUser;
-  // 停權或刪除自己會把管理員鎖在後台外面，admin plugin 也會回 YOU_CANNOT_BAN_YOURSELF
+  // 停權自己會把管理員鎖在後台外面，admin plugin 也會回 YOU_CANNOT_BAN_YOURSELF
   isSelf: boolean;
   banned: boolean;
-  // 有訂單的會員刪不掉（order.userId 是財務紀錄，沒設 onDelete），自己也不能刪自己
-  deleteDisabledReason?: string;
-  // 同一列的三個對話框一次只會開一個，所以共用一個狀態
+  // 同一列的兩個對話框一次只會開一個，所以共用一個狀態
   activeDialog: UserDialogName | null;
   setActiveDialog: (dialog: UserDialogName | null) => void;
 };
 
 const UserActionsContext = createContext<UserActionsContextValue | null>(null);
 
-// order.userId 沒設 onDelete，有訂單的會員在資料庫層就刪不掉，先在 UI 擋下來
-function getDeleteDisabledReason(user: AdminUser, isSelf: boolean) {
-  if (isSelf) return '不能刪除自己的帳號';
-  if (user.orderCount > 0) return '這位會員已有訂單紀錄，無法刪除';
-  return undefined;
-}
-
 type UserActionsProviderProps = {
   user: AdminUser;
-  // 用來擋住「停權/刪除自己」這件事
+  // 用來擋住「停權自己」這件事
   currentUserId: string;
   children: React.ReactNode;
 };
@@ -40,18 +31,16 @@ export default function UserActionsProvider({
 }: UserActionsProviderProps) {
   const [activeDialog, setActiveDialog] = useState<UserDialogName | null>(null);
 
-  const value = useMemo<UserActionsContextValue>(() => {
-    const isSelf = user.id === currentUserId;
-
-    return {
+  const value = useMemo<UserActionsContextValue>(
+    () => ({
       user,
-      isSelf,
+      isSelf: user.id === currentUserId,
       banned: Boolean(user.banned),
-      deleteDisabledReason: getDeleteDisabledReason(user, isSelf),
       activeDialog,
       setActiveDialog,
-    };
-  }, [user, currentUserId, activeDialog]);
+    }),
+    [user, currentUserId, activeDialog],
+  );
 
   return (
     <UserActionsContext.Provider value={value}>
