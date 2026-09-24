@@ -1,209 +1,204 @@
-# spot-tea（找茶）
+# 找茶 spot-tea
 
-台灣茶葉電商，以 [vinext](https://www.npmjs.com/package/vinext)（Next.js 16 相容）建置，
-部署在 Cloudflare Workers，資料庫是 Neon Postgres（經 Hyperdrive），
-圖片放 Neon Object Storage 並由 ImageKit 當 CDN，金流串接綠界。
+個人獨立開發的台灣茶葉電商。從瀏覽商品、購物車、結帳、綠界信用卡付款，
+到會員中心與後台出貨管理，完整走完一筆訂單的生命週期。
+以 vinext（Next.js App Router 相容）打造，部署在 Cloudflare Workers。
+
+**Demo：<https://spot-tea.cyuan.workers.dev>**
+
+> 信用卡付款串接的是綠界測試環境，可用綠界公開的測試卡號 `4311-9522-2222-2222`
+> （安全碼任意三碼、有效期限任意未來月年、3D 驗證碼 `1234`）走完付款流程。
+
+<!-- 截圖待補：放進 docs/screenshots/ -->
+
+![首頁](docs/screenshots/home.png)
+
+| 商品頁                                   | 結帳                                               |
+| ---------------------------------------- | -------------------------------------------------- |
+| ![商品頁](docs/screenshots/product.png)  | ![結帳](docs/screenshots/checkout.png)             |
+| **會員訂單**                             | **後台訂單管理**                                   |
+| ![會員訂單](docs/screenshots/orders.png) | ![後台訂單管理](docs/screenshots/admin-orders.png) |
+
+## 專案亮點
+
+- **完整的電商流程**：顧客下單付款、管理員備貨出貨、顧客查詢與取消訂單，前後台都實際串到資料庫與金流。
+- **重視資料正確性**：庫存在資料庫端以帶條件的 `UPDATE` 扣減，防止超賣；
+  訂單狀態只能依序往前推，每一次變更都留下操作紀錄。
+- **真實金流串接**：綠界全方位金流信用卡付款，處理 CheckMacValue 驗證、重複通知與付款失敗重付。
+- **在嚴格限制下做架構取捨**：Cloudflare Workers 免費方案每個請求只有 10ms CPU、
+  KV 每天只有 1,000 次寫入，密碼雜湊、快取策略與圖片上傳都依此設計。
+- **型別安全延伸到邊界**：環境變數、表單與 server action 的輸入都經過 zod 驗證，
+  Drizzle ORM 讓資料庫 schema 與查詢結果的型別保持一致。
 
 ## 功能
 
-- **前台**：首頁（依茶區選購、最新上架）、商品列表（茶區篩選、邊打邊搜、分頁）、
-  商品頁（依重量選規格、收藏）、購物車（存在 localStorage）、結帳、門市資訊。
-- **會員中心**：修改名稱與密碼、裁切後上傳大頭貼、我的訂單（出貨前可自行取消）、商品收藏。
-- **付款方式**：綠界信用卡、貨到付款、ATM 匯款。滿 NT$1,500 免運，未滿收 NT$120。
-- **後台**（`role = admin`）：儀表板、商品管理（規格、圖片、批次上下架與刪除）、商品分類、
-  訂單管理、使用者管理（新增、改角色、停權）。每張表都能搜尋、排序、分頁。
-- **Email 驗證與忘記密碼**：程式寫好了，但目前沒有自訂網域，暫時關閉（見「部署」）。
+**顧客**
+
+- 首頁依茶區選購、最新上架；商品列表可依茶區篩選、邊打邊搜、分頁
+- 商品頁依重量選規格、加入收藏
+- 購物車、結帳、門市資訊
+- 付款方式：綠界信用卡、貨到付款、ATM 匯款；滿 NT$1,500 免運，未滿收 NT$120
+
+**會員中心**
+
+- 修改名稱與密碼、裁切後上傳大頭貼
+- 我的訂單：查看處理進度，出貨前可自行取消
+- 商品收藏
+
+**管理後台**
+
+- 儀表板：已付款營收、訂單數、會員數、上架商品數，以及最新訂單與低庫存提醒
+- 商品管理：多重量規格、圖片上傳、批次上下架與刪除；商品分類管理
+- 訂單管理：依步驟推進訂單與付款狀態
+- 會員管理：新增會員、調整角色、停權，並列出每位會員的累計消費
+- 所有表格皆支援搜尋、排序與分頁
+
+Email 驗證與忘記密碼已實作（Resend 寄信），因尚未綁定自訂網域，暫未啟用。
 
 ## 技術棧
 
-| 項目     | 使用                                                                       |
-| -------- | -------------------------------------------------------------------------- |
-| 框架     | vinext（Next.js App Router 相容，跑在 Vite 上）、React 19                  |
-| 部署     | Cloudflare Workers（`@vinext/cloudflare`）                                 |
-| 資料庫   | Neon Postgres + Cloudflare Hyperdrive、Drizzle ORM 1.0 RC（relations v2）  |
-| 登入     | Better Auth（email + 密碼、admin plugin），session 快取在 Workers KV       |
-| 圖片     | Neon Object Storage（S3 相容）、ImageKit                                   |
-| 金流     | 綠界全方位金流（AIO）信用卡                                                |
-| 寄信     | Resend                                                                     |
-| UI       | Tailwind CSS、shadcn/ui（base-nova）、TanStack Table、react-hook-form、zod |
-| 開發工具 | TypeScript、oxlint、oxfmt、Vitest、pnpm                                    |
+| 類別       | 技術                                                      |
+| ---------- | --------------------------------------------------------- |
+| 框架       | vinext（Next.js App Router 相容，以 Vite 建置）、React 19 |
+| 執行環境   | Cloudflare Workers                                        |
+| 資料庫     | Neon Postgres、Drizzle ORM、Cloudflare Hyperdrive         |
+| 快取       | Workers KV                                                |
+| 身分驗證   | Better Auth（含 admin plugin）                            |
+| 檔案儲存   | Neon Object Storage（S3 相容）、ImageKit CDN              |
+| 金流       | 綠界全方位金流（AIO）                                     |
+| 寄信       | Resend                                                    |
+| UI         | Tailwind CSS、shadcn/ui、TanStack Table                   |
+| 表單與驗證 | React Hook Form、zod                                      |
+| 測試       | Vitest                                                    |
+| 開發工具   | TypeScript、pnpm、oxlint、oxfmt                           |
 
-## 快速開始
+## 系統架構
 
-```sh
-pnpm install
-cp .env.example .env.local   # 填入下方的環境變數
-pnpm db:migrate
-pnpm db:seed
-pnpm dev                     # http://localhost:3000
+```mermaid
+flowchart LR
+  B["瀏覽器"] -->|"頁面、server action"| W["Cloudflare Worker<br/>vinext"]
+  W -->|"Hyperdrive 連線池"| DB[("Neon Postgres")]
+  W <-->|"session、商品快取"| KV[("Workers KV")]
+  B -->|"presigned URL 直接上傳"| S3[("Neon Object Storage")]
+  S3 --> IK["ImageKit CDN"]
+  IK -->|"依尺寸輸出圖片"| B
+  B -->|"表單 POST"| EC["綠界金流"]
+  EC -->|"付款結果回呼"| W
 ```
 
-- **第一個管理員**：admin plugin 的預設角色是 `customer`，後台的新增會員與改角色又都需要管理員身分，
-  所以第一個管理員要先註冊，再到資料庫把該使用者的 `role` 改成 `admin`。
-- `db:seed` 的示範訂單會掛在 `db/seed-data.ts` 的 `seedOrderUserEmail` 帳號底下，
-  該帳號還沒註冊時只會跳過訂單，分類與商品照常寫入。
+- **Cloudflare Workers**：頁面、server action 與 API 都跑在同一個 Worker 上，
+  並固定在離資料庫最近的區域（`aws:ap-southeast-1`）。
+- **Hyperdrive**：Worker 的每個請求都是短暫的執行環境，由 Hyperdrive 維持到 Neon 的連線池，
+  省下每次重新建立連線的成本。
+- **Workers KV**：快取 Better Auth 的 session，以及前台的商品與分類清單。
+  資料庫仍是唯一的真實來源，商品、分類或庫存變動時以標籤讓快取失效。
+- **Neon Object Storage + ImageKit**：商品圖與大頭貼由瀏覽器直接上傳，
+  對外經 ImageKit CDN 依螢幕尺寸產生 srcset。
 
-## 環境變數
+## 技術挑戰與解法
 
-複製 `.env.example` 成 `.env.local` 後填入。程式一律經由 `env.ts` 讀取，不直接碰 `process.env`：
-Neon 的變數交給 `@neon/env` 的 `parseEnv`，其餘用 zod 驗證，少一個或格式錯會直接報錯，
-不會變成 `undefined` 流進別的地方。
+### 1. 結帳：防止超賣與竄改價格
 
-| 變數                                                                                 | 用途                                                                                  |
-| ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------- |
-| `DATABASE_URL_UNPOOLED`                                                              | Neon 的直連（non-pooled）連線字串，給 migration、seed、drizzle-kit 與 Better Auth CLI |
-| `CLOUDFLARE_HYPERDRIVE_LOCAL_CONNECTION_STRING_HYPERDRIVE`                           | 本機 dev 時 `HYPERDRIVE` binding 對應的連線字串                                       |
-| `CLOUDFLARE_HYPERDRIVE_LOCAL_CONNECTION_STRING_HYPERDRIVE_FRESH`                     | 同上，對應 `HYPERDRIVE_FRESH`                                                         |
-| `AWS_ENDPOINT_URL_S3` / `AWS_REGION` / `AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY` | Neon Object Storage，由 `neon env pull` 產生                                          |
-| `IMAGEKIT_URL_ENDPOINT`                                                              | ImageKit 的 URL endpoint（origin 指在 bucket 根目錄），圖片公開網址的前綴             |
-| `BETTER_AUTH_SECRET` / `BETTER_AUTH_URL`                                             | Better Auth                                                                           |
-| `RESEND_API_KEY` / `EMAIL_FROM`                                                      | Resend，寄註冊驗證信與重設密碼信；寄件網域要先在 Resend 驗證                          |
-| `ECPAY_MERCHANT_ID` / `ECPAY_HASH_KEY` / `ECPAY_HASH_IV`                             | 綠界特店資料；`.env.example` 附的是綠界公開的測試特店                                 |
-| `ECPAY_MODE`                                                                         | `stage`（預設）或 `production`，決定送單到綠界的測試或正式付款頁                      |
+**問題**：購物車存在瀏覽器，送來的價格不可信；兩位顧客同時搶最後一件商品時，
+「先讀庫存、算好再寫回」會發生 lost update。
 
-本機開發時所有變數（含機密）都放 `.env.local`：Node 腳本用 dotenv 讀它，
-dev server 裡的 Worker 則由 Cloudflare 的 Vite plugin 讀（官方的做法是 `.dev.vars` 與 `.env*` 擇一，
-這個專案用後者）。
+**做法**：
 
-正式環境的非機密變數寫在 `wrangler.jsonc` 的 `vars`；機密
-（`AWS_ACCESS_KEY_ID`、`AWS_SECRET_ACCESS_KEY`、`BETTER_AUTH_SECRET`、`RESEND_API_KEY`、
-`ECPAY_HASH_KEY`、`ECPAY_HASH_IV`）用 `wrangler secret put` 設定，不要寫進 `wrangler.jsonc`。
+- client 只送規格與數量，品名、單價與庫存一律在 server 從資料庫重新查詢。
+  價格有變動時，帶回最新單價請顧客確認後再送出。
+- 扣庫存用帶條件的 `UPDATE ... SET stock = stock - n WHERE stock >= n`，由資料庫原子相減。
+  後到的那筆命中 0 列，整筆交易連同已扣的庫存一起 rollback，顧客會看到庫存不足的提示。
 
-## Cloudflare bindings
+### 2. 訂單狀態機：禁止跳步，擋下併發操作
 
-| Binding            | 用途                                                                    |
-| ------------------ | ----------------------------------------------------------------------- |
-| `HYPERDRIVE_FRESH` | Hyperdrive，不快取查詢。目前所有查詢都走這一條                          |
-| `HYPERDRIVE`       | Hyperdrive，有查詢快取。是 `getDatabase()` 的預設值，但目前沒有程式使用 |
-| `VINEXT_KV_CACHE`  | vinext 的資料快取，存放 `unstable_cache` 的結果                         |
-| `AUTH_KV`          | Better Auth 的 `secondaryStorage`，快取 session                         |
-| `IMAGES`           | vinext `next/image` 的站內圖片最佳化                                    |
-| `ASSETS`           | 建置後的靜態檔（`dist/client`）                                         |
+**問題**：後台若提供可任意編輯的表單，狀態可能被改錯、也無從追查是誰改的；
+兩位管理員同時操作，或其中一人的畫面已經過期時，會互相覆蓋。
 
-Worker 固定放在 Neon 資料庫所在的 `aws:ap-southeast-1`（配合 Hyperdrive，不用 smart placement），
-Workers Cache 保持關閉，否則會和 vinext 的 KV 快取衝突。
+**做法**：
 
-## 資料庫
+- 訂單狀態只能依序往前推（待處理 → 備貨中 → 已出貨 → 已完成，出貨前可取消），
+  付款狀態獨立記錄（未付款 → 已付款 → 已退款）。後台只有「下一步」按鈕，沒有編輯表單。
+- 允許的前一個狀態直接寫進 `UPDATE` 的 `WHERE`，業務規則也一併放進條件
+  （信用卡與 ATM 匯款要先付款才能備貨，貨到付款例外）。畫面過期或同時操作只會命中 0 列，
+  回傳「訂單狀態已經變更，請重新整理」。
+- 在同一筆交易裡寫入 `order_event`，記下每一次變更與操作的管理員；取消訂單時補回庫存。
 
-Schema 在 `db/schema/`（依 auth / product / order / favorite 分檔），
-關聯在 `db/relations/`（每個 domain 一個 `defineRelationsPart`，於 `index.ts` 淺層合併）。
+### 3. 綠界金流：重複與不保證順序的付款通知
 
-- `user` / `session` / `account` / `verification`：Better Auth 的表，含 admin plugin 的角色與停權欄位。
+**問題**：綠界會把付款結果同時送到 ReturnURL（server 對 server）與 OrderResultURL（導回瀏覽器），
+兩者內容相同、不保證誰先到，通知也可能重送。
+
+**做法**：
+
+- 兩個端點共用同一段處理：先驗證 CheckMacValue 與特店編號，
+  再以 `WHERE payment_status = 'unpaid'` 回寫。先到的寫入，後到與重送的命中 0 列，
+  不會重複入帳，也不會重複記錄歷程。
+- 綠界後台「模擬付款」產生的通知（`SimulatePaid=1`）沒有真的收到錢，不會標記為已付款。
+- 付款失敗或中途離開時，訂單維持未付款，可在訂單完成頁重新付款。
+
+### 4. 追進框架原始碼，找出正式環境的重導向迴圈
+
+**問題**：會員中心在本機一切正常，部署後卻出現 Cloudflare 1101 錯誤「Too many redirects」。
+
+**原因**：追進 `@vinext/cloudflare` 的 CDN adapter 原始碼後發現，
+它把頁面渲染交給另一個啟用快取的 Worker 入口，而這個內部 `fetch` 漏設了 `redirect: "manual"`
+（同一套件的其他內部請求都有設）。頁面回傳的 307 因此被 Worker 自己跟隨，
+重新渲染同一頁、再回 307，直到超過重導向上限。
+
+**做法**：頁面不再呼叫 `redirect()`，登入與權限的轉址移到 `proxy.ts`（middleware）。
+它執行在不經內部轉送的入口，307 能正常回到瀏覽器。頁面本身只負責在 session 失效時顯示提示畫面。
+
+### 5. 在 Workers 免費方案的限制下設計
+
+- **每個請求只有 10ms CPU**：Better Auth 預設的 scrypt 在 Workers 上要花數百 ms，登入必定超時。
+  改用 Web Crypto 原生的 PBKDF2 覆寫密碼雜湊，迭代次數存進 hash 本身，之後調整也不會讓舊密碼失效。
+  （Workers 的 PBKDF2 迭代上限只在正式環境生效，本機測不出來，這點也寫進了註解。）
+- **KV 每天只有 1,000 次寫入**：若為每組篩選參數開一個 cache key，任何人亂打的關鍵字都會多消耗一次寫入。
+  改成整份型錄只快取一個 key，茶區篩選、關鍵字搜尋與分頁都在記憶體中完成。
+- **圖片上傳不經過 Worker**：server 只簽發 presigned URL，瀏覽器直接 PUT 到物件儲存，
+  不佔用 Worker 的 CPU 與請求大小限制。
+
+### 6. 時區
+
+Worker 執行在 UTC，但訂單日期與訂單編號（`ST-YYYYMMDD-NNNN`）都應以台灣時間計算。
+日期一律以 `Asia/Taipei` 計算與顯示，避免午夜前後的訂單被算到前一天。
+
+## 資料模型
+
+- `user` / `session` / `account` / `verification`：Better Auth 的資料表，含 admin plugin 的角色與停權欄位。
 - `category` / `product` / `product_variant`：商品依重量分規格，價格與庫存記在規格上。
-- `order` / `order_item` / `order_event`：訂單狀態與付款狀態分開記錄；明細存下單當下的品名與單價快照；
-  `order_event` 留下每一次狀態變更與操作的管理員。
+- `order` / `order_item` / `order_event`：訂單狀態與付款狀態分開記錄；
+  訂單明細保存下單當下的品名與單價；`order_event` 記錄每一次狀態變更與操作者。
 - `favorite`：以 (user_id, product_id) 為複合主鍵。
 
-```sh
-pnpm db:generate   # 由 db/schema/ 產生 SQL migration 到 drizzle/
-pnpm db:migrate    # 套用未執行的 migration（走 DATABASE_URL_UNPOOLED）
-pnpm db:seed       # upsert db/seed-data.ts 的分類、商品與示範訂單，可重複執行
-```
+## 測試
 
-Better Auth 的表由它的 CLI 產生：`pnpm dlx auth@latest generate --config lib/auth-cli.ts`。
-CLI 在純 Node 裡跑，載不進會用到 Worker binding 的 `lib/auth.ts`，所以另有一份 `lib/auth-cli.ts`；
-新增會建表或加欄位的 plugin 時，兩邊的 `plugins` 要同步。
-
-### 連線與快取
-
-- Hyperdrive 在正式環境負責連線池，Worker 每個請求建立一個短命的 `pg` client。
-  Hyperdrive 的來源請用 Neon 的直連 host，不要用 `-pooler` 的那個。
-- 所有查詢都走 `fresh`：後台、結帳、會員訂單與收藏都要看到當下的資料。
-- 前台的商品與分類清單（`db/queries/products.ts`）外包一層 `unstable_cache`，結果存進
-  `VINEXT_KV_CACHE`，掛 `products` / `categories` 標籤、一小時重新驗證。
-  改到商品、分類或庫存的 server action（後台編輯、結帳扣庫存、取消補庫存）會用 `updateTag` 清掉。
-- 茶區篩選、關鍵字、分頁與商品頁的 slug 都是在記憶體裡篩選整份型錄，不另開 cache key：
-  Free 方案的 KV 每天只有 1,000 次寫入，任何人亂打的參數都會多一次寫入。
-- Session 由 `lib/session.ts` 以 React 的 `cache()` 包起來，每個請求只查一次。
-  `AUTH_KV` 只是快取，session 仍以資料庫為主；KV 沒有原子操作，所以驗證碼留在資料庫、
-  rate limit 用記憶體。
-
-## 訂單與付款
-
-- **訂單狀態**：待處理 → 備貨中 → 已出貨 → 已完成，出貨前可取消（顧客或後台皆可），取消時補回庫存。
-- **付款狀態**：未付款 → 已付款 → 已退款。信用卡與 ATM 匯款要先付款才能開始備貨，貨到付款例外。
-- 後台只能按按鈕把狀態往下一步推，沒有編輯表單。允許的前一個狀態直接寫進 `UPDATE` 的條件，
-  畫面過期或兩人同時操作只會命中 0 列；每一步在同一筆交易裡寫一筆 `order_event`，
-  並把操作者記到 `updatedById`。規則表在 `features/orders/order-status.ts`。
-- **結帳**：client 只送規格與數量，品名、單價與庫存一律從資料庫重撈。合計和顧客看到的不同時
-  會帶回最新單價請顧客確認；扣庫存用帶條件的 `UPDATE`（`stock >= quantity`）在資料庫端相減，防止超賣。
-  訂單編號是 `ST-YYYYMMDD-NNNN`，日期以台北時間計。
-- **綠界信用卡**：訂單以未付款成立，完成頁由 server action 算好帶 CheckMacValue 的欄位，
-  再由瀏覽器以表單 POST 到綠界付款頁。付款結果由 `/api/payments/ecpay/notify`（ReturnURL）
-  與 `/api/payments/ecpay/result`（OrderResultURL）回寫，先到的那個寫入，重複的通知不會重複入帳；
-  模擬付款的通知不會標記已付款。付款失敗或中途離開時訂單仍是未付款，可以在完成頁重付。
-- 回呼網址跟著請求的 Origin 走，而綠界只打得到公開的 80/443 網址，本機測試付款要開 tunnel。
-- 貨到付款、ATM 匯款與綠界要求人工確認的交易，由後台手動標記已付款；退款要先在綠界後台或銀行完成，
-  後台只記錄結果。
-
-## 開發
-
-```sh
-pnpm dev           # vinext dev server（http://localhost:3000）
-pnpm build         # 建置 Cloudflare Worker 輸出到 dist/
-pnpm start         # 用 wrangler 在本機跑建置後的 Worker（http://localhost:8787）
-pnpm preview       # build + start
-pnpm deploy        # 部署到 Cloudflare
-pnpm cf-typegen    # 重新產生 Cloudflare binding 的型別
-```
-
-## 檢查
-
-```sh
-pnpm typecheck     # tsc --noEmit
-pnpm lint          # oxlint
-pnpm format        # oxfmt（含 .css）
-pnpm format:check
-pnpm test          # vitest
-```
-
-單元測試（`*.test.ts`）放在被測模組旁邊，著重在運費、訂單狀態、訂單編號、CheckMacValue、
-密碼雜湊、登入後轉址這類商業規則。Commit 訊息採用 Conventional Commits。
-
-## 部署
-
-```sh
-pnpm build
-pnpm deploy
-```
-
-- `wrangler.jsonc` 裡的 Hyperdrive 與 KV id 屬於目前的 Cloudflare 帳號，換帳號要重新建立並換掉 id。
-- 網域寫死在幾個地方，換網域時要一起改：`lib/auth.ts` 的 `baseURL.allowedHosts`、
-  `app/sitemap.ts` 與 `app/robots.txt`。
-- **綠界上線**：把 `wrangler.jsonc` 的 `ECPAY_MERCHANT_ID` 換成正式特店、`ECPAY_MODE` 改成 `production`，
-  HashKey / HashIV 用 `wrangler secret put` 換成正式的。
-- **開啟 Email 功能**：在 Resend 驗證網域並改掉 `EMAIL_FROM`（`onboarding@resend.dev` 只寄得到
-  Resend 帳號本人的信箱），再把 `lib/auth.ts` 的 `requireEmailVerification`、`sendOnSignUp`、
-  `sendOnSignIn` 打開，並拿掉 `app/(auth)/forgot-password/page.tsx` 的 `closeFeature`。
+單元測試放在被測模組旁（`*.test.ts`），以 Vitest 執行，著重在出錯代價高的商業規則：
+運費計算、訂單狀態轉移、訂單編號、綠界 CheckMacValue、密碼雜湊、
+登入後的安全轉址（防止 open redirect），以及各表單的 zod schema。
 
 ## 專案結構
 
-- `app/` —— 路由。`(shop)` 前台與 `(user)` 會員中心共用 `SiteChrome`（導覽列 + 頁尾），
-  `(auth)` 是乾淨的置中表單，`(admin)` 是側邊欄後台；`api/auth` 是 Better Auth，
-  `api/payments/ecpay` 接綠界的回呼。
-- `features/<feature>/` —— 該功能專屬的 components / schemas / actions 與商業邏輯。
-  `features/admin/` 再依 domain 分成 products / categories / orders / users / dashboard / shared。
-- `components/ui/` —— 只放 shadcn/ui 的原生元件，保持可以重新產生。
-- `components/common/`、`components/layout/` —— 專案自己寫的共用元件。
-- `db/schema/`、`db/relations/`、`db/queries/` —— schema、關聯與查詢；`db/queries/admin/` 給後台用。
-  `drizzle/` 是產生出來的 migration。
-- `lib/` —— auth、session、密碼雜湊、寄信、格式化、S3 client、ImageKit 網址等共用模組。
-- `env.ts` / `neon.ts` —— 環境變數驗證，以及 Neon 的分支政策（宣告 `images` bucket）。
-- `proxy.ts` —— `/user`、`/checkout`、`/admin` 的登入檢查與轉址。
-- `.claude/skills/ecpay/` —— 綠界的 Claude skill（vendored，oxfmt / oxlint 都略過）。
+依功能（feature-based）組織：路由檔保持精簡，每個功能的元件、schema、server action
+與商業邏輯放在同一個資料夾。
 
-## 幾個容易踩到的點
+```text
+app/          路由：(shop) 前台、(user) 會員中心、(auth) 登入註冊、(admin) 後台、api/ 金流回呼
+features/     各功能模組：cart、checkout、orders、payments、products、favorites、user、admin
+components/   共用元件：ui/（shadcn/ui）、common/、layout/
+db/           Drizzle schema、relations、queries
+lib/          auth、session、密碼雜湊、S3 client、ImageKit 等共用模組
+proxy.ts      登入與權限檢查、轉址
+```
 
-- **頁面裡不要用 `redirect()`**。Cloudflare 的 CDN adapter 會自己追著 307 跑，
-  最後變成 1101「Too many redirects」。轉址寫在根目錄的 `proxy.ts`。
-  同樣的原因，驗證信與重設密碼信的連結直接指向站內頁面，不走 Better Auth 會 302 的 GET 端點。
-- **`proxy.ts` 只樂觀檢查 cookie**，真正的身分確認在頁面與 server action 裡：
-  server action 等同公開的 POST endpoint，每個都要自己確認身分；後台 layout 顯示 `AccessDenied`
-  也擋不住頁面資料被序列化進 RSC payload，所以每個後台頁面在查詢前都要呼叫 `getAdminUser()`。
-- 密碼雜湊用 PBKDF2 而不是 scrypt：Workers 免費方案每個請求只有 10ms CPU。
-  迭代次數不能超過 100,000（workerd 的硬性上限，只在 production 生效）。
-- 商品圖片與大頭貼由瀏覽器透過 presigned URL 直接 PUT 到物件儲存，不經過 Worker。
-  商品圖片在表單送出時才上傳，取消編輯不會留下沒人用的檔案。
-- 指向 ImageKit 的 `next/image` 要給明確的 `width` / `height`，不要用 `fill` 或 `unoptimized`，
-  vinext 才會交給 unpic 產生 ImageKit 的 srcset。
-- Worker 跑在 UTC，日期一律以 `Asia/Taipei` 計算與顯示（`lib/format.ts`、訂單編號、綠界的交易時間）。
+## 本機執行
+
+需要 Node.js、pnpm，以及 Neon 與 Cloudflare 帳號。
+
+```sh
+pnpm install
+cp .env.example .env.local   # 填入環境變數
+pnpm db:migrate
+pnpm db:seed                 # 寫入示範分類與商品
+pnpm dev                     # http://localhost:3000
+```
