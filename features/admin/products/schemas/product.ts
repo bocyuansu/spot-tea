@@ -60,6 +60,16 @@ export const productFormSchema = z.object({
 
 export type ProductFormValues = z.infer<typeof productFormSchema>;
 
+// 商品列表勾選後的批次操作只有上架與下架，改回草稿要進編輯頁
+export const productBatchStatusSchema = z.object({
+  ids: z.array(z.string()).min(1),
+  status: z.enum(['published', 'archived']),
+});
+
+export type ProductBatchStatus = z.infer<
+  typeof productBatchStatusSchema
+>['status'];
+
 export const emptyProductVariant: ProductFormValues['variants'][number] = {
   weightGrams: 150,
   label: '',

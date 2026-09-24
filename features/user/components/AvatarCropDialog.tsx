@@ -91,6 +91,7 @@ export default function AvatarCropDialog({
       }
 
       // Content-Type 有被簽進網址，這裡必須送一模一樣的值
+      // 將圖片上傳到 Neon Object Storage
       const response = await fetch(ticket.uploadUrl, {
         method: 'PUT',
         body: cropped,
@@ -102,7 +103,7 @@ export default function AvatarCropDialog({
         return;
       }
 
-      // 走 /api/auth，cookie 由回應帶回去（原因見 deleteReplacedAvatar）
+      // 會發送 Post 請求到 /api/auth，驗證 Session 後，直接更新 Neon 的 user
       const { error } = await authClient.updateUser({ image: ticket.url });
 
       if (error) {

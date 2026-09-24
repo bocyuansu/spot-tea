@@ -1,15 +1,17 @@
 'use server';
 
 import { updateTag } from 'next/cache';
-import { and, eq, notInArray } from 'drizzle-orm';
+import { and, eq, inArray, notInArray } from 'drizzle-orm';
 import { getDatabase } from '@/db/client';
 import { product, productVariant } from '@/db/schema';
 import type { ActionResult } from '@/features/admin/shared/action-result';
 import { isAdmin } from '@/features/admin/shared/admin-guard';
 import { deleteProductImages } from '@/features/admin/products/delete-product-images';
 import {
+  productBatchStatusSchema,
   productFormSchema,
   UNCATEGORIZED,
+  type ProductBatchStatus,
   type ProductFormValues,
 } from '@/features/admin/products/schemas/product';
 
@@ -183,6 +185,35 @@ export async function updateProduct(
   await deleteProductImages(removedImages);
 
   // 可能改到 slug 或 status，舊網址那份快取也會失真
+  updateTag('products');
+
+  return { ok: true };
+}
+
+/** 商品列表勾選後的批次上下架，只改 status，其他欄位與規格都不動 */
+export async function updateProductsStatus(
+  ids: string[],
+  status: ProductBatchStatus,
+): Promise<ActionResult> {
+  if (!(await isAdmin()))
+    return { ok: false, message: '沒有權限執行這個操作 !' };
+
+  const parsed = productBatchStatusSchema.safeParse({ ids, status });
+  if (!parsed.success)
+    return { ok: false, message: '欄位格式有誤，請重新檢查 !' };
+
+  const db = await getDatabase('fresh');
+
+  try {
+    await db
+      .update(product)
+      .set({ status: parsed.data.status })
+      .where(inArray(product.id, parsed.data.ids));
+  } catch {
+    return { ok: false, message: '更新失敗，請稍後再試 !' };
+  }
+
+  // 上下架決定商品會不會出現在前台，不清的話前台列表還是舊的
   updateTag('products');
 
   return { ok: true };

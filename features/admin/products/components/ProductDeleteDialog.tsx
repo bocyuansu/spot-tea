@@ -15,6 +15,7 @@ import { Loader2 } from 'lucide-react';
 import { useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { deleteProduct } from '@/features/admin/products/actions/products';
+import { productTablePaginationAtom } from '@/features/admin/products/product-table-pagination';
 
 type ProductDeleteDialogProps = {
   productId: string;
@@ -47,6 +48,8 @@ export default function ProductDeleteDialog({
 
       onOpenChange(false);
       toast.add({ type: 'success', description: '商品已刪除 !' });
+      // 刪掉的可能是最後一頁僅剩的一項，回到第一頁才不會停在空白頁
+      productTablePaginationAtom.set((old) => ({ ...old, pageIndex: 0 }));
       router.refresh();
     });
   }

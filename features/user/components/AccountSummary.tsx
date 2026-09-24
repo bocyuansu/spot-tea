@@ -4,7 +4,6 @@ import { formatDateTW } from '@/lib/format';
 import type { authClient } from '@/lib/auth-client';
 import AvatarUploader from '@/features/user/components/AvatarUploader';
 
-// admin plugin 的 defaultRole 是 customer，但舊資料仍可能沒有角色
 const roleLabels: Record<string, string> = {
   admin: '管理員',
   customer: '一般會員',

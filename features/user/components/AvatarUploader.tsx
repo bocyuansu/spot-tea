@@ -5,12 +5,12 @@ import { Button } from '@/components/ui/button';
 import { toast } from '@/components/ui/toast';
 import UserAvatar from '@/components/common/UserAvatar';
 import { Camera } from 'lucide-react';
-import AvatarCropDialog from '@/features/user/components/AvatarCropDialog';
 /* Upload */
 import {
   avatarContentTypes,
   avatarUploadSchema,
 } from '@/features/user/schemas/avatar';
+import AvatarCropDialog from '@/features/user/components/AvatarCropDialog';
 /* Nextjs */
 import { useEffect, useRef, useState } from 'react';
 
@@ -26,7 +26,7 @@ export default function AvatarUploader({ image }: AvatarUploaderProps) {
   // 剛儲存成功的裁切結果，直接拿來當頭像
   const [preview, setPreview] = useState<string | null>(null);
 
-  // 換了一張或離開頁面時，把上一張的 blob 網址還回去
+  // 換了一張或離開頁面時，釋放佔用的瀏覽器記憶體
   useEffect(() => {
     if (!source) return;
     return () => URL.revokeObjectURL(source);
@@ -96,6 +96,7 @@ export default function AvatarUploader({ image }: AvatarUploaderProps) {
         </Button>
       </div>
 
+      {/* 隱藏的 File Input 用 Button 來觸發 */}
       <input
         ref={fileInput}
         type="file"
