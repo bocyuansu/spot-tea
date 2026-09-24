@@ -17,6 +17,7 @@ import { useRouter } from 'next/navigation';
 import { authClient } from '@/lib/auth-client';
 import { getErrorMessage } from '@/lib/auth-errors';
 import { useUserDialog } from '@/features/admin/users/components/UserActionsProvider';
+import { userTablePaginationAtom } from '@/features/admin/users/user-table-state';
 
 export default function UserDeleteDialog() {
   const { user, open, onOpenChange } = useUserDialog('delete');
@@ -38,6 +39,8 @@ export default function UserDeleteDialog() {
 
       onOpenChange(false);
       toast.add({ type: 'success', description: '會員已刪除 !' });
+      // 刪掉的可能是最後一頁僅剩的一位，回到第一頁才不會停在空白頁
+      userTablePaginationAtom.set((old) => ({ ...old, pageIndex: 0 }));
       router.refresh();
     });
   }

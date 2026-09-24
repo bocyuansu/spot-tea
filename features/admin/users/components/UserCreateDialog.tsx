@@ -37,6 +37,11 @@ import {
   adminUserRoleLabels,
   type AdminCreateUserValues,
 } from '@/features/admin/users/schemas/user';
+import {
+  userTableGlobalFilterAtom,
+  userTablePaginationAtom,
+  userTableSortingAtom,
+} from '@/features/admin/users/user-table-state';
 /* Better Auth */
 import { authClient } from '@/lib/auth-client';
 import { getErrorMessage } from '@/lib/auth-errors';
@@ -83,6 +88,10 @@ export default function UserCreateDialog() {
             setOpen(false);
             form.reset();
             toast.add({ type: 'success', description: '會員已建立 !' });
+            // 新會員在預設順序下排在列表最前面：清掉搜尋與排序、回到第一頁才看得到
+            userTableGlobalFilterAtom.set('');
+            userTableSortingAtom.set([]);
+            userTablePaginationAtom.set((old) => ({ ...old, pageIndex: 0 }));
             router.refresh();
           },
           onError: (ctx) => {

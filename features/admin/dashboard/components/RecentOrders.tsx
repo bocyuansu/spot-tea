@@ -16,6 +16,7 @@ import {
 } from '@/features/orders/order-status';
 import { formatDateTW, formatPriceTWD } from '@/lib/format';
 import type { AdminOverview } from '@/db/queries/admin/overview';
+import OrderMenu from '@/features/admin/orders/components/OrderMenu';
 
 type RecentOrdersProps = {
   orders: AdminOverview['recentOrders'];
@@ -42,6 +43,7 @@ export default function RecentOrders({ orders }: RecentOrdersProps) {
                 <TableHead>付款狀態</TableHead>
                 <TableHead>下單日期</TableHead>
                 <TableHead className="text-right">金額</TableHead>
+                <TableHead className="text-right">操作</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -73,6 +75,12 @@ export default function RecentOrders({ orders }: RecentOrdersProps) {
                   </TableCell>
                   <TableCell className="text-right font-medium text-primary">
                     {formatPriceTWD(order.totalAmount)}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <OrderMenu
+                      orderId={order.id}
+                      orderNumber={order.orderNumber}
+                    />
                   </TableCell>
                 </TableRow>
               ))}

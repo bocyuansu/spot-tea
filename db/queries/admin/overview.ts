@@ -27,7 +27,16 @@ export async function getAdminOverview() {
     db.$count(order),
     db.$count(user),
     db.$count(product, eq(product.status, 'published')),
+    // 最新訂單只撈 RecentOrders 表格用得到的欄位
     db.query.order.findMany({
+      columns: {
+        id: true,
+        orderNumber: true,
+        status: true,
+        paymentStatus: true,
+        totalAmount: true,
+        createdAt: true,
+      },
       with: {
         user: { columns: { name: true, email: true } },
       },

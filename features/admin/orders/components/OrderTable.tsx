@@ -1,30 +1,42 @@
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent } from '@/components/ui/card';
+'use client';
+
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+} from '@/components/ui/card';
 import {
   Table,
   TableBody,
   TableCell,
-  TableHead,
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import {
-  getPaymentMethodLabel,
-  isAwaitingRefund,
-  orderStatusLabels,
-  orderStatusVariants,
-  paymentStatusLabels,
-  paymentStatusVariants,
-} from '@/features/orders/order-status';
-import { formatDateTW, formatPriceTWD } from '@/lib/format';
-import OrderMenu from '@/features/admin/orders/components/OrderMenu';
 import type { AdminOrder } from '@/db/queries/admin/orders';
+import { columns } from '@/features/admin/orders/order-table-columns';
+import {
+  orderTableGlobalFilterAtom,
+  orderTablePaginationAtom,
+  orderTableSortingAtom,
+} from '@/features/admin/orders/order-table-state';
+import { useAppTable } from '@/features/admin/shared/admin-table';
 
 type OrderTableProps = {
   orders: AdminOrder[];
 };
 
 export default function OrderTable({ orders }: OrderTableProps) {
+  const table = useAppTable({
+    columns,
+    data: orders,
+    atoms: {
+      pagination: orderTablePaginationAtom,
+      sorting: orderTableSortingAtom,
+      globalFilter: orderTableGlobalFilterAtom,
+    },
+  });
+
   if (orders.length === 0) {
     return (
       <div className="flex min-h-64 flex-col items-center justify-center gap-2 text-center text-muted-foreground">
@@ -34,70 +46,59 @@ export default function OrderTable({ orders }: OrderTableProps) {
   }
 
   return (
-    <Card>
-      <CardContent>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>訂單編號</TableHead>
-              <TableHead>會員</TableHead>
-              <TableHead>訂單狀態</TableHead>
-              <TableHead>付款狀態</TableHead>
-              <TableHead>付款方式</TableHead>
-              <TableHead>下單日期</TableHead>
-              <TableHead className="text-right">金額</TableHead>
-              <TableHead className="text-right">操作</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {orders.map((order) => (
-              <TableRow key={order.id}>
-                <TableCell className="font-medium">
-                  {order.orderNumber}
-                </TableCell>
-                <TableCell>
-                  <div className="flex flex-col">
-                    <span>{order.user.name}</span>
-                    <span className="text-xs text-muted-foreground">
-                      {order.user.email}
-                    </span>
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <Badge variant={orderStatusVariants[order.status]}>
-                    {orderStatusLabels[order.status]}
-                  </Badge>
-                </TableCell>
-                <TableCell>
-                  <div className="flex flex-wrap gap-1">
-                    <Badge variant={paymentStatusVariants[order.paymentStatus]}>
-                      {paymentStatusLabels[order.paymentStatus]}
-                    </Badge>
-                    {isAwaitingRefund(order) && (
-                      <Badge variant="destructive">待退款</Badge>
-                    )}
-                  </div>
-                </TableCell>
-                <TableCell className="text-muted-foreground">
-                  {getPaymentMethodLabel(order.paymentProvider)}
-                </TableCell>
-                <TableCell className="text-muted-foreground">
-                  {formatDateTW(order.createdAt)}
-                </TableCell>
-                <TableCell className="text-right font-medium text-primary">
-                  {formatPriceTWD(order.totalAmount)}
-                </TableCell>
-                <TableCell>
-                  <OrderMenu
-                    orderId={order.id}
-                    orderNumber={order.orderNumber}
-                  />
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </CardContent>
-    </Card>
+    <table.AppTable>
+      <Card>
+        <CardHeader className="border-b">
+          <table.TableSearch
+            placeholder="搜尋訂單編號、會員名稱或 Email"
+            label="搜尋訂單"
+          />
+        </CardHeader>
+
+        <CardContent>
+          <Table>
+            <TableHeader>
+              {table.getHeaderGroups().map((headerGroup) => (
+                <TableRow key={headerGroup.id}>
+                  {headerGroup.headers.map((h) => (
+                    <table.AppHeader header={h} key={h.id}>
+                      {(header) => <header.SortableTableHead />}
+                    </table.AppHeader>
+                  ))}
+                </TableRow>
+              ))}
+            </TableHeader>
+            <TableBody>
+              {table.getRowModel().rows.length === 0 && (
+                <TableRow className="hover:bg-transparent">
+                  <TableCell
+                    colSpan={table.getAllLeafColumns().length}
+                    className="h-24 text-center text-muted-foreground"
+                  >
+                    沒有符合搜尋條件的訂單
+                  </TableCell>
+                </TableRow>
+              )}
+              {table.getRowModel().rows.map((row) => (
+                <TableRow key={row.id}>
+                  {row.getAllCells().map((cell) => (
+                    <TableCell
+                      key={cell.id}
+                      className={cell.column.columnDef.meta?.className}
+                    >
+                      <table.FlexRender cell={cell} />
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </CardContent>
+
+        <CardFooter>
+          <table.TablePagination />
+        </CardFooter>
+      </Card>
+    </table.AppTable>
   );
 }

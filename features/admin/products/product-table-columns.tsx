@@ -1,72 +1,15 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import {
-  columnFilteringFeature,
-  constructFilterFn,
-  constructSortFn,
-  createColumnHelper,
-  createExpandedRowModel,
-  createFilteredRowModel,
-  createPaginatedRowModel,
-  createSortedRowModel,
-  filterFn_includesString,
-  globalFilteringFeature,
-  metaHelper,
-  rowExpandingFeature,
-  rowPaginationFeature,
-  rowSelectionFeature,
-  rowSortingFeature,
-  tableFeatures,
-} from '@tanstack/react-table';
 import { ChevronRight, Leaf } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import { normalizeSearchText } from '@/features/products/product-catalog';
 import { productStatusLabels } from '@/features/products/product-status';
 import { formatPriceTWD } from '@/lib/format';
 import { cn } from '@/lib/utils';
 import type { AdminProduct } from '@/db/queries/admin/products';
 import ProductMenu from '@/features/admin/products/components/ProductMenu';
-
-// 同一個 className 會同時套在 <th> 與 <td>，讓標題和內容的寬度、對齊一致
-type ProductColumnMeta = {
-  className?: string;
-};
-
-// 和前台搜尋一樣不分全半形與大小寫：輸入法打出的 ＧＡＢＡ 也找得到 GABA
-const filterFn_includesKeyword = constructFilterFn({
-  ...filterFn_includesString,
-  resolveFilterValue: (value) => normalizeSearchText(String(value).trim()),
-  resolveDataValue: (value) =>
-    value == null ? undefined : normalizeSearchText(String(value)),
-});
-
-// 內建的 text 排序比的是字元編碼，中文排起來沒有規則可循；
-// 改用繁體中文的排序規則（依筆畫），numeric 讓「75g」排在「150g」前面
-const zhHantCollator = new Intl.Collator('zh-Hant-TW', { numeric: true });
-const sortFn_zhHant = constructSortFn({
-  sort: (dataValueA, dataValueB) =>
-    zhHantCollator.compare(dataValueA, dataValueB),
-  resolveDataValue: (value) => String(value ?? ''),
-});
-
-// 欄位的型別是從 features 推導的，所以 features 和 columns 放在同一個檔案
-export const features = tableFeatures({
-  columnFilteringFeature,
-  globalFilteringFeature,
-  rowSortingFeature,
-  rowExpandingFeature,
-  rowPaginationFeature,
-  rowSelectionFeature,
-  filteredRowModel: createFilteredRowModel(),
-  sortedRowModel: createSortedRowModel(),
-  expandedRowModel: createExpandedRowModel(),
-  paginatedRowModel: createPaginatedRowModel(),
-  filterFns: { includesKeyword: filterFn_includesKeyword },
-  sortFns: { zhHant: sortFn_zhHant },
-  columnMeta: metaHelper<ProductColumnMeta>(),
-});
+import { createAppColumnHelper } from '@/features/admin/shared/admin-table';
 
 function formatPriceRange(variants: AdminProduct['variants']) {
   if (variants.length === 0) return '—';
@@ -80,7 +23,7 @@ function formatPriceRange(variants: AdminProduct['variants']) {
     : `${formatPriceTWD(minPrice)} – ${formatPriceTWD(maxPrice)}`;
 }
 
-const columnHelper = createColumnHelper<typeof features, AdminProduct>();
+const columnHelper = createAppColumnHelper<AdminProduct>();
 
 export const columns = columnHelper.columns([
   // 勾選狀態以商品 id 為 key，換頁後已勾的商品仍會留著；全選只會選到目前這一頁

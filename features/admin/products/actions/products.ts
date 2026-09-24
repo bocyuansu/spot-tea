@@ -10,6 +10,7 @@ import { deleteProductImages } from '@/features/admin/products/delete-product-im
 import {
   productBatchStatusSchema,
   productFormSchema,
+  productIdsSchema,
   UNCATEGORIZED,
   type ProductBatchStatus,
   type ProductFormValues,
@@ -219,23 +220,28 @@ export async function updateProductsStatus(
   return { ok: true };
 }
 
-export async function deleteProduct(id: string): Promise<ActionResult> {
+/** 商品列表勾選後的批次刪除 */
+export async function deleteProducts(ids: string[]): Promise<ActionResult> {
   if (!(await isAdmin()))
     return { ok: false, message: '沒有權限執行這個操作 !' };
 
+  const parsed = productIdsSchema.safeParse(ids);
+  if (!parsed.success)
+    return { ok: false, message: '欄位格式有誤，請重新檢查 !' };
+
   const db = await getDatabase('fresh');
 
-  // 刪掉之後就查不到這個商品的圖片了，用 returning 在同一句裡把清單帶回來
+  // 刪掉之後就查不到這些商品的圖片了，用 returning 在同一句裡把清單帶回來
   let images: string[] = [];
 
   try {
     // product_variant 設了 onDelete: cascade，規格會跟著一起刪掉
-    const [deleted] = await db
+    const deleted = await db
       .delete(product)
-      .where(eq(product.id, id))
+      .where(inArray(product.id, parsed.data))
       .returning({ images: product.images });
 
-    images = deleted?.images ?? [];
+    images = deleted.flatMap((row) => row.images ?? []);
   } catch {
     return { ok: false, message: '刪除失敗，請稍後再試 !' };
   }

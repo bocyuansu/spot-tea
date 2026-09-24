@@ -7,12 +7,11 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { IconDotsVertical } from '@tabler/icons-react';
-import { Pencil, Trash2 } from 'lucide-react';
-import ProductDeleteDialog from '@/features/admin/products/components/ProductDeleteDialog';
+import { Pencil } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { useState } from 'react';
 
+// 刪除改成勾選後在列表上方批次刪除，見 ProductBatchActions
 export default function ProductMenu({
   productId,
   productName,
@@ -20,8 +19,6 @@ export default function ProductMenu({
   productId: string;
   productName: string;
 }) {
-  const [deleteOpen, setDeleteOpen] = useState(false);
-
   return (
     <div className="flex justify-end">
       <DropdownMenu>
@@ -38,21 +35,8 @@ export default function ProductMenu({
           >
             <Pencil className="size-4" /> 編輯
           </DropdownMenuItem>
-          <DropdownMenuItem
-            variant="destructive"
-            aria-label={`刪除 ${productName}`}
-            onClick={() => setDeleteOpen(true)}
-          >
-            <Trash2 className="size-4" /> 刪除
-          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
-      <ProductDeleteDialog
-        productId={productId}
-        productName={productName}
-        open={deleteOpen}
-        onOpenChange={setDeleteOpen}
-      />
     </div>
   );
 }

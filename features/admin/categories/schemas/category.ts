@@ -19,6 +19,9 @@ export const categoryFormSchema = z.object({
 
 export type CategoryFormValues = z.infer<typeof categoryFormSchema>;
 
+// 分類列表的批次刪除至少要勾選一個分類
+export const categoryIdsSchema = z.array(z.string()).min(1);
+
 export const emptyCategory: CategoryFormValues = {
   name: '',
   slug: '',

@@ -1,6 +1,4 @@
-import { count } from 'drizzle-orm';
 import { getDatabase } from '@/db/client';
-import { product } from '@/db/schema';
 
 // 連線的選擇與理由見 db/queries/admin/overview.ts
 
@@ -11,23 +9,21 @@ import { product } from '@/db/schema';
 export async function listAdminCategoriesWithCounts() {
   const db = await getDatabase('fresh');
 
-  // 商品數另外用 group by 撈再併回來，避免把每個分類的商品整包拉出來
-  const [categories, productCounts] = await Promise.all([
-    db.query.category.findMany({ orderBy: { name: 'asc' } }),
-    db
-      .select({ categoryId: product.categoryId, productCount: count() })
-      .from(product)
-      .groupBy(product.categoryId),
-  ]);
-
-  // 未分類商品會落在 categoryId 為 null 的那一組，對不到任何分類 id
-  const productCountByCategoryId = new Map(
-    productCounts.map((row) => [row.categoryId, row.productCount]),
-  );
+  // 刪除分類的確認對話框要列出哪些商品會變成未分類，所以每個分類帶上底下商品的名稱；
+  // 只撈 id 與名稱，商品數也直接從這份清單算
+  const categories = await db.query.category.findMany({
+    with: {
+      products: {
+        columns: { id: true, name: true },
+        orderBy: { name: 'asc' },
+      },
+    },
+    orderBy: { name: 'asc' },
+  });
 
   return categories.map((row) => ({
     ...row,
-    productCount: productCountByCategoryId.get(row.id) ?? 0,
+    productCount: row.products.length,
   }));
 }
 

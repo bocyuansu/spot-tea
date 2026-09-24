@@ -1,21 +1,47 @@
-import { Card, CardContent } from '@/components/ui/card';
+'use client';
+
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+} from '@/components/ui/card';
 import {
   Table,
   TableBody,
   TableCell,
-  TableHead,
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import CategoryMenu from '@/features/admin/categories/components/CategoryMenu';
-import { formatDateTW } from '@/lib/format';
 import type { AdminCategoryWithCount } from '@/db/queries/admin/categories';
+import CategoryBatchActions from '@/features/admin/categories/components/CategoryBatchActions';
+import { columns } from '@/features/admin/categories/category-table-columns';
+import {
+  categoryTableGlobalFilterAtom,
+  categoryTablePaginationAtom,
+  categoryTableSortingAtom,
+} from '@/features/admin/categories/category-table-state';
+import { useAppTable } from '@/features/admin/shared/admin-table';
 
 type CategoryTableProps = {
   categories: AdminCategoryWithCount[];
 };
 
 export default function CategoryTable({ categories }: CategoryTableProps) {
+  const table = useAppTable({
+    columns,
+    data: categories,
+    atoms: {
+      pagination: categoryTablePaginationAtom,
+      sorting: categoryTableSortingAtom,
+      globalFilter: categoryTableGlobalFilterAtom,
+    },
+  });
+
+  const selectedCategories = table
+    .getSelectedRowModel()
+    .rows.map((row) => row.original);
+
   if (categories.length === 0) {
     return (
       <div className="flex min-h-64 flex-col items-center justify-center gap-2 text-center text-muted-foreground">
@@ -26,39 +52,70 @@ export default function CategoryTable({ categories }: CategoryTableProps) {
   }
 
   return (
-    <Card>
-      <CardContent>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>分類</TableHead>
-              <TableHead>網址代稱</TableHead>
-              <TableHead className="text-right">商品數</TableHead>
-              <TableHead className="text-right">建立日期</TableHead>
-              <TableHead className="w-24 text-right">操作</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {categories.map((category) => (
-              <TableRow key={category.id}>
-                <TableCell className="font-medium">{category.name}</TableCell>
-                <TableCell className="font-mono text-xs text-muted-foreground">
-                  {category.slug}
-                </TableCell>
-                <TableCell className="text-right">
-                  {category.productCount}
-                </TableCell>
-                <TableCell className="text-right text-muted-foreground">
-                  {formatDateTW(category.createdAt)}
-                </TableCell>
-                <TableCell>
-                  <CategoryMenu category={category} />
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </CardContent>
-    </Card>
+    <table.AppTable>
+      <Card>
+        <CardHeader className="border-b">
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            {/* 分類搜尋 */}
+            <table.TableSearch
+              placeholder="搜尋分類名稱或網址代稱"
+              label="搜尋分類"
+            />
+            {/* 批次操作 */}
+            <CategoryBatchActions
+              categories={selectedCategories}
+              onSuccess={() => table.resetRowSelection()}
+            />
+          </div>
+        </CardHeader>
+
+        <CardContent>
+          <Table>
+            <TableHeader>
+              {table.getHeaderGroups().map((headerGroup) => (
+                <TableRow key={headerGroup.id}>
+                  {headerGroup.headers.map((h) => (
+                    <table.AppHeader header={h} key={h.id}>
+                      {(header) => <header.SortableTableHead />}
+                    </table.AppHeader>
+                  ))}
+                </TableRow>
+              ))}
+            </TableHeader>
+            <TableBody>
+              {table.getRowModel().rows.length === 0 && (
+                <TableRow className="hover:bg-transparent">
+                  <TableCell
+                    colSpan={table.getAllLeafColumns().length}
+                    className="h-24 text-center text-muted-foreground"
+                  >
+                    沒有符合搜尋條件的分類
+                  </TableCell>
+                </TableRow>
+              )}
+              {table.getRowModel().rows.map((row) => (
+                <TableRow
+                  key={row.id}
+                  data-state={row.getIsSelected() ? 'selected' : undefined}
+                >
+                  {row.getAllCells().map((cell) => (
+                    <TableCell
+                      key={cell.id}
+                      className={cell.column.columnDef.meta?.className}
+                    >
+                      <table.FlexRender cell={cell} />
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </CardContent>
+
+        <CardFooter>
+          <table.TablePagination />
+        </CardFooter>
+      </Card>
+    </table.AppTable>
   );
 }

@@ -60,9 +60,12 @@ export const productFormSchema = z.object({
 
 export type ProductFormValues = z.infer<typeof productFormSchema>;
 
-// 商品列表勾選後的批次操作只有上架與下架，改回草稿要進編輯頁
+// 商品列表的批次操作（上下架、刪除）至少要勾選一項商品
+export const productIdsSchema = z.array(z.string()).min(1);
+
+// 批次改狀態只有上架與下架，改回草稿要進編輯頁
 export const productBatchStatusSchema = z.object({
-  ids: z.array(z.string()).min(1),
+  ids: productIdsSchema,
   status: z.enum(['published', 'archived']),
 });
 

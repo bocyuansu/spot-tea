@@ -1,30 +1,27 @@
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent } from '@/components/ui/card';
+'use client';
+
+import { useMemo } from 'react';
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+} from '@/components/ui/card';
 import {
   Table,
   TableBody,
   TableCell,
-  TableHead,
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import UserActions from '@/features/admin/users/components/UserActions';
-import { formatDateTW } from '@/lib/format';
 import type { AdminUser } from '@/db/queries/admin/users';
-
-// admin plugin 的 defaultRole 是 customer，舊資料仍可能沒有角色
-const roleLabels: Record<string, string> = {
-  admin: '管理員',
-  customer: '一般會員',
-};
-
-// 停權到期後 admin plugin 是等會員下次登入才解除，所以列表還是會看到已停權
-function banNote(user: AdminUser) {
-  const period = user.banExpires
-    ? `${formatDateTW(user.banExpires)} 解除`
-    : '永久停權';
-  return user.banReason ? `${period}・${user.banReason}` : period;
-}
+import { useAppTable } from '@/features/admin/shared/admin-table';
+import { createUserColumns } from '@/features/admin/users/user-table-columns';
+import {
+  userTableGlobalFilterAtom,
+  userTablePaginationAtom,
+  userTableSortingAtom,
+} from '@/features/admin/users/user-table-state';
 
 type UserTableProps = {
   users: AdminUser[];
@@ -33,6 +30,22 @@ type UserTableProps = {
 };
 
 export default function UserTable({ users, currentUserId }: UserTableProps) {
+  // 欄位換了新的參考，表格就會重建所有欄位，所以只在 currentUserId 變了才重建
+  const columns = useMemo(
+    () => createUserColumns(currentUserId),
+    [currentUserId],
+  );
+
+  const table = useAppTable({
+    columns,
+    data: users,
+    atoms: {
+      pagination: userTablePaginationAtom,
+      sorting: userTableSortingAtom,
+      globalFilter: userTableGlobalFilterAtom,
+    },
+  });
+
   if (users.length === 0) {
     return (
       <div className="flex min-h-64 flex-col items-center justify-center gap-2 text-center text-muted-foreground">
@@ -42,61 +55,59 @@ export default function UserTable({ users, currentUserId }: UserTableProps) {
   }
 
   return (
-    <Card>
-      <CardContent>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>會員</TableHead>
-              <TableHead>角色</TableHead>
-              <TableHead>狀態</TableHead>
-              <TableHead className="text-right">訂單數</TableHead>
-              <TableHead className="text-right">加入日期</TableHead>
-              <TableHead className="w-24 text-right">操作</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {users.map((user) => (
-              <TableRow key={user.id}>
-                <TableCell>
-                  <div className="flex flex-col">
-                    <span className="font-medium">{user.name}</span>
-                    <span className="text-xs text-muted-foreground">
-                      {user.email}
-                    </span>
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <Badge
-                    variant={user.role === 'admin' ? 'default' : 'secondary'}
+    <table.AppTable>
+      <Card>
+        <CardHeader className="border-b">
+          <table.TableSearch
+            placeholder="搜尋會員名稱或 Email"
+            label="搜尋會員"
+          />
+        </CardHeader>
+
+        <CardContent>
+          <Table>
+            <TableHeader>
+              {table.getHeaderGroups().map((headerGroup) => (
+                <TableRow key={headerGroup.id}>
+                  {headerGroup.headers.map((h) => (
+                    <table.AppHeader header={h} key={h.id}>
+                      {(header) => <header.SortableTableHead />}
+                    </table.AppHeader>
+                  ))}
+                </TableRow>
+              ))}
+            </TableHeader>
+            <TableBody>
+              {table.getRowModel().rows.length === 0 && (
+                <TableRow className="hover:bg-transparent">
+                  <TableCell
+                    colSpan={table.getAllLeafColumns().length}
+                    className="h-24 text-center text-muted-foreground"
                   >
-                    {roleLabels[user.role ?? ''] ?? '一般會員'}
-                  </Badge>
-                </TableCell>
-                <TableCell>
-                  {user.banned ? (
-                    <div className="flex flex-col items-start gap-1">
-                      <Badge variant="destructive">已停權</Badge>
-                      <span className="max-w-40 truncate text-xs text-muted-foreground">
-                        {banNote(user)}
-                      </span>
-                    </div>
-                  ) : (
-                    <span className="text-muted-foreground">正常</span>
-                  )}
-                </TableCell>
-                <TableCell className="text-right">{user.orderCount}</TableCell>
-                <TableCell className="text-right text-muted-foreground">
-                  {formatDateTW(user.createdAt)}
-                </TableCell>
-                <TableCell>
-                  <UserActions user={user} currentUserId={currentUserId} />
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </CardContent>
-    </Card>
+                    沒有符合搜尋條件的會員
+                  </TableCell>
+                </TableRow>
+              )}
+              {table.getRowModel().rows.map((row) => (
+                <TableRow key={row.id}>
+                  {row.getAllCells().map((cell) => (
+                    <TableCell
+                      key={cell.id}
+                      className={cell.column.columnDef.meta?.className}
+                    >
+                      <table.FlexRender cell={cell} />
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </CardContent>
+
+        <CardFooter>
+          <table.TablePagination />
+        </CardFooter>
+      </Card>
+    </table.AppTable>
   );
 }

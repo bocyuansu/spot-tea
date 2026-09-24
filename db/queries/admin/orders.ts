@@ -2,10 +2,21 @@ import { getDatabase } from '@/db/client';
 
 // 連線的選擇與理由見 db/queries/admin/overview.ts
 
+// 訂單列表整批送到瀏覽器給表格搜尋、排序與分頁，只撈表格用得到的欄位，
+// 收件地址、備註這類個資和明細頁才用得到的欄位就不會跟著送出去
 export async function listAdminOrders() {
   const db = await getDatabase('fresh');
 
   return db.query.order.findMany({
+    columns: {
+      id: true,
+      orderNumber: true,
+      status: true,
+      paymentStatus: true,
+      paymentProvider: true,
+      totalAmount: true,
+      createdAt: true,
+    },
     with: {
       user: { columns: { name: true, email: true } },
     },
