@@ -8,7 +8,11 @@ export default function ProductsLoading() {
         <Skeleton className="h-6 w-55" />
       </div>
 
-      <Skeleton className="h-7 w-90" />
+      <div className="flex flex-wrap gap-3">
+        {Array.from({ length: 5 }, (_, chip) => (
+          <Skeleton key={chip} className="h-12 w-28 rounded-full" />
+        ))}
+      </div>
 
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:gap-6">
         {Array.from({ length: 4 }, (_, row) => (

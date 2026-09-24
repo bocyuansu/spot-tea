@@ -12,8 +12,7 @@ export const metadata: Metadata = {
     template: '%s | 找茶',
     default: '找茶．歡迎來Tea館！',
   },
-  description:
-    '品牌初衷係以推廣台灣的四大茶區為出發。標誌透過四片葉片來代表台灣四大茶區，運用「探索台灣茶」概念來作為標誌設計，將搜尋的「放大鏡」朝著右上45度仰角，象徵著將台灣茶葉推廣更遠大的理想。',
+  description: '從平地到高山，一起探索台灣各地茶區的嚴選好茶',
   manifest: '/manifest.json',
 };
 

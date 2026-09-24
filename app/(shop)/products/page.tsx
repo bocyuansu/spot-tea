@@ -31,19 +31,20 @@ export default async function ProductsPage({
   // 參數重複時（?q=a&q=b）會變成陣列，只接受單一字串
   const query = typeof q === 'string' ? q.trim() : '';
 
-  const categories = await listCategories();
+  const [categories, products] = await Promise.all([
+    listCategories(),
+    listPublishedProducts(''),
+  ]);
   const activeCategory = categories.find((row) => row.slug === category);
 
-  // 先確認分類存在才查：listPublishedProducts 的每個參數都是一個 KV key，
-  // 放任意的 ?category= 進去，Cloudflare Free 方案每天 1,000 次的 KV 寫入很快就會被用完。
-  // 不存在的分類和以前一樣顯示空列表，只是不再查詢也不寫快取
-  const products =
-    category && !activeCategory
-      ? []
-      : await listPublishedProducts(activeCategory?.slug ?? '');
-
-  // 關鍵字和頁碼同理不進快取，只在記憶體裡篩選、切頁
-  const matchedProducts = searchProducts(products, query);
+  // 分類、關鍵字、頁碼都不進快取，只在記憶體裡篩選、切頁：
+  // listPublishedProducts 的每個參數都是一個 KV key，任何人亂打的 ?category= 都會多一次 KV 寫入，
+  // Cloudflare Free 方案每天只有 1,000 次。整份型錄只佔一個 key，首頁和商品詳情頁也共用。
+  // 關鍵字先篩，茶區膠囊上的款數才會跟點下去看到的一致；不存在的分類自然篩出空列表
+  const searchedProducts = searchProducts(products, query);
+  const matchedProducts = category
+    ? searchedProducts.filter((product) => product.category?.slug === category)
+    : searchedProducts;
   const {
     items,
     page: currentPage,
@@ -56,7 +57,7 @@ export default async function ProductsPage({
         <div>
           <h1 className="font-heading text-3xl md:text-4xl">所有商品</h1>
           <p className="mt-1 text-muted-foreground">
-            探索台灣四大茶區的嚴選好茶
+            從平地到高山，一起探索台灣各地茶區的嚴選好茶
           </p>
         </div>
         <ProductSearch
@@ -67,6 +68,8 @@ export default async function ProductsPage({
 
       <Categories
         categories={categories}
+        products={searchedProducts}
+        showAll
         activeCategorySlug={category}
         query={query}
       />
