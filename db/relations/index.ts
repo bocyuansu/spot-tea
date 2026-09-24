@@ -5,6 +5,7 @@ import * as schema from '@/db/schema';
 import { authRelations } from './auth';
 import { productRelations } from './product';
 import { orderRelations } from './order';
+import { favoriteRelations } from './favorite';
 
 // 官方 Rule 2：只用 part 的專案，其中一個 part 要是空的（不傳 callback），
 // drizzle 才能推導出 schema 內的每一張表。沒宣告任何關聯的表格（例如 verification）
@@ -25,4 +26,5 @@ export const relations = {
   ...authRelations,
   ...productRelations,
   ...orderRelations,
+  ...favoriteRelations,
 };

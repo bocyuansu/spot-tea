@@ -1,9 +1,12 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { getPublishedProductBySlug } from '@/db/queries/products';
+import { isProductFavorited } from '@/db/queries/favorites';
 import ProductGallery from '@/features/products/components/ProductGallery';
 import ProductPurchasePanel from '@/features/products/components/ProductPurchasePanel';
+import FavoriteButton from '@/features/favorites/components/FavoriteButton';
 import { formatPriceTWD } from '@/lib/format';
+import { getSession } from '@/lib/session';
 
 type ProductPageProps = {
   params: Promise<{ slug: string }>;
@@ -35,6 +38,12 @@ export default async function ProductPage({ params }: ProductPageProps) {
   const prices = product.variants.map((variant) => variant.price);
   const minPrice = prices.length > 0 ? Math.min(...prices) : null;
   const maxPrice = prices.length > 0 ? Math.max(...prices) : null;
+
+  // Navbar 已經讀過 session，lib/session.ts 的 cache() 讓這裡不會再查一次
+  const session = await getSession();
+  const favorited = session
+    ? await isProductFavorited(session.user.id, product.id)
+    : false;
 
   return (
     <div className="grid gap-8 md:grid-cols-2 md:items-start">
@@ -75,6 +84,13 @@ export default async function ProductPage({ params }: ProductPageProps) {
           productSlug={product.slug}
           productImage={product.images?.[0] ?? null}
           variants={product.variants}
+        />
+
+        <FavoriteButton
+          productId={product.id}
+          productSlug={product.slug}
+          isLoggedIn={session !== null}
+          initialFavorited={favorited}
         />
       </div>
     </div>

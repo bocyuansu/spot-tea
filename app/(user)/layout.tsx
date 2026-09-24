@@ -10,6 +10,10 @@ const links = [
     href: '/user/orders',
     label: '我的訂單',
   },
+  {
+    href: '/user/favorites',
+    label: '商品收藏',
+  },
 ];
 
 export default function UserLayout({

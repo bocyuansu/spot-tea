@@ -13,7 +13,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { SidebarProvider } from '@/components/ui/sidebar';
 // Icon
-import { LayoutDashboard, Menu, ShoppingCart, User } from 'lucide-react';
+import { Heart, LayoutDashboard, Menu, ShoppingCart, User } from 'lucide-react';
 import { IconShoppingBag, IconMapPin } from '@tabler/icons-react';
 import { authClient } from '@/lib/auth-client';
 import Link from 'next/link';
@@ -98,6 +98,20 @@ export default function MobileMenu({
                   >
                     <User className="size-5" />
                     <span>會員中心</span>
+                  </Link>
+                }
+              />
+            )}
+            {isLoggedIn && (
+              <SheetClose
+                render={
+                  <Link
+                    href="/user/favorites"
+                    prefetch={false}
+                    className="flex items-center gap-1 hover:text-primary"
+                  >
+                    <Heart className="size-5" />
+                    <span>商品收藏</span>
                   </Link>
                 }
               />

@@ -1,15 +1,18 @@
+import type { ReactNode } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Leaf } from 'lucide-react';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { formatPriceTWD } from '@/lib/format';
 import type { ProductWithDetails } from '@/db/queries/products';
 
 type ProductCardProps = {
   product: ProductWithDetails;
+  // 卡片底部的操作列，例如收藏頁的「取消收藏」；商品列表不傳就沒有
+  action?: ReactNode;
 };
 
-export default function ProductCard({ product }: ProductCardProps) {
+export default function ProductCard({ product, action }: ProductCardProps) {
   const image = product.images?.[0] ?? null;
   const prices = product.variants.map((variant) => variant.price);
   const minPrice = prices.length > 0 ? Math.min(...prices) : null;
@@ -68,6 +71,7 @@ export default function ProductCard({ product }: ProductCardProps) {
               : `${formatPriceTWD(minPrice)} 起`}
         </p>
       </CardContent>
+      {action && <CardFooter className="p-1">{action}</CardFooter>}
     </Card>
   );
 }

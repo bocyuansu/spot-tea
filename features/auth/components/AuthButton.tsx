@@ -17,6 +17,7 @@ import { Button } from '@/components/ui/button';
 import { authClient } from '@/lib/auth-client';
 import { useRouter } from 'next/navigation';
 import {
+  IconHeart,
   IconMapPin,
   IconReceipt,
   IconShoppingBag,
@@ -183,6 +184,12 @@ function DropdownMenuAvatar({ user }: { user: UserSummary }) {
           >
             <IconReceipt />
             <span>訂單資料</span>
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            render={<Link href="/user/favorites" prefetch={false} />}
+          >
+            <IconHeart />
+            <span>商品收藏</span>
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuGroup>
