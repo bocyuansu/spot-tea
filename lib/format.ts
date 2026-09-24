@@ -4,6 +4,7 @@ export function formatPriceTWD(amount: number) {
 
 export function formatDateTW(date: Date) {
   return date.toLocaleDateString('zh-Hant-TW', {
+    timeZone: 'Asia/Taipei',
     year: 'numeric',
     month: '2-digit',
     day: '2-digit',

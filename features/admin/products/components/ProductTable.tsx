@@ -102,6 +102,7 @@ export default function ProductTable({ products }: ProductTableProps) {
     <Card>
       <CardHeader className="border-b">
         <div className="flex flex-wrap items-center justify-between gap-4">
+          {/* 商品搜尋 */}
           <ProductTableSearch
             value={table.state.globalFilter}
             onChange={(value) => {
@@ -110,7 +111,7 @@ export default function ProductTable({ products }: ProductTableProps) {
               table.firstPage();
             }}
           />
-
+          {/* 批次操作 */}
           <ProductBatchActions
             productIds={selectedProductIds}
             onSuccess={() => table.resetRowSelection()}
