@@ -27,6 +27,7 @@
     "@hookform/resolvers": "^5.9.1",
     "@neon/env": "^1.4.3",
     "@tabler/icons-react": "^3.46.0",
+    "@tanstack/react-pacer": "^0.23.0",
     "@tanstack/react-store": "^0.11.1",
     "@tanstack/react-table": "^9.2.4",
     "@vinext/cloudflare": "latest",

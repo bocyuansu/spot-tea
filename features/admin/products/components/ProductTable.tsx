@@ -4,6 +4,9 @@ import { Fragment } from 'react';
 import Link from 'next/link';
 import { useTable } from '@tanstack/react-table';
 import {
+  ArrowDown,
+  ArrowUp,
+  ArrowUpDown,
   ChevronLeft,
   ChevronRight,
   ChevronsLeft,
@@ -31,16 +34,29 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { cn } from '@/lib/utils';
 import type { AdminProduct } from '@/db/queries/admin/products';
 import ProductBatchActions from '@/features/admin/products/components/ProductBatchActions';
+import ProductTableSearch from '@/features/admin/products/components/ProductTableSearch';
 import ProductVariantTable from '@/features/admin/products/components/ProductVariantTable';
 import {
   columns,
   features,
 } from '@/features/admin/products/product-table-columns';
-import { productTablePaginationAtom } from '@/features/admin/products/product-table-pagination';
+import {
+  productTableGlobalFilterAtom,
+  productTablePaginationAtom,
+  productTableSortingAtom,
+} from '@/features/admin/products/product-table-state';
 
 const PAGE_SIZE_OPTIONS = [10, 20, 30, 40, 50];
+
+// 已排序的欄位顯示方向箭頭，並用 aria-sort 告訴螢幕報讀器；
+// 還沒排序的欄位用淡色的雙向箭頭，提示標題可以點
+const sortIndicators = {
+  asc: { icon: ArrowUp, ariaSort: 'ascending' },
+  desc: { icon: ArrowDown, ariaSort: 'descending' },
+} as const;
 
 type ProductTableProps = {
   products: AdminProduct[];
@@ -56,9 +72,14 @@ export default function ProductTable({ products }: ProductTableProps) {
     getRowCanExpand: (row) => row.original.variants.length > 0,
     atoms: {
       pagination: productTablePaginationAtom,
+      sorting: productTableSortingAtom,
+      globalFilter: productTableGlobalFilterAtom,
     },
+    globalFilterFn: 'includesKeyword',
+    // 一次只依一欄排序：標題上的箭頭看不出多欄排序的先後
+    enableMultiSort: false,
     // 資料更新（例如批次上下架後重新整理）時停在原本那一頁；
-    // 會讓列表長度改變的新增與刪除，由它們自己把頁碼歸零
+    // 會讓列表長度改變的新增與刪除，以及搜尋和排序，由它們自己把頁碼歸零
     autoResetPageIndex: false,
   });
 
@@ -80,10 +101,21 @@ export default function ProductTable({ products }: ProductTableProps) {
   return (
     <Card>
       <CardHeader className="border-b">
-        <ProductBatchActions
-          productIds={selectedProductIds}
-          onSuccess={() => table.resetRowSelection()}
-        />
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <ProductTableSearch
+            value={table.state.globalFilter}
+            onChange={(value) => {
+              table.setGlobalFilter(value);
+              // 結果筆數變了，原本那一頁可能已經不存在，回到第一頁
+              table.firstPage();
+            }}
+          />
+
+          <ProductBatchActions
+            productIds={selectedProductIds}
+            onSuccess={() => table.resetRowSelection()}
+          />
+        </div>
       </CardHeader>
 
       <CardContent>
@@ -91,21 +123,59 @@ export default function ProductTable({ products }: ProductTableProps) {
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => (
-                  <TableHead
-                    key={header.id}
-                    colSpan={header.colSpan}
-                    className={header.column.columnDef.meta?.className}
-                  >
-                    {header.isPlaceholder ? null : (
-                      <table.FlexRender header={header} />
-                    )}
-                  </TableHead>
-                ))}
+                {headerGroup.headers.map((header) => {
+                  const sortDirection = header.column.getIsSorted();
+                  const sortIndicator = sortDirection
+                    ? sortIndicators[sortDirection]
+                    : undefined;
+                  const SortIcon = sortIndicator?.icon ?? ArrowUpDown;
+
+                  return (
+                    <TableHead
+                      key={header.id}
+                      colSpan={header.colSpan}
+                      aria-sort={sortIndicator?.ariaSort}
+                      className={header.column.columnDef.meta?.className}
+                    >
+                      {header.isPlaceholder ? null : header.column.getCanSort() ? (
+                        // 負邊距抵銷按鈕內距，標題文字才會和下方內容對齊（左、中、右對齊都適用）
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="-mx-2.5 text-sm"
+                          onClick={(event) => {
+                            header.column.getToggleSortingHandler()?.(event);
+                            // 換了排序，原本那一頁的內容就不一樣了，回到第一頁
+                            table.firstPage();
+                          }}
+                        >
+                          <table.FlexRender header={header} />
+                          <SortIcon
+                            className={cn(
+                              !sortDirection && 'text-muted-foreground',
+                            )}
+                          />
+                        </Button>
+                      ) : (
+                        <table.FlexRender header={header} />
+                      )}
+                    </TableHead>
+                  );
+                })}
               </TableRow>
             ))}
           </TableHeader>
           <TableBody>
+            {table.getRowModel().rows.length === 0 && (
+              <TableRow className="hover:bg-transparent">
+                <TableCell
+                  colSpan={table.getAllLeafColumns().length}
+                  className="h-24 text-center text-muted-foreground"
+                >
+                  沒有符合搜尋條件的商品
+                </TableCell>
+              </TableRow>
+            )}
             {table.getRowModel().rows.map((row) => (
               <Fragment key={row.id}>
                 <TableRow
@@ -161,9 +231,10 @@ export default function ProductTable({ products }: ProductTableProps) {
         </div>
 
         <div className="flex items-center gap-6">
+          {/* 搜尋沒有結果時仍算一頁，頁碼顯示才不會出現「第 1 / 0 頁」 */}
           <p className="text-sm font-medium">
-            第 {table.state.pagination.pageIndex + 1} / {table.getPageCount()}{' '}
-            頁
+            第 {table.state.pagination.pageIndex + 1} /{' '}
+            {Math.max(1, table.getPageCount())} 頁
           </p>
           <div className="flex items-center gap-2">
             <Button

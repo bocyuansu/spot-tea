@@ -15,7 +15,7 @@ import { Loader2 } from 'lucide-react';
 import { useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { deleteProduct } from '@/features/admin/products/actions/products';
-import { productTablePaginationAtom } from '@/features/admin/products/product-table-pagination';
+import { productTablePaginationAtom } from '@/features/admin/products/product-table-state';
 
 type ProductDeleteDialogProps = {
   productId: string;

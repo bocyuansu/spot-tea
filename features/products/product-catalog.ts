@@ -8,7 +8,7 @@ type SearchableProduct = {
 };
 
 // NFKC 把輸入法打出的全形英數（ＧＡＢＡ）轉成半形，再轉小寫，比對時才不分全半形與大小寫
-function normalizeSearchText(text: string) {
+export function normalizeSearchText(text: string) {
   return text.normalize('NFKC').toLowerCase();
 }
 

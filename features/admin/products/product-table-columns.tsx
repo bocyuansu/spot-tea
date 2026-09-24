@@ -1,19 +1,28 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import {
+  columnFilteringFeature,
+  constructFilterFn,
+  constructSortFn,
   createColumnHelper,
   createExpandedRowModel,
+  createFilteredRowModel,
   createPaginatedRowModel,
+  createSortedRowModel,
+  filterFn_includesString,
+  globalFilteringFeature,
   metaHelper,
   rowExpandingFeature,
   rowPaginationFeature,
   rowSelectionFeature,
+  rowSortingFeature,
   tableFeatures,
 } from '@tanstack/react-table';
 import { ChevronRight, Leaf } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
+import { normalizeSearchText } from '@/features/products/product-catalog';
 import { productStatusLabels } from '@/features/products/product-status';
 import { formatPriceTWD } from '@/lib/format';
 import { cn } from '@/lib/utils';
@@ -25,13 +34,37 @@ type ProductColumnMeta = {
   className?: string;
 };
 
+// 和前台搜尋一樣不分全半形與大小寫：輸入法打出的 ＧＡＢＡ 也找得到 GABA
+const filterFn_includesKeyword = constructFilterFn({
+  ...filterFn_includesString,
+  resolveFilterValue: (value) => normalizeSearchText(String(value).trim()),
+  resolveDataValue: (value) =>
+    value == null ? undefined : normalizeSearchText(String(value)),
+});
+
+// 內建的 text 排序比的是字元編碼，中文排起來沒有規則可循；
+// 改用繁體中文的排序規則（依筆畫），numeric 讓「75g」排在「150g」前面
+const zhHantCollator = new Intl.Collator('zh-Hant-TW', { numeric: true });
+const sortFn_zhHant = constructSortFn({
+  sort: (dataValueA, dataValueB) =>
+    zhHantCollator.compare(dataValueA, dataValueB),
+  resolveDataValue: (value) => String(value ?? ''),
+});
+
 // 欄位的型別是從 features 推導的，所以 features 和 columns 放在同一個檔案
 export const features = tableFeatures({
+  columnFilteringFeature,
+  globalFilteringFeature,
+  rowSortingFeature,
   rowExpandingFeature,
   rowPaginationFeature,
   rowSelectionFeature,
+  filteredRowModel: createFilteredRowModel(),
+  sortedRowModel: createSortedRowModel(),
   expandedRowModel: createExpandedRowModel(),
   paginatedRowModel: createPaginatedRowModel(),
+  filterFns: { includesKeyword: filterFn_includesKeyword },
+  sortFns: { zhHant: sortFn_zhHant },
   columnMeta: metaHelper<ProductColumnMeta>(),
 });
 
@@ -119,8 +152,12 @@ export const columns = columnHelper.columns([
         </div>
       );
     },
+    // 圖片網址不是給人讀的，不參與排序與搜尋
+    enableSorting: false,
+    enableGlobalFilter: false,
     meta: { className: 'w-16 text-center' },
   }),
+  // 搜尋只比對名稱和分類：都是表格上看得到的字，才看得出每筆結果為什麼符合
   columnHelper.accessor('name', {
     header: '商品',
     cell: ({ row, getValue }) => (
@@ -131,6 +168,7 @@ export const columns = columnHelper.columns([
         </span>
       </div>
     ),
+    sortFn: 'zhHant',
   }),
   columnHelper.accessor((product) => product.category?.name ?? '未分類', {
     id: 'category',
@@ -138,21 +176,38 @@ export const columns = columnHelper.columns([
     cell: ({ getValue }) => (
       <span className="text-muted-foreground">{getValue()}</span>
     ),
+    sortFn: 'zhHant',
   }),
-  columnHelper.accessor('status', {
+  // 值用畫面上的中文標籤，排序才會照看到的字排：已上架、已下架、草稿
+  columnHelper.accessor((product) => productStatusLabels[product.status], {
+    id: 'status',
     header: '狀態',
-    cell: ({ getValue }) => (
-      <Badge variant={getValue() === 'published' ? 'default' : 'outline'}>
-        {productStatusLabels[getValue()]}
+    cell: ({ row, getValue }) => (
+      <Badge
+        variant={row.original.status === 'published' ? 'default' : 'outline'}
+      >
+        {getValue()}
       </Badge>
     ),
+    sortFn: 'zhHant',
+    enableGlobalFilter: false,
     meta: { className: 'text-center' },
   }),
-  columnHelper.accessor((product) => formatPriceRange(product.variants), {
-    id: 'price',
-    header: '價格',
-    meta: { className: 'text-right' },
-  }),
+  // 依最低價排序；還沒有規格的商品沒有價格，不論升冪降冪都排在最後
+  columnHelper.accessor(
+    (product) =>
+      product.variants.length > 0
+        ? Math.min(...product.variants.map((variant) => variant.price))
+        : undefined,
+    {
+      id: 'price',
+      header: '價格',
+      cell: ({ row }) => formatPriceRange(row.original.variants),
+      sortUndefined: 'last',
+      enableGlobalFilter: false,
+      meta: { className: 'text-right' },
+    },
+  ),
   columnHelper.accessor(
     (product) =>
       product.variants.reduce((total, variant) => total + variant.stock, 0),
@@ -164,6 +219,7 @@ export const columns = columnHelper.columns([
           {getValue()}
         </span>
       ),
+      enableGlobalFilter: false,
       meta: { className: 'text-right' },
     },
   ),
