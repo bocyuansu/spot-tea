@@ -1,5 +1,5 @@
 import { Badge } from '@/components/ui/badge';
-import { formatDateTW } from '@/lib/format';
+import { formatDateTW, formatPriceTWD } from '@/lib/format';
 import type { AdminUser } from '@/db/queries/admin/users';
 import UserActions from '@/features/admin/users/components/UserActions';
 import { createAppColumnHelper } from '@/features/admin/shared/admin-table';
@@ -71,6 +71,16 @@ export function createUserColumns(currentUserId: string) {
     }),
     columnHelper.accessor('orderCount', {
       header: '訂單數',
+      enableGlobalFilter: false,
+      meta: { className: 'text-right' },
+    }),
+    columnHelper.accessor('spentAmount', {
+      header: '消費金額',
+      cell: ({ getValue }) => (
+        <span className="font-medium text-primary">
+          {formatPriceTWD(getValue())}
+        </span>
+      ),
       enableGlobalFilter: false,
       meta: { className: 'text-right' },
     }),
