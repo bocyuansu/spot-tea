@@ -7,21 +7,10 @@ import {
   CardFooter,
   CardHeader,
 } from '@/components/ui/card';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
 import type { AdminUser } from '@/db/queries/admin/users';
 import { useAppTable } from '@/features/admin/shared/admin-table';
 import { createUserColumns } from '@/features/admin/users/user-table-columns';
-import {
-  userTableGlobalFilterAtom,
-  userTablePaginationAtom,
-  userTableSortingAtom,
-} from '@/features/admin/users/user-table-state';
+import { userTableState } from '@/features/admin/users/user-table-state';
 
 type UserTableProps = {
   users: AdminUser[];
@@ -39,11 +28,7 @@ export default function UserTable({ users, currentUserId }: UserTableProps) {
   const table = useAppTable({
     columns,
     data: users,
-    atoms: {
-      pagination: userTablePaginationAtom,
-      sorting: userTableSortingAtom,
-      globalFilter: userTableGlobalFilterAtom,
-    },
+    atoms: userTableState.atoms,
   });
 
   if (users.length === 0) {
@@ -65,43 +50,7 @@ export default function UserTable({ users, currentUserId }: UserTableProps) {
         </CardHeader>
 
         <CardContent>
-          <Table>
-            <TableHeader>
-              {table.getHeaderGroups().map((headerGroup) => (
-                <TableRow key={headerGroup.id}>
-                  {headerGroup.headers.map((h) => (
-                    <table.AppHeader header={h} key={h.id}>
-                      {(header) => <header.SortableTableHead />}
-                    </table.AppHeader>
-                  ))}
-                </TableRow>
-              ))}
-            </TableHeader>
-            <TableBody>
-              {table.getRowModel().rows.length === 0 && (
-                <TableRow className="hover:bg-transparent">
-                  <TableCell
-                    colSpan={table.getAllLeafColumns().length}
-                    className="h-24 text-center text-muted-foreground"
-                  >
-                    沒有符合搜尋條件的會員
-                  </TableCell>
-                </TableRow>
-              )}
-              {table.getRowModel().rows.map((row) => (
-                <TableRow key={row.id}>
-                  {row.getAllCells().map((cell) => (
-                    <TableCell
-                      key={cell.id}
-                      className={cell.column.columnDef.meta?.className}
-                    >
-                      <table.FlexRender cell={cell} />
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+          <table.TableContent emptyMessage="沒有符合搜尋條件的會員" />
         </CardContent>
 
         <CardFooter>

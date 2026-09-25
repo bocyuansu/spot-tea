@@ -1,6 +1,5 @@
 'use client';
 
-import { Fragment } from 'react';
 import Link from 'next/link';
 import { buttonVariants } from '@/components/ui/button';
 import {
@@ -9,22 +8,11 @@ import {
   CardFooter,
   CardHeader,
 } from '@/components/ui/card';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
 import type { AdminProduct } from '@/db/queries/admin/products';
 import ProductBatchActions from '@/features/admin/products/components/ProductBatchActions';
 import ProductVariantTable from '@/features/admin/products/components/ProductVariantTable';
 import { columns } from '@/features/admin/products/product-table-columns';
-import {
-  productTableGlobalFilterAtom,
-  productTablePaginationAtom,
-  productTableSortingAtom,
-} from '@/features/admin/products/product-table-state';
+import { productTableState } from '@/features/admin/products/product-table-state';
 import { useAppTable } from '@/features/admin/shared/admin-table';
 
 type ProductTableProps = {
@@ -36,11 +24,7 @@ export default function ProductTable({ products }: ProductTableProps) {
     columns,
     data: products,
     getRowCanExpand: (row) => row.original.variants.length > 0,
-    atoms: {
-      pagination: productTablePaginationAtom,
-      sorting: productTableSortingAtom,
-      globalFilter: productTableGlobalFilterAtom,
-    },
+    atoms: productTableState.atoms,
   });
 
   const selectedProducts = table
@@ -77,59 +61,13 @@ export default function ProductTable({ products }: ProductTableProps) {
         </CardHeader>
 
         <CardContent>
-          <Table>
-            <TableHeader>
-              {table.getHeaderGroups().map((headerGroup) => (
-                <TableRow key={headerGroup.id}>
-                  {headerGroup.headers.map((h) => (
-                    <table.AppHeader header={h} key={h.id}>
-                      {(header) => <header.SortableTableHead />}
-                    </table.AppHeader>
-                  ))}
-                </TableRow>
-              ))}
-            </TableHeader>
-            <TableBody>
-              {table.getRowModel().rows.length === 0 && (
-                <TableRow className="hover:bg-transparent">
-                  <TableCell
-                    colSpan={table.getAllLeafColumns().length}
-                    className="h-24 text-center text-muted-foreground"
-                  >
-                    沒有符合搜尋條件的商品
-                  </TableCell>
-                </TableRow>
-              )}
-              {table.getRowModel().rows.map((row) => (
-                <Fragment key={row.id}>
-                  <TableRow
-                    data-state={row.getIsSelected() ? 'selected' : undefined}
-                  >
-                    {row.getAllCells().map((cell) => (
-                      <TableCell
-                        key={cell.id}
-                        className={cell.column.columnDef.meta?.className}
-                      >
-                        <table.FlexRender cell={cell} />
-                      </TableCell>
-                    ))}
-                  </TableRow>
-
-                  {/* 展開的規格矩陣是額外的一列，用單一儲存格橫跨整個表格 */}
-                  {row.getIsExpanded() && (
-                    <TableRow className="hover:bg-transparent">
-                      <TableCell
-                        colSpan={row.getAllCells().length}
-                        className="bg-muted/30 p-0"
-                      >
-                        <ProductVariantTable variants={row.original.variants} />
-                      </TableCell>
-                    </TableRow>
-                  )}
-                </Fragment>
-              ))}
-            </TableBody>
-          </Table>
+          {/* 展開的商品在下方列出規格矩陣 */}
+          <table.TableContent
+            emptyMessage="沒有符合搜尋條件的商品"
+            renderExpandedRow={(product: AdminProduct) => (
+              <ProductVariantTable variants={product.variants} />
+            )}
+          />
         </CardContent>
 
         <CardFooter>

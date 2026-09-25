@@ -1,33 +1,13 @@
-import { Checkbox } from '@/components/ui/checkbox';
 import { formatDateTW } from '@/lib/format';
 import type { AdminCategoryWithCount } from '@/db/queries/admin/categories';
 import CategoryMenu from '@/features/admin/categories/components/CategoryMenu';
 import { createAppColumnHelper } from '@/features/admin/shared/admin-table';
+import { createSelectColumn } from '@/features/admin/shared/select-column';
 
 const columnHelper = createAppColumnHelper<AdminCategoryWithCount>();
 
 export const columns = columnHelper.columns([
-  // 勾選狀態以分類 id 為 key，換頁後已勾的分類仍會留著；全選只會選到目前這一頁
-  columnHelper.display({
-    id: 'select',
-    header: ({ table }) => (
-      <Checkbox
-        aria-label="選取本頁所有分類"
-        checked={table.getIsAllPageRowsSelected()}
-        onCheckedChange={(checked) => table.toggleAllPageRowsSelected(checked)}
-        className="border-primary"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        aria-label={`選取 ${row.original.name}`}
-        checked={row.getIsSelected()}
-        onCheckedChange={(checked) => row.toggleSelected(checked)}
-        className="border-primary"
-      />
-    ),
-    meta: { className: 'w-8' },
-  }),
+  createSelectColumn<AdminCategoryWithCount>('分類'),
   // 搜尋只比對名稱和網址代稱：都是表格上看得到的字，才看得出每筆結果為什麼符合
   columnHelper.accessor('name', {
     header: '分類',

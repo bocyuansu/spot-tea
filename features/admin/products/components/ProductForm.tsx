@@ -38,11 +38,7 @@ import {
   updateProduct,
 } from '@/features/admin/products/actions/products';
 import { uploadProductImages } from '@/features/admin/products/upload-product-images';
-import {
-  productTableGlobalFilterAtom,
-  productTablePaginationAtom,
-  productTableSortingAtom,
-} from '@/features/admin/products/product-table-state';
+import { productTableState } from '@/features/admin/products/product-table-state';
 import { productStatusLabels } from '@/features/products/product-status';
 /* Nextjs */
 import { useTransition } from 'react';
@@ -147,11 +143,7 @@ export default function ProductForm({ categories, product }: ProductFormProps) {
 
       // 新商品在預設順序下排在列表最前面：清掉搜尋與排序、回到第一頁才看得到；
       // 編輯完則停在原本的搜尋結果與那一頁
-      if (!product) {
-        productTableGlobalFilterAtom.set('');
-        productTableSortingAtom.set([]);
-        productTablePaginationAtom.set((old) => ({ ...old, pageIndex: 0 }));
-      }
+      if (!product) productTableState.reset();
 
       router.push('/admin/products');
     });

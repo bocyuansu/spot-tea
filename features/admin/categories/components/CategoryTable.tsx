@@ -6,21 +6,10 @@ import {
   CardFooter,
   CardHeader,
 } from '@/components/ui/card';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
 import type { AdminCategoryWithCount } from '@/db/queries/admin/categories';
 import CategoryBatchActions from '@/features/admin/categories/components/CategoryBatchActions';
 import { columns } from '@/features/admin/categories/category-table-columns';
-import {
-  categoryTableGlobalFilterAtom,
-  categoryTablePaginationAtom,
-  categoryTableSortingAtom,
-} from '@/features/admin/categories/category-table-state';
+import { categoryTableState } from '@/features/admin/categories/category-table-state';
 import { useAppTable } from '@/features/admin/shared/admin-table';
 
 type CategoryTableProps = {
@@ -31,11 +20,7 @@ export default function CategoryTable({ categories }: CategoryTableProps) {
   const table = useAppTable({
     columns,
     data: categories,
-    atoms: {
-      pagination: categoryTablePaginationAtom,
-      sorting: categoryTableSortingAtom,
-      globalFilter: categoryTableGlobalFilterAtom,
-    },
+    atoms: categoryTableState.atoms,
   });
 
   const selectedCategories = table
@@ -70,46 +55,7 @@ export default function CategoryTable({ categories }: CategoryTableProps) {
         </CardHeader>
 
         <CardContent>
-          <Table>
-            <TableHeader>
-              {table.getHeaderGroups().map((headerGroup) => (
-                <TableRow key={headerGroup.id}>
-                  {headerGroup.headers.map((h) => (
-                    <table.AppHeader header={h} key={h.id}>
-                      {(header) => <header.SortableTableHead />}
-                    </table.AppHeader>
-                  ))}
-                </TableRow>
-              ))}
-            </TableHeader>
-            <TableBody>
-              {table.getRowModel().rows.length === 0 && (
-                <TableRow className="hover:bg-transparent">
-                  <TableCell
-                    colSpan={table.getAllLeafColumns().length}
-                    className="h-24 text-center text-muted-foreground"
-                  >
-                    沒有符合搜尋條件的分類
-                  </TableCell>
-                </TableRow>
-              )}
-              {table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() ? 'selected' : undefined}
-                >
-                  {row.getAllCells().map((cell) => (
-                    <TableCell
-                      key={cell.id}
-                      className={cell.column.columnDef.meta?.className}
-                    >
-                      <table.FlexRender cell={cell} />
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+          <table.TableContent emptyMessage="沒有符合搜尋條件的分類" />
         </CardContent>
 
         <CardFooter>

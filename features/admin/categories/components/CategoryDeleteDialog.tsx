@@ -18,7 +18,7 @@ import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import type { AdminCategoryWithCount } from '@/db/queries/admin/categories';
 import { deleteCategories } from '@/features/admin/categories/actions/categories';
-import { categoryTablePaginationAtom } from '@/features/admin/categories/category-table-state';
+import { categoryTableState } from '@/features/admin/categories/category-table-state';
 
 type CategoryDeleteDialogProps = {
   // products 與 productCount 用來提醒哪些商品會變成未分類
@@ -73,7 +73,7 @@ export default function CategoryDeleteDialog({
         description: `已刪除 ${targets.length} 個分類 !`,
       });
       // 刪掉的可能是後面幾頁的全部分類，回到第一頁才不會停在空白頁
-      categoryTablePaginationAtom.set((old) => ({ ...old, pageIndex: 0 }));
+      categoryTableState.firstPage();
       router.refresh();
     });
   }

@@ -19,6 +19,7 @@ import {
 } from '@tanstack/react-table';
 import { normalizeSearchText } from '@/features/products/product-catalog';
 import SortableTableHead from '@/features/admin/shared/components/SortableTableHead';
+import TableContent from '@/features/admin/shared/components/TableContent';
 import TablePagination from '@/features/admin/shared/components/TablePagination';
 import TableSearch from '@/features/admin/shared/components/TableSearch';
 
@@ -46,8 +47,9 @@ const sortFn_zhHant = constructSortFn({
 
 /**
  * 後台的商品、分類、訂單、會員列表共用這一組設定，搜尋、排序、分頁的行為才會一致。
- * 各列表只帶自己的欄位、資料與狀態 atom；搜尋框、分頁列與可排序的表頭也在這裡註冊，
- * 用 <table.TableSearch />、<table.TablePagination />、<header.SortableTableHead /> 取用
+ * 各列表只帶自己的欄位、資料與狀態 atom（見 admin-table-state.ts）；
+ * 搜尋框、表格內容、分頁列與可排序的表頭也在這裡註冊，
+ * 用 <table.TableSearch />、<table.TableContent />、<table.TablePagination />、<header.SortableTableHead /> 取用
  */
 export const {
   createAppColumnHelper,
@@ -81,6 +83,6 @@ export const {
   // 會讓列表長度改變的新增與刪除，以及搜尋和排序，由它們自己把頁碼歸零
   autoResetPageIndex: false,
 
-  tableComponents: { TableSearch, TablePagination },
+  tableComponents: { TableSearch, TableContent, TablePagination },
   headerComponents: { SortableTableHead },
 });

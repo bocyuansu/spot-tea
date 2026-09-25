@@ -3,13 +3,13 @@ import Link from 'next/link';
 import { ChevronRight, Leaf } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
 import { productStatusLabels } from '@/features/products/product-status';
 import { formatPriceTWD } from '@/lib/format';
 import { cn } from '@/lib/utils';
 import type { AdminProduct } from '@/db/queries/admin/products';
 import ProductMenu from '@/features/admin/products/components/ProductMenu';
 import { createAppColumnHelper } from '@/features/admin/shared/admin-table';
+import { createSelectColumn } from '@/features/admin/shared/select-column';
 
 function formatPriceRange(variants: AdminProduct['variants']) {
   if (variants.length === 0) return '—';
@@ -26,27 +26,7 @@ function formatPriceRange(variants: AdminProduct['variants']) {
 const columnHelper = createAppColumnHelper<AdminProduct>();
 
 export const columns = columnHelper.columns([
-  // 勾選狀態以商品 id 為 key，換頁後已勾的商品仍會留著；全選只會選到目前這一頁
-  columnHelper.display({
-    id: 'select',
-    header: ({ table }) => (
-      <Checkbox
-        aria-label="選取本頁所有商品"
-        checked={table.getIsAllPageRowsSelected()}
-        onCheckedChange={(checked) => table.toggleAllPageRowsSelected(checked)}
-        className="border-primary"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        aria-label={`選取 ${row.original.name}`}
-        checked={row.getIsSelected()}
-        onCheckedChange={(checked) => row.toggleSelected(checked)}
-        className="border-primary"
-      />
-    ),
-    meta: { className: 'w-8' },
-  }),
+  createSelectColumn<AdminProduct>('商品'),
   columnHelper.display({
     id: 'expander',
     header: () => <span className="sr-only">展開規格</span>,

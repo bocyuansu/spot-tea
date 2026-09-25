@@ -18,7 +18,7 @@ import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import type { AdminProduct } from '@/db/queries/admin/products';
 import { deleteProducts } from '@/features/admin/products/actions/products';
-import { productTablePaginationAtom } from '@/features/admin/products/product-table-state';
+import { productTableState } from '@/features/admin/products/product-table-state';
 
 type ProductDeleteDialogProps = {
   products: Pick<AdminProduct, 'id' | 'name'>[];
@@ -64,7 +64,7 @@ export default function ProductDeleteDialog({
         description: `已刪除 ${targets.length} 項商品 !`,
       });
       // 刪掉的可能是後面幾頁的全部商品，回到第一頁才不會停在空白頁
-      productTablePaginationAtom.set((old) => ({ ...old, pageIndex: 0 }));
+      productTableState.firstPage();
       router.refresh();
     });
   }

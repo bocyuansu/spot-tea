@@ -6,20 +6,9 @@ import {
   CardFooter,
   CardHeader,
 } from '@/components/ui/card';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
 import type { AdminOrder } from '@/db/queries/admin/orders';
 import { columns } from '@/features/admin/orders/order-table-columns';
-import {
-  orderTableGlobalFilterAtom,
-  orderTablePaginationAtom,
-  orderTableSortingAtom,
-} from '@/features/admin/orders/order-table-state';
+import { orderTableState } from '@/features/admin/orders/order-table-state';
 import { useAppTable } from '@/features/admin/shared/admin-table';
 
 type OrderTableProps = {
@@ -30,11 +19,7 @@ export default function OrderTable({ orders }: OrderTableProps) {
   const table = useAppTable({
     columns,
     data: orders,
-    atoms: {
-      pagination: orderTablePaginationAtom,
-      sorting: orderTableSortingAtom,
-      globalFilter: orderTableGlobalFilterAtom,
-    },
+    atoms: orderTableState.atoms,
   });
 
   if (orders.length === 0) {
@@ -56,43 +41,7 @@ export default function OrderTable({ orders }: OrderTableProps) {
         </CardHeader>
 
         <CardContent>
-          <Table>
-            <TableHeader>
-              {table.getHeaderGroups().map((headerGroup) => (
-                <TableRow key={headerGroup.id}>
-                  {headerGroup.headers.map((h) => (
-                    <table.AppHeader header={h} key={h.id}>
-                      {(header) => <header.SortableTableHead />}
-                    </table.AppHeader>
-                  ))}
-                </TableRow>
-              ))}
-            </TableHeader>
-            <TableBody>
-              {table.getRowModel().rows.length === 0 && (
-                <TableRow className="hover:bg-transparent">
-                  <TableCell
-                    colSpan={table.getAllLeafColumns().length}
-                    className="h-24 text-center text-muted-foreground"
-                  >
-                    沒有符合搜尋條件的訂單
-                  </TableCell>
-                </TableRow>
-              )}
-              {table.getRowModel().rows.map((row) => (
-                <TableRow key={row.id}>
-                  {row.getAllCells().map((cell) => (
-                    <TableCell
-                      key={cell.id}
-                      className={cell.column.columnDef.meta?.className}
-                    >
-                      <table.FlexRender cell={cell} />
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+          <table.TableContent emptyMessage="沒有符合搜尋條件的訂單" />
         </CardContent>
 
         <CardFooter>
