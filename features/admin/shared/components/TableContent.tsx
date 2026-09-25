@@ -14,7 +14,7 @@ import { useTableContext } from '@/features/admin/shared/admin-table';
 type TableContentProps<TData extends RowData> = {
   // 有資料但搜尋不到任何一筆時顯示的提示
   emptyMessage: string;
-  // 展開某一列時，在它下方多顯示的內容；列表不能展開就不用傳
+  // 展開某一列時，接在它下方的 TableRow；列表不能展開就不用傳
   renderExpandedRow?: (rowData: TData) => ReactNode;
 };
 
@@ -63,17 +63,10 @@ export default function TableContent<TData extends RowData>({
               ))}
             </TableRow>
 
-            {/* 展開的內容是額外的一列，用單一儲存格橫跨整個表格 */}
-            {renderExpandedRow && row.getIsExpanded() && (
-              <TableRow className="hover:bg-transparent">
-                <TableCell
-                  colSpan={row.getAllCells().length}
-                  className="bg-muted/30 p-0"
-                >
-                  {renderExpandedRow(row.original)}
-                </TableCell>
-              </TableRow>
-            )}
+            {/* 展開的內容直接接在這一列下方，沿用同一張表的欄寬 */}
+            {renderExpandedRow &&
+              row.getIsExpanded() &&
+              renderExpandedRow(row.original)}
           </Fragment>
         ))}
       </TableBody>

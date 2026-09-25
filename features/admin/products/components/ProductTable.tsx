@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/card';
 import type { AdminProduct } from '@/db/queries/admin/products';
 import ProductBatchActions from '@/features/admin/products/components/ProductBatchActions';
-import ProductVariantTable from '@/features/admin/products/components/ProductVariantTable';
+import ProductVariantRows from '@/features/admin/products/components/ProductVariantRows';
 import { columns } from '@/features/admin/products/product-table-columns';
 import { productTableState } from '@/features/admin/products/product-table-state';
 import { useAppTable } from '@/features/admin/shared/admin-table';
@@ -61,11 +61,11 @@ export default function ProductTable({ products }: ProductTableProps) {
         </CardHeader>
 
         <CardContent>
-          {/* 展開的商品在下方列出規格矩陣 */}
+          {/* 展開的商品在下方逐列列出規格，欄位對齊商品列 */}
           <table.TableContent
             emptyMessage="沒有符合搜尋條件的商品"
             renderExpandedRow={(product: AdminProduct) => (
-              <ProductVariantTable variants={product.variants} />
+              <ProductVariantRows variants={product.variants} />
             )}
           />
         </CardContent>
