@@ -229,63 +229,81 @@ Worker 執行在 UTC，但訂單日期與訂單編號（`ST-YYYYMMDD-NNNN`）都
 
 依功能（feature-based）組織：
 
+```
 root/
 ├── app/                      
 │   ├── (admin)/
-|   |   ├── admin/            # 後台管理
-|   |   |   ├── dashboard/    # 儀表板
-|   |   |   ├── products/     # 商品管理
-|   |   |   ├── categories/   # 商品分類
-|   |   |   ├── orders/       # 訂單管理
-|   |   |   └── users/        # 使用者管理
-|   |   ├── layout.tsx        # 後台佈局
-|   |   ├── loading.tsx       # 後台載入畫面
-|   |   └── error.tsx         # 後台錯誤頁面
+|   |   ├── admin/                  # 後台管理
+|   |   |   ├── dashboard/          # 儀表板
+|   |   |   ├── products/           # 商品管理
+|   |   |   ├── categories/         # 商品分類
+|   |   |   ├── orders/             # 訂單管理
+|   |   |   └── users/              # 使用者管理
+|   |   ├── layout.tsx              # 後台佈局
+|   |   ├── loading.tsx             # 後台載入畫面
+|   |   └── error.tsx               # 後台錯誤頁面
 │   ├── (auth)/
-|   |   ├── login/            # 會員登入
-|   |   ├── signup/           # 會員註冊
-|   |   ├── verify-email/     # 信箱驗證
-|   |   ├── forgot-password/  # 忘記密碼
-|   |   ├── reset-password/   # 重設密碼
-|   |   └── layout.tsx        # 登入、註冊佈局
+|   |   ├── login/                  # 會員登入
+|   |   ├── signup/                 # 會員註冊
+|   |   ├── verify-email/           # 信箱驗證
+|   |   ├── forgot-password/        # 忘記密碼
+|   |   ├── reset-password/         # 重設密碼
+|   |   └── layout.tsx              # 登入、註冊佈局
 │   ├── (shop)/
-|   |   ├── products/         # 前台商品列表
-|   |   ├── cart/             # 購物車
-|   |   ├── checkout/         # 結帳
-|   |   ├── store-location/   # 門市資訊
-|   |   ├── layout.tsx        # 前台佈局
-|   |   └── page.tsx          # 前台首頁
+|   |   ├── products/               # 前台商品列表
+|   |   ├── cart/                   # 購物車
+|   |   ├── checkout/               # 結帳
+|   |   ├── store-location/         # 門市資訊
+|   |   ├── layout.tsx              # 前台佈局
+|   |   └── page.tsx                # 前台首頁
 │   ├── (user)/
-|   |   ├── user/             # 前台會員
-|   |   |   ├── orders/       # 我的訂單
-|   |   |   ├── favorites/    # 商品收藏
-|   |   |   └── page.tsx      # 會員中心
-|   |   └── layout.tsx        # 會員佈局
+|   |   ├── user/                   # 前台會員
+|   |   |   ├── orders/             # 我的訂單
+|   |   |   ├── favorites/          # 商品收藏
+|   |   |   └── page.tsx            # 會員中心
+|   |   └── layout.tsx              # 會員佈局
 │   ├── api/
-|   |   ├── auth/             # Auth API authentication
+|   |   ├── auth/                   # Auth API authentication
 |   |   └── payments/         
-|   |       └── ecpay/        # 綠界 API
-|   |           ├── notify/   # 綠界 ReturnURL：付款結果 Server 對 Server 的通知
-|   |           └── result/   # 綠界 OrderResultURL：消費者付款後，綠界付款頁以 form POST 把瀏覽器帶回這裡
-│   ├── layout.tsx            # RootLayout
-│   ├── error.tsx             # 全站的錯誤邊界
-│   ├── not-found.tsx         # 網址輸入錯誤顯示的頁面
-│   ├── globals.css           # shadcn/ui Theme
-│   ├── sitemap.ts            # 網站地圖
-│   └── robots.txt            # 爬蟲引導
-├── components/    
+|   |       └── ecpay/              # 綠界 API
+|   |           ├── notify/         # 綠界 ReturnURL：付款結果 Server 對 Server 的通知
+|   |           └── result/         # 綠界 OrderResultURL：消費者付款後，綠界付款頁以 form POST 把瀏覽器帶回這裡
+│   ├── layout.tsx                  # RootLayout
+│   ├── error.tsx                   # 全站的錯誤邊界
+│   ├── not-found.tsx               # 網址輸入錯誤顯示的頁面
+│   ├── globals.css                 # shadcn/ui Theme
+│   ├── sitemap.ts                  # 網站地圖
+│   └── robots.txt                  # 爬蟲引導
+├── components/
+│   ├── common/                     # 全站共用元件
+│   ├── layout/               
+|   |   ├── admin/
+|   |   |   ├── AdminHeader.tsx     # 後台頁首
+|   |   |   ├── AdminNavMain.tsx    # 後台導覽
+|   |   |   └── AdminSidebar.tsx    # 後台側邊欄
+|   |   ├── Navbar.tsx              # 前台頁首
+|   |   ├── Footer.tsx              # 前台頁尾
+|   |   ├── MobileMenu.tsx          # 手機版菜單
+|   |   ├── NavUser.tsx             # 導覽元件的使用者資訊
+|   |   └── SiteChrome.tsx          # 前台共用佈局 
+│   └── ui/                         # shadcn/ui
+├── db/
+│   ├── queries/                    # 資料庫查詢
+│   ├── relations/                  # 資料庫關聯
+│   ├── schema/                     # 資料表結構
+│   ├── client.ts                   # 資料庫連線
+│   └── migrate.ts                  # 資料庫遷移
+├── drizzle/                        # 根據 schema 產生的 sql migration
+├── features/                       # 功能模組
+├── hooks/                          # React Custom Hooks
+├── lib/                            # Better Auth / Resend / format / imageKit / Neon Object Storage
+├── env.ts      # 有型別的環境變數
+├── neon.ts     # Neon 設定
+├── proxy.ts     # 登入判斷：樂觀檢查 cookie 是否存在
 ├── .env.example      # 環境變數參考範本
 ├── .gitignore        # Git 忽略追蹤清單
 ├── package.json      # 專案依賴與執行指令
 └── README.md         # 專案說明
-
-```text
-app/          路由：(shop) 前台、(user) 會員中心、(auth) 登入註冊、(admin) 後台、api/ 金流回呼
-features/     各功能模組：cart、checkout、orders、payments、products、favorites、user、admin
-components/   共用元件：ui/（shadcn/ui）、common/、layout/
-db/           Drizzle schema、relations、queries
-lib/          auth、session、密碼雜湊、S3 client、ImageKit 等共用模組
-proxy.ts      登入與權限檢查、轉址
 ```
 
 ## 本機執行
