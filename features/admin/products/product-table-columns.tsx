@@ -69,15 +69,15 @@ export const columns = columnHelper.columns([
     ),
     meta: { className: 'w-10' },
   }),
-  columnHelper.accessor((product) => product.images?.[0] ?? null, {
+  columnHelper.display({
     id: 'image',
     header: '圖片',
-    cell: ({ row, getValue }) => {
-      const productImgUrl = getValue();
+    cell: ({ row }) => {
+      const productImgUrl = row.original.images?.[0];
 
       return productImgUrl ? (
         <Link
-          href={productImgUrl}
+          href={`/products/${row.original.slug}`}
           prefetch={false}
           className="w-full flex justify-center items-center"
         >
@@ -95,9 +95,6 @@ export const columns = columnHelper.columns([
         </div>
       );
     },
-    // 圖片網址不是給人讀的，不參與排序與搜尋
-    enableSorting: false,
-    enableGlobalFilter: false,
     meta: { className: 'w-16 text-center' },
   }),
   // 搜尋只比對名稱和分類：都是表格上看得到的字，才看得出每筆結果為什麼符合
