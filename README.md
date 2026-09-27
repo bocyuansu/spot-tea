@@ -126,14 +126,14 @@ Email 驗證與忘記密碼已實作（Resend 寄信），因尚未綁定自訂�
 
 ```mermaid
 flowchart LR
-  B["瀏覽器"] -->|"頁面、server action"| W["Cloudflare Worker<br/>vinext"]
-  W -->|"Hyperdrive 連線池"| DB[("Neon Postgres")]
-  W <-->|"session、商品快取"| KV[("Workers KV")]
-  B -->|"presigned URL 直接上傳"| S3[("Neon Object Storage")]
-  S3 --> IK["ImageKit CDN"]
-  IK -->|"依尺寸輸出圖片"| B
-  B -->|"表單 POST"| EC["綠界金流"]
-  EC -->|"付款結果回呼"| W
+    B["瀏覽器"] -->|"頁面、server action"| W["Cloudflare Worker<br/>vinext"]
+    W -->|"Hyperdrive 連線池"| DB[("Neon Postgres")]
+    W <-->|"session、商品快取"| KV[("Workers KV")]
+    B -->|"presigned URL 直接上傳"| S3[("Neon Object Storage")]
+    S3 --> IK["ImageKit CDN"]
+    IK -->|"依尺寸輸出圖片"| B
+    B -->|"表單 POST"| EC["綠界金流"]
+    EC -->|"付款結果回呼"| W
 ```
 
 - **Cloudflare Workers**：頁面、server action 與 API 都跑在同一個 Worker 上，
