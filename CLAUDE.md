@@ -18,7 +18,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 | 類別       | 套件                                                                               |
 | ---------- | ---------------------------------------------------------------------------------- |
-| 框架       | vinext 1.0 beta（Next.js 16 相容）、React 19.3、TypeScript 7                       |
+| 框架       | vinext 1.0（Next.js 16 相容）、React 19.3、TypeScript 7                            |
 | 部署       | Cloudflare Workers + Hyperdrive + KV（`@vinext/cloudflare`、wrangler）             |
 | 資料庫     | Neon Postgres、Drizzle ORM 1.0.0-rc.4（relations v2：`defineRelationsPart`）、`pg` |
 | 身分驗證   | Better Auth 1.7（admin plugin）                                                    |

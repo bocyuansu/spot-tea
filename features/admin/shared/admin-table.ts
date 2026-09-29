@@ -82,7 +82,7 @@ export const {
   // 資料更新（例如編輯或批次上下架後重新整理）時停在原本那一頁；
   // 會讓列表長度改變的新增與刪除，以及搜尋和排序，由它們自己把頁碼歸零
   autoResetPageIndex: false,
-
+  // 註冊元件
   tableComponents: { TableSearch, TableContent, TablePagination },
   headerComponents: { SortableTableHead },
 });

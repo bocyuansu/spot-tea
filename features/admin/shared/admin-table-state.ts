@@ -9,6 +9,7 @@ import type { PaginationState, SortingState } from '@tanstack/react-table';
  * server 端只會讀取（寫入都來自使用者操作），不會跨請求互相影響
  */
 export function createAdminTableState() {
+  // 讓 TanStack Store atom 管理狀態
   const atoms = {
     pagination: createAtom<PaginationState>({ pageIndex: 0, pageSize: 10 }),
     // 沒有排序時沿用查詢本身的順序
@@ -21,14 +22,15 @@ export function createAdminTableState() {
     atoms.pagination.set((old) => ({ ...old, pageIndex: 0 }));
   }
 
+  function reset() {
+    atoms.globalFilter.set('');
+    atoms.sorting.set([]);
+    firstPage();
+  }
+
   return {
     atoms,
     firstPage,
-    // 清掉搜尋與排序並回到第一頁，列表回到查詢本身的順序
-    reset() {
-      atoms.globalFilter.set('');
-      atoms.sorting.set([]);
-      firstPage();
-    },
+    reset,
   };
 }

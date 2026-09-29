@@ -12,6 +12,7 @@ export default function Footer() {
               alt="Spot Tea logo"
               width={100}
               height={100}
+              crossOrigin="anonymous"
             />
           </Link>
         </div>

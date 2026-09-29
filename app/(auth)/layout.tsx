@@ -15,6 +15,7 @@ export default function AuthLayout({
           alt="Spot Tea logo"
           width={100}
           height={100}
+          crossOrigin="anonymous"
         />
       </Link>
       {children}

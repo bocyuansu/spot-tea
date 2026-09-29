@@ -34,6 +34,7 @@ export default async function Navbar() {
             alt="Spot Tea logo"
             width={100}
             height={100}
+            crossOrigin="anonymous"
             className="w-16 h-16 md:w-25 md:h-25"
           />
         </Link>
