@@ -1,23 +1,81 @@
 # 找茶 spot-tea
 
-個人獨立開發的台灣茶葉電商。從瀏覽商品、購物車、結帳、綠界信用卡付款，
-到會員中心與後台出貨管理，完整走完一筆訂單的生命週期。
+個人獨立開發的台灣茶葉電商。從瀏覽商品、購物車、結帳、綠界信用卡付款，到會員中心與後台出貨管理，完整走完一筆訂單的生命週期。
 以 vinext（Next.js App Router 相容）打造，部署在 Cloudflare Workers。
 
 **Demo：<https://spot-tea.cyuan.workers.dev>**
 
+**測試帳號：**
+
+一般會員：customer01@test.com
+
+管理員：admin001@test.com
+
+密碼：12345678
+
 > 信用卡付款串接的是綠界測試環境，可用綠界公開的測試卡號 `4311-9522-2222-2222`
 > （安全碼任意三碼、有效期限任意未來月年、3D 驗證碼 `1234`）走完付款流程。
 
-<!-- 截圖待補：放進 docs/screenshots/ -->
+## 作品截圖
 
-![首頁](docs/screenshots/home.png)
-
-| 商品頁                                   | 結帳                                               |
-| ---------------------------------------- | -------------------------------------------------- |
-| ![商品頁](docs/screenshots/product.png)  | ![結帳](docs/screenshots/checkout.png)             |
-| **會員訂單**                             | **後台訂單管理**                                   |
-| ![會員訂單](docs/screenshots/orders.png) | ![後台訂單管理](docs/screenshots/admin-orders.png) |
+<table>
+  <tr>
+    <th width="50%">首頁</th>
+    <th width="50%">商品頁</th>
+  </tr>
+  <tr>
+    <td align="center"><img src="https://github.com/user-attachments/assets/5be91249-4eca-48e0-9f02-524dbf081e69" alt="首頁"></td>
+    <td align="center"><img src="https://github.com/user-attachments/assets/05039cdc-5fe6-4d40-ae9a-7138005e6235" alt="商品頁"></td>
+  </tr>
+  <tr>
+    <th width="50%">購物車</th>
+    <th width="50%">結帳</th>
+  </tr>
+  <tr>
+    <td align="center"><img src="https://github.com/user-attachments/assets/f7fda095-767c-4dc1-9022-7e2b18d040b1" alt="購物車"></td>
+    <td align="center"><img src="https://github.com/user-attachments/assets/79edbcfb-f5d9-4fa8-bad8-5fa6b3260abe" alt="結帳"></td>
+  </tr>
+  <tr>
+    <th width="50%">會員中心</th>
+    <th width="50%">我的訂單</th>
+  </tr>
+  <tr>
+    <td align="center"><img src="https://github.com/user-attachments/assets/812574f3-f32b-48fb-8a63-8a2aa4731b4f" alt="會員中心"></td>
+    <td align="center"><img src="https://github.com/user-attachments/assets/54165fa5-9de9-4c71-8af0-1506022b677b" alt="我的訂單"></td>
+  </tr>
+  <tr>
+    <th width="50%">商品收藏</th>
+    <th width="50%">門市資訊</th>
+  </tr>
+  <tr>
+    <td align="center"><img src="https://github.com/user-attachments/assets/50e79bf9-7a1c-4de8-b0ac-888f01ac1a6a" alt="商品收藏"></td>
+    <td align="center"><img src="https://github.com/user-attachments/assets/fbd0691e-e888-4ce3-88d0-27934d2ad6c8" alt="門市資訊"></td>
+  </tr>
+  <tr>
+    <th width="50%">後台儀表板</th>
+    <th width="50%">後台商品管理</th>
+  </tr>
+  <tr>
+    <td align="center"><img src="https://github.com/user-attachments/assets/63f52e9e-e397-4a56-b2c9-0642ff49dfc4" alt="後台儀表板"></td>
+    <td align="center"><img src="https://github.com/user-attachments/assets/c9f0d92a-c66f-4ecf-9178-41d35e052814" alt="後台商品管理"></td>
+  </tr>
+  <tr>
+    <th width="50%">後台商品分類</th>
+    <th width="50%">後台訂單管理</th>
+  </tr>
+  <tr>
+    <td align="center"><img src="https://github.com/user-attachments/assets/7ae36876-3195-45db-bb07-fb75930c33f2" alt="後台商品分類"></td>
+    <td align="center"><img src="https://github.com/user-attachments/assets/bec472fe-cf37-4998-b032-bd1c49819131" alt="後台訂單管理"></td>
+  </tr>
+  <tr>
+    <th width="50%">訂單明細、訂單狀態</th>
+    <th width="50%">使用者管理</th>
+  </tr>
+  <tr>
+    <td align="center"><img src="https://github.com/user-attachments/assets/bb58e7d1-1a67-4164-9bc8-09ba980f08ad" alt="使用者管理"></td>
+    <td align="center"><img src="https://github.com/user-attachments/assets/a3216ddb-c884-4eed-b461-a174199e79be" alt="使用者管理"></td>
+  </tr>
+</table>
 
 ## 專案亮點
 
@@ -59,7 +117,7 @@ Email 驗證與忘記密碼已實作（Resend 寄信），因尚未綁定自訂�
 
 | 類別       | 技術                                                      |
 | ---------- | --------------------------------------------------------- |
-| 框架       | vinext（Next.js App Router 相容，以 Vite 建置）、React 19 |
+| 框架       | vinext（Next.js 相容，以 Vite 建置）、React                 |
 | 執行環境   | Cloudflare Workers                                        |
 | 資料庫     | Neon Postgres、Drizzle ORM、Cloudflare Hyperdrive         |
 | 快取       | Workers KV                                                |
@@ -68,7 +126,7 @@ Email 驗證與忘記密碼已實作（Resend 寄信），因尚未綁定自訂�
 | 金流       | 綠界全方位金流（AIO）                                     |
 | 寄信       | Resend                                                    |
 | UI         | Tailwind CSS、shadcn/ui、TanStack Table                   |
-| 表單與驗證 | React Hook Form、zod                                      |
+| 表單與驗證 | React Hook Form、Zod                                      |
 | 測試       | Vitest                                                    |
 | 開發工具   | TypeScript、pnpm、oxlint、oxfmt                           |
 
@@ -76,14 +134,14 @@ Email 驗證與忘記密碼已實作（Resend 寄信），因尚未綁定自訂�
 
 ```mermaid
 flowchart LR
-  B["瀏覽器"] -->|"頁面、server action"| W["Cloudflare Worker<br/>vinext"]
-  W -->|"Hyperdrive 連線池"| DB[("Neon Postgres")]
-  W <-->|"session、商品快取"| KV[("Workers KV")]
-  B -->|"presigned URL 直接上傳"| S3[("Neon Object Storage")]
-  S3 --> IK["ImageKit CDN"]
-  IK -->|"依尺寸輸出圖片"| B
-  B -->|"表單 POST"| EC["綠界金流"]
-  EC -->|"付款結果回呼"| W
+    B["瀏覽器"] -->|"頁面、server action"| W["Cloudflare Worker<br/>vinext"]
+    W -->|"Hyperdrive 連線池"| DB[("Neon Postgres")]
+    W <-->|"session、商品快取"| KV[("Workers KV")]
+    B -->|"presigned URL 直接上傳"| S3[("Neon Object Storage")]
+    S3 --> IK["ImageKit CDN"]
+    IK -->|"依尺寸輸出圖片"| B
+    B -->|"表單 POST"| EC["綠界金流"]
+    EC -->|"付款結果回呼"| W
 ```
 
 - **Cloudflare Workers**：頁面、server action 與 API 都跑在同一個 Worker 上，
@@ -99,11 +157,9 @@ flowchart LR
 
 ### 1. 結帳：防止超賣與竄改價格
 
-**問題**：購物車存在瀏覽器，送來的價格不可信；兩位顧客同時搶最後一件商品時，
-「先讀庫存、算好再寫回」會發生 lost update。
+**問題**：購物車存在瀏覽器，送來的價格不可信；兩位顧客同時搶最後一件商品時，「先讀庫存、算好再寫回」會發生 lost update。
 
 **做法**：
-
 - client 只送規格與數量，品名、單價與庫存一律在 server 從資料庫重新查詢。
   價格有變動時，帶回最新單價請顧客確認後再送出。
 - 扣庫存用帶條件的 `UPDATE ... SET stock = stock - n WHERE stock >= n`，由資料庫原子相減。
@@ -177,18 +233,85 @@ Worker 執行在 UTC，但訂單日期與訂單編號（`ST-YYYYMMDD-NNNN`）都
 運費計算、訂單狀態轉移、訂單編號、綠界 CheckMacValue、密碼雜湊、
 登入後的安全轉址（防止 open redirect），以及各表單的 zod schema。
 
-## 專案結構
+## 📁專案結構
 
-依功能（feature-based）組織：路由檔保持精簡，每個功能的元件、schema、server action
-與商業邏輯放在同一個資料夾。
+依功能（feature-based）組織：
 
-```text
-app/          路由：(shop) 前台、(user) 會員中心、(auth) 登入註冊、(admin) 後台、api/ 金流回呼
-features/     各功能模組：cart、checkout、orders、payments、products、favorites、user、admin
-components/   共用元件：ui/（shadcn/ui）、common/、layout/
-db/           Drizzle schema、relations、queries
-lib/          auth、session、密碼雜湊、S3 client、ImageKit 等共用模組
-proxy.ts      登入與權限檢查、轉址
+```
+root/
+├── app/                      
+│   ├── (admin)/
+|   |   ├── admin/                  # 後台管理
+|   |   |   ├── dashboard/          # 儀表板
+|   |   |   ├── products/           # 商品管理
+|   |   |   ├── categories/         # 商品分類
+|   |   |   ├── orders/             # 訂單管理
+|   |   |   └── users/              # 使用者管理
+|   |   ├── layout.tsx              # 後台佈局
+|   |   ├── loading.tsx             # 後台載入畫面
+|   |   └── error.tsx               # 後台錯誤頁面
+│   ├── (auth)/
+|   |   ├── login/                  # 會員登入
+|   |   ├── signup/                 # 會員註冊
+|   |   ├── verify-email/           # 信箱驗證
+|   |   ├── forgot-password/        # 忘記密碼
+|   |   ├── reset-password/         # 重設密碼
+|   |   └── layout.tsx              # 登入、註冊佈局
+│   ├── (shop)/
+|   |   ├── products/               # 前台商品列表
+|   |   ├── cart/                   # 購物車
+|   |   ├── checkout/               # 結帳
+|   |   ├── store-location/         # 門市資訊
+|   |   ├── layout.tsx              # 前台佈局
+|   |   └── page.tsx                # 前台首頁
+│   ├── (user)/
+|   |   ├── user/                   # 前台會員
+|   |   |   ├── orders/             # 我的訂單
+|   |   |   ├── favorites/          # 商品收藏
+|   |   |   └── page.tsx            # 會員中心
+|   |   └── layout.tsx              # 會員佈局
+│   ├── api/
+|   |   ├── auth/                   # Auth API authentication
+|   |   └── payments/         
+|   |       └── ecpay/              # 綠界 API
+|   |           ├── notify/         # 綠界 ReturnURL：付款結果 Server 對 Server 的通知
+|   |           └── result/         # 綠界 OrderResultURL：消費者付款後，綠界付款頁以 form POST 把瀏覽器帶回這裡
+│   ├── layout.tsx                  # RootLayout
+│   ├── error.tsx                   # 全站的錯誤邊界
+│   ├── not-found.tsx               # 網址輸入錯誤顯示的頁面
+│   ├── globals.css                 # shadcn/ui Theme
+│   ├── sitemap.ts                  # 網站地圖
+│   └── robots.txt                  # 爬蟲引導
+├── components/
+│   ├── common/                     # 全站共用元件
+│   ├── layout/               
+|   |   ├── admin/
+|   |   |   ├── AdminHeader.tsx     # 後台頁首
+|   |   |   ├── AdminNavMain.tsx    # 後台導覽
+|   |   |   └── AdminSidebar.tsx    # 後台側邊欄
+|   |   ├── Navbar.tsx              # 前台頁首
+|   |   ├── Footer.tsx              # 前台頁尾
+|   |   ├── MobileMenu.tsx          # 手機版菜單
+|   |   ├── NavUser.tsx             # 導覽元件的使用者資訊
+|   |   └── SiteChrome.tsx          # 前台共用佈局 
+│   └── ui/                         # shadcn/ui
+├── db/
+│   ├── queries/                    # 資料庫查詢
+│   ├── relations/                  # 資料庫關聯
+│   ├── schema/                     # 資料表結構
+│   ├── client.ts                   # 資料庫連線
+│   └── migrate.ts                  # 資料庫遷移
+├── drizzle/                        # 根據 schema 產生的 sql migration
+├── features/                       # 功能模組
+├── hooks/                          # React Custom Hooks
+├── lib/                            # Better Auth / Resend / format / imageKit / Neon Object Storage
+├── env.ts      # 有型別的環境變數
+├── neon.ts     # Neon 設定
+├── proxy.ts     # 登入判斷：樂觀檢查 cookie 是否存在
+├── .env.example      # 環境變數參考範本
+├── .gitignore        # Git 忽略追蹤清單
+├── package.json      # 專案依賴與執行指令
+└── README.md         # 專案說明
 ```
 
 ## 本機執行
