@@ -22,7 +22,7 @@ export default function AccountSummary({ user }: AccountSummaryProps) {
         <div className="flex min-w-0 flex-col gap-1">
           <div className="flex flex-wrap items-center gap-2">
             <h2 className="font-heading text-xl">{user.name}</h2>
-            <span className="rounded-full bg-primary/10 px-2 py-0.5 text-xs text-primary">
+            <span className="rounded-full bg-primary/10 px-2 py-0.5 text-xs text-primary-strong">
               {roleLabels[user.role ?? ''] ?? '一般會員'}
             </span>
           </div>

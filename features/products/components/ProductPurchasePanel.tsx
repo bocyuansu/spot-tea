@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useId, useMemo, useState } from 'react';
 import { ShoppingCartPlus } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -41,6 +41,7 @@ export default function ProductPurchasePanel({
   );
   // 購買數量
   const [quantity, setQuantity] = useState(1);
+  const variantLabelId = useId();
   // 從 ID 找出選中的商品規格
   const selectedVariant = useMemo(
     () => variants.find((variant) => variant.id === selectedVariantId),
@@ -83,8 +84,15 @@ export default function ProductPurchasePanel({
   return (
     <div className="flex flex-col gap-4 border-t pt-4">
       <div className="flex flex-col gap-2">
-        <span className="text-sm font-medium">規格</span>
-        <div className="flex flex-wrap gap-2">
+        <span id={variantLabelId} className="text-sm font-medium">
+          規格
+        </span>
+        {/* 按鈕名稱直接用畫面上的重量與價格，選中狀態用 aria-pressed 告訴螢幕閱讀器 */}
+        <div
+          role="group"
+          aria-labelledby={variantLabelId}
+          className="flex flex-wrap gap-2"
+        >
           {variants.map((variant) => {
             const soldOut = variant.stock <= 0;
             const selected = variant.id === selectedVariantId;
@@ -93,13 +101,13 @@ export default function ProductPurchasePanel({
               <button
                 key={variant.id}
                 type="button"
-                aria-label="選擇茶葉重量(公克)"
+                aria-pressed={selected}
                 disabled={soldOut}
                 onClick={() => handleSelectVariant(variant)}
                 className={cn(
                   'flex flex-col items-start rounded-lg border px-3 py-2 text-left text-sm transition-colors',
                   selected
-                    ? 'border-primary bg-primary/5'
+                    ? 'border-primary-strong bg-primary/10'
                     : 'border-border hover:bg-muted',
                   soldOut && 'cursor-not-allowed opacity-50',
                 )}
@@ -134,7 +142,7 @@ export default function ProductPurchasePanel({
 
       <div className="flex items-center justify-between">
         <span className="text-sm text-muted-foreground">小計</span>
-        <span className="text-xl font-semibold text-primary">
+        <span className="text-xl font-semibold text-primary-strong">
           {formatPriceTWD((selectedVariant?.price ?? 0) * quantity)}
         </span>
       </div>
@@ -144,7 +152,7 @@ export default function ProductPurchasePanel({
         size="lg"
         disabled={isSoldOut}
         onClick={handleAddToCart}
-        className="w-full gap-2"
+        className="h-11 w-full gap-2 text-base"
       >
         <ShoppingCartPlus className="size-4" />
         {isSoldOut ? '已售完' : '加入購物車'}

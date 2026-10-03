@@ -40,7 +40,7 @@ import {
 import { authClient } from '@/lib/auth-client';
 import { getErrorMessage } from '@/lib/auth-errors';
 /* Nextjs */
-import { useTransition } from 'react';
+import { useTransition, useId } from 'react';
 import { useRouter } from 'next/navigation';
 import { useUserDialog } from '@/features/admin/users/components/UserActionsProvider';
 import type { AdminUser } from '@/db/queries/admin/users';
@@ -53,6 +53,9 @@ function toFormDefault(user: AdminUser): AdminUpdateUserValues {
 }
 
 export default function UserEditDialog() {
+  // label 的 htmlFor 與輸入框的 id，同一頁有多個表單實例也不會撞名
+  const formId = useId();
+
   // 管理員不能把自己降級，否則會把自己鎖在後台外面
   const { user, isSelf, open, onOpenChange } = useUserDialog('edit');
   const [isPending, startTransition] = useTransition();
@@ -115,8 +118,9 @@ export default function UserEditDialog() {
               control={form.control}
               render={({ field, fieldState }) => (
                 <Field>
-                  <FieldLabel>用戶名稱</FieldLabel>
+                  <FieldLabel htmlFor={`${formId}-name`}>用戶名稱</FieldLabel>
                   <Input
+                    id={`${formId}-name`}
                     aria-invalid={fieldState.invalid}
                     placeholder="username"
                     {...field}
@@ -129,8 +133,13 @@ export default function UserEditDialog() {
             />
 
             <Field>
-              <FieldLabel>電子信箱</FieldLabel>
-              <Input value={user.email} readOnly disabled />
+              <FieldLabel htmlFor={`${formId}-email`}>電子信箱</FieldLabel>
+              <Input
+                id={`${formId}-email`}
+                value={user.email}
+                readOnly
+                disabled
+              />
               <FieldDescription>電子信箱註冊後無法修改</FieldDescription>
             </Field>
 
@@ -139,7 +148,7 @@ export default function UserEditDialog() {
               control={form.control}
               render={({ field }) => (
                 <Field>
-                  <FieldLabel>角色</FieldLabel>
+                  <FieldLabel htmlFor={`${formId}-role`}>角色</FieldLabel>
                   <Select
                     items={adminUserRoleLabels}
                     value={field.value}
@@ -148,7 +157,7 @@ export default function UserEditDialog() {
                     }
                     disabled={isSelf}
                   >
-                    <SelectTrigger className="w-full">
+                    <SelectTrigger id={`${formId}-role`} className="w-full">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>

@@ -12,7 +12,7 @@ export default function AuthLayout({
       <Link href="/" prefetch={false} className="flex items-center">
         <Image
           src="https://ik.imagekit.io/cyuan/public/spot-tea.jpg"
-          alt="Spot Tea logo"
+          alt="找茶 首頁"
           width={100}
           height={100}
           crossOrigin="anonymous"

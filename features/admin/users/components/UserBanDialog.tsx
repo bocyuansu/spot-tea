@@ -41,11 +41,14 @@ import {
 import { authClient } from '@/lib/auth-client';
 import { getErrorMessage } from '@/lib/auth-errors';
 /* Nextjs */
-import { useTransition } from 'react';
+import { useTransition, useId } from 'react';
 import { useRouter } from 'next/navigation';
 import { useUserDialog } from '@/features/admin/users/components/UserActionsProvider';
 
 export default function UserBanDialog() {
+  // label 的 htmlFor 與輸入框的 id，同一頁有多個表單實例也不會撞名
+  const formId = useId();
+
   // 停權與解除停權共用這個對話框，只有停權需要填原因與期限
   const { user, banned, open, onOpenChange } = useUserDialog('ban');
   const [isPending, startTransition] = useTransition();
@@ -123,7 +126,9 @@ export default function UserBanDialog() {
                 control={form.control}
                 render={({ field }) => (
                   <Field>
-                    <FieldLabel>停權期限</FieldLabel>
+                    <FieldLabel htmlFor={`${formId}-duration`}>
+                      停權期限
+                    </FieldLabel>
                     <Select
                       items={adminBanDurationLabels}
                       value={field.value}
@@ -131,7 +136,10 @@ export default function UserBanDialog() {
                         field.onChange(value ?? 'permanent')
                       }
                     >
-                      <SelectTrigger className="w-full">
+                      <SelectTrigger
+                        id={`${formId}-duration`}
+                        className="w-full"
+                      >
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -156,8 +164,11 @@ export default function UserBanDialog() {
                 control={form.control}
                 render={({ field, fieldState }) => (
                   <Field>
-                    <FieldLabel>停權原因（選填）</FieldLabel>
+                    <FieldLabel htmlFor={`${formId}-banReason`}>
+                      停權原因（選填）
+                    </FieldLabel>
                     <Textarea
+                      id={`${formId}-banReason`}
                       aria-invalid={fieldState.invalid}
                       placeholder="例如：惡意下單"
                       rows={3}

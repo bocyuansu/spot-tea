@@ -42,7 +42,7 @@ import { userTableState } from '@/features/admin/users/user-table-state';
 import { authClient } from '@/lib/auth-client';
 import { getErrorMessage } from '@/lib/auth-errors';
 /* Nextjs */
-import { useState, useTransition } from 'react';
+import { useState, useTransition, useId } from 'react';
 import { useRouter } from 'next/navigation';
 
 const emptyUser: AdminCreateUserValues = {
@@ -53,6 +53,9 @@ const emptyUser: AdminCreateUserValues = {
 };
 
 export default function UserCreateDialog() {
+  // label 的 htmlFor 與輸入框的 id，同一頁有多個表單實例也不會撞名
+  const formId = useId();
+
   const [isPending, startTransition] = useTransition();
   const [open, setOpen] = useState(false);
   const router = useRouter();
@@ -126,8 +129,9 @@ export default function UserCreateDialog() {
               control={form.control}
               render={({ field, fieldState }) => (
                 <Field>
-                  <FieldLabel>用戶名稱</FieldLabel>
+                  <FieldLabel htmlFor={`${formId}-name`}>用戶名稱</FieldLabel>
                   <Input
+                    id={`${formId}-name`}
                     aria-invalid={fieldState.invalid}
                     placeholder="username"
                     {...field}
@@ -144,8 +148,9 @@ export default function UserCreateDialog() {
               control={form.control}
               render={({ field, fieldState }) => (
                 <Field>
-                  <FieldLabel>電子信箱</FieldLabel>
+                  <FieldLabel htmlFor={`${formId}-email`}>電子信箱</FieldLabel>
                   <Input
+                    id={`${formId}-email`}
                     type="email"
                     aria-invalid={fieldState.invalid}
                     placeholder="user@example.com"
@@ -164,8 +169,9 @@ export default function UserCreateDialog() {
               control={form.control}
               render={({ field, fieldState }) => (
                 <Field>
-                  <FieldLabel>密碼</FieldLabel>
+                  <FieldLabel htmlFor={`${formId}-password`}>密碼</FieldLabel>
                   <Input
+                    id={`${formId}-password`}
                     type="password"
                     aria-invalid={fieldState.invalid}
                     {...field}
@@ -182,7 +188,7 @@ export default function UserCreateDialog() {
               control={form.control}
               render={({ field }) => (
                 <Field>
-                  <FieldLabel>角色</FieldLabel>
+                  <FieldLabel htmlFor={`${formId}-role`}>角色</FieldLabel>
                   <Select
                     items={adminUserRoleLabels}
                     value={field.value}
@@ -190,7 +196,7 @@ export default function UserCreateDialog() {
                       field.onChange(value ?? 'customer')
                     }
                   >
-                    <SelectTrigger className="w-full">
+                    <SelectTrigger id={`${formId}-role`} className="w-full">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>

@@ -77,7 +77,7 @@ export function createUserColumns(currentUserId: string) {
     columnHelper.accessor('spentAmount', {
       header: '消費金額',
       cell: ({ getValue }) => (
-        <span className="font-medium text-primary">
+        <span className="font-medium text-primary-strong">
           {formatPriceTWD(getValue())}
         </span>
       ),

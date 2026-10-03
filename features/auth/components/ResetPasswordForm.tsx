@@ -22,7 +22,7 @@ import { resetPasswordSchema } from '@/features/auth/schemas/reset-password';
 import { authClient } from '@/lib/auth-client';
 import { getErrorMessage } from '@/lib/auth-errors';
 /* Nextjs */
-import { useTransition } from 'react';
+import { useTransition, useId } from 'react';
 import { useRouter } from 'next/navigation';
 
 type ResetPasswordFormProps = {
@@ -31,6 +31,9 @@ type ResetPasswordFormProps = {
 };
 
 export default function ResetPasswordForm({ token }: ResetPasswordFormProps) {
+  // label 的 htmlFor 與輸入框的 id，同一頁有多個表單實例也不會撞名
+  const formId = useId();
+
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
 
@@ -84,8 +87,11 @@ export default function ResetPasswordForm({ token }: ResetPasswordFormProps) {
               control={form.control}
               render={({ field, fieldState }) => (
                 <Field>
-                  <FieldLabel>新密碼</FieldLabel>
+                  <FieldLabel htmlFor={`${formId}-newPassword`}>
+                    新密碼
+                  </FieldLabel>
                   <Input
+                    id={`${formId}-newPassword`}
                     aria-invalid={fieldState.invalid}
                     placeholder="********"
                     type="password"
@@ -103,8 +109,11 @@ export default function ResetPasswordForm({ token }: ResetPasswordFormProps) {
               control={form.control}
               render={({ field, fieldState }) => (
                 <Field>
-                  <FieldLabel>確認新密碼</FieldLabel>
+                  <FieldLabel htmlFor={`${formId}-confirmPassword`}>
+                    確認新密碼
+                  </FieldLabel>
                   <Input
+                    id={`${formId}-confirmPassword`}
                     aria-invalid={fieldState.invalid}
                     placeholder="********"
                     type="password"

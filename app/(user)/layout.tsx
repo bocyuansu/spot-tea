@@ -30,8 +30,8 @@ export default function UserLayout({
               <ActiveLink
                 key={link.label}
                 href={link.href}
-                className="w-full rounded-md hover:text-primary"
-                activeClassName="bg-muted text-primary font-semibold"
+                className="w-full rounded-md hover:text-primary-strong"
+                activeClassName="bg-muted text-primary-strong font-semibold"
               >
                 {link.label}
               </ActiveLink>

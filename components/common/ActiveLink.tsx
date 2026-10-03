@@ -24,8 +24,10 @@ export default function ActiveLink({
     <Link
       href={href}
       prefetch={false}
+      aria-current={isActive ? 'page' : undefined}
       className={cn(
-        'text-xs p-1 sm:text-sm sm:px-2 md:text-base md:px-3 md:py-2',
+        // 手機上也維持 14px 字與約 40px 高的點擊範圍
+        'px-3 py-2.5 text-sm md:py-2 md:text-base',
         className,
         isActive && activeClassName,
       )}

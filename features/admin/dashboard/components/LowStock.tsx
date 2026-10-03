@@ -47,7 +47,7 @@ export default function LowStock({ variants }: LowStockProps) {
                   className={
                     variant.stock === 0
                       ? 'shrink-0 text-destructive'
-                      : 'shrink-0 text-primary'
+                      : 'shrink-0 text-primary-strong'
                   }
                 >
                   {variant.stock === 0 ? '已售完' : `剩 ${variant.stock} 件`}

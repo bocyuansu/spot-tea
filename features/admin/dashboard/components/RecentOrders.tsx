@@ -73,7 +73,7 @@ export default function RecentOrders({ orders }: RecentOrdersProps) {
                   <TableCell className="text-muted-foreground">
                     {formatDateTW(order.createdAt)}
                   </TableCell>
-                  <TableCell className="text-right font-medium text-primary">
+                  <TableCell className="text-right font-medium text-primary-strong">
                     {formatPriceTWD(order.totalAmount)}
                   </TableCell>
                   <TableCell className="text-right">

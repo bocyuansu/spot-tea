@@ -48,9 +48,9 @@ export default async function CheckoutCompletePage({
 
       <div className="flex flex-col items-center gap-2 text-center">
         {awaitingPayment ? (
-          <CreditCard className="size-12 text-primary" />
+          <CreditCard className="size-12 text-primary-strong" />
         ) : (
-          <CircleCheck className="size-12 text-primary" />
+          <CircleCheck className="size-12 text-primary-strong" />
         )}
         <h1 className="font-heading text-3xl md:text-4xl">
           {awaitingPayment ? '訂單已成立，請完成付款' : '感謝您的訂購 !'}

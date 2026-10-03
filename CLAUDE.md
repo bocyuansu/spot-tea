@@ -25,7 +25,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 | UI         | Tailwind CSS 4、shadcn/ui（Base UI 1.8 版本，不是 Radix）、Tabler / Lucide icons   |
 | 表單與驗證 | react-hook-form 7、zod 4                                                           |
 | 其他       | Neon Object Storage（S3 SDK）、ImageKit、Resend、綠界 ECPay                        |
-| 工具       | pnpm 11、oxlint、oxfmt、vitest 3                                                   |
+| 工具       | pnpm 12、oxlint、oxfmt、vitest 3                                                   |
 
 ## 指令
 

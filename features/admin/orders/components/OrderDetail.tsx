@@ -72,7 +72,7 @@ export default function OrderDetail({ order }: OrderDetailProps) {
             </div>
             <div className="flex items-center justify-between">
               <span>合計</span>
-              <span className="font-semibold text-primary">
+              <span className="font-semibold text-primary-strong">
                 {formatPriceTWD(order.totalAmount)}
               </span>
             </div>

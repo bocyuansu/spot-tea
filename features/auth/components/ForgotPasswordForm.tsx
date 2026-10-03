@@ -23,10 +23,13 @@ import { forgotPasswordSchema } from '@/features/auth/schemas/forgot-password';
 import { authClient } from '@/lib/auth-client';
 import { getErrorMessage } from '@/lib/auth-errors';
 /* Nextjs */
-import { useState, useTransition } from 'react';
+import { useState, useTransition, useId } from 'react';
 import Link from 'next/link';
 
 export default function ForgotPasswordForm() {
+  // label 的 htmlFor 與輸入框的 id，同一頁有多個表單實例也不會撞名
+  const formId = useId();
+
   const [isPending, startTransition] = useTransition();
   // 送出成功後改顯示「請收信」，記下寄到哪個信箱
   const [sentTo, setSentTo] = useState<string | null>(null);
@@ -82,8 +85,12 @@ export default function ForgotPasswordForm() {
               control={form.control}
               render={({ field, fieldState }) => (
                 <Field>
-                  <FieldLabel>電子信箱 (Email)</FieldLabel>
+                  <FieldLabel htmlFor={`${formId}-email`}>
+                    電子信箱 (Email)
+                  </FieldLabel>
                   <Input
+                    id={`${formId}-email`}
+                    autoComplete="email"
                     aria-invalid={fieldState.invalid}
                     placeholder="example@gmail.com"
                     type="email"

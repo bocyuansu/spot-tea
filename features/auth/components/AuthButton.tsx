@@ -48,68 +48,16 @@ export default function AuthButton({ initialSession }: AuthButtonProps) {
   return <LoginButton />;
 }
 
-export function MemberLink() {
-  return (
-    <Link
-      href="/user"
-      aria-label="會員中心"
-      prefetch={false}
-      className="hidden gap-1 md:flex md:gap-0 items-center text-xs sm:text-sm md:text-base hover:text-primary"
-    >
-      <User className="size-5 md:size-6" />
-      <span className="hidden lg:inline">會員</span>
-    </Link>
-  );
-}
-
 export function LoginButton() {
   return (
     <Link
       href="/login"
       prefetch={false}
-      className="flex gap-1 items-center text-base hover:text-primary"
+      className="flex gap-1 items-center text-base hover:text-primary-strong"
     >
       <User className="size-6" />
       <span className="text-lg">登入</span>
     </Link>
-  );
-}
-
-export function LogoutButton() {
-  const router = useRouter();
-
-  async function handleLogout() {
-    await authClient.signOut({
-      fetchOptions: {
-        onSuccess: () => {
-          toast.add({
-            type: 'success',
-            description: '登出成功 !',
-          });
-          router.refresh();
-        },
-        onError: ({ error }) => {
-          console.error(error.error.message);
-          toast.add({
-            type: 'error',
-            description: error.error.message,
-            priority: 'high',
-          });
-        },
-      },
-    });
-  }
-
-  return (
-    <Button
-      type="button"
-      variant="ghost"
-      onClick={handleLogout}
-      className="px-0 gap-1 text-xs sm:text-sm md:gap-0 md:text-base hover:text-primary hover:bg-white"
-    >
-      <LogOut className="size-4 sm:size-5 md:size-6" />
-      <span>登出</span>
-    </Button>
   );
 }
 

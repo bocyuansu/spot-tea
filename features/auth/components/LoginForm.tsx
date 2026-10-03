@@ -22,7 +22,7 @@ import { loginSchema } from '@/features/auth/schemas/login';
 import { authClient } from '@/lib/auth-client';
 import { getErrorMessage } from '@/lib/auth-errors';
 /* Nextjs */
-import { useTransition } from 'react';
+import { useTransition, useId } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
@@ -32,6 +32,9 @@ type LoginFormProps = {
 };
 
 export default function LoginForm({ redirectTo }: LoginFormProps) {
+  // label 的 htmlFor 與輸入框的 id，同一頁有多個表單實例也不會撞名
+  const formId = useId();
+
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
 
@@ -86,8 +89,12 @@ export default function LoginForm({ redirectTo }: LoginFormProps) {
               control={form.control}
               render={({ field, fieldState }) => (
                 <Field>
-                  <FieldLabel>電子信箱 (Email)</FieldLabel>
+                  <FieldLabel htmlFor={`${formId}-email`}>
+                    電子信箱 (Email)
+                  </FieldLabel>
                   <Input
+                    id={`${formId}-email`}
+                    autoComplete="email"
                     aria-invalid={fieldState.invalid}
                     placeholder="example@gmail.com"
                     type="email"
@@ -105,7 +112,9 @@ export default function LoginForm({ redirectTo }: LoginFormProps) {
               render={({ field, fieldState }) => (
                 <Field>
                   <div className="flex items-center">
-                    <FieldLabel>密碼 (Password)</FieldLabel>
+                    <FieldLabel htmlFor={`${formId}-password`}>
+                      密碼 (Password)
+                    </FieldLabel>
                     <Link
                       href="/forgot-password"
                       className="ml-auto text-sm underline-offset-4 hover:underline"
@@ -114,6 +123,8 @@ export default function LoginForm({ redirectTo }: LoginFormProps) {
                     </Link>
                   </div>
                   <Input
+                    id={`${formId}-password`}
+                    autoComplete="current-password"
                     aria-invalid={fieldState.invalid}
                     placeholder="********"
                     type="password"

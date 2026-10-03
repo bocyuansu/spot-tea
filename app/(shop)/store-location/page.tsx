@@ -1,6 +1,11 @@
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
+import OpeningHours from '@/components/common/OpeningHours';
+import { STORE_EMAIL, STORE_PHONE } from '@/lib/store-info';
+
+// 白底上的連結用深茶綠加底線，對比約 6:1
+const linkClassName = 'text-primary-strong underline underline-offset-4';
 
 export const metadata: Metadata = {
   title: '門市資訊',
@@ -15,7 +20,7 @@ export default function StoreLocationPage() {
         <div className="flex-1 flex justify-center items-center">
           <Image
             src="https://br-crimson-cake-b3f0h3r9.storage.c-4.ap-southeast-1.aws.neon.tech/images/public/spot-tea-store.jpg"
-            alt="Spot Tea Store"
+            alt="找茶台中實體門市"
             width={600}
             // 少了 height 瀏覽器拿不到固有比例，圖片載入時整塊會跳動
             height={338}
@@ -26,14 +31,15 @@ export default function StoreLocationPage() {
         {/* RIGHT */}
         <div className="flex-1 flex flex-col gap-6 justify-center items-center text-center">
           <h1 className="text-2xl">台中實體門市</h1>
-          <div>
+          <div className="flex flex-col items-center gap-1">
             <h2 className="text-lg">營業時間</h2>
-            <p>週一至週五｜09:00–21:00</p>
-            <p>週六　　　｜10:00–19:00</p>
+            <OpeningHours className="text-left" />
           </div>
           <div>
             <h2 className="text-lg">門市電話</h2>
-            <p>0958565883</p>
+            <a href={STORE_PHONE.href} className={linkClassName}>
+              {STORE_PHONE.display}
+            </a>
           </div>
           <div>
             <h2 className="text-lg">聯繫我們</h2>
@@ -41,7 +47,7 @@ export default function StoreLocationPage() {
               LINE｜
               <Link
                 href="https://line.me/R/ti/p/@737drhqn"
-                className="text-amber-400"
+                className={linkClassName}
               >
                 @Spot-tea
               </Link>
@@ -50,7 +56,7 @@ export default function StoreLocationPage() {
               Instagram｜
               <Link
                 href="https://www.instagram.com/spottea_tw"
-                className="text-amber-400"
+                className={linkClassName}
               >
                 spottea_tw
               </Link>
@@ -59,18 +65,15 @@ export default function StoreLocationPage() {
               Facebook｜
               <Link
                 href="https://www.facebook.com/SpotTeaTW"
-                className="text-amber-400"
+                className={linkClassName}
               >
                 找茶．歡迎來Tea館！
               </Link>
             </p>
             <p>
               Email｜
-              <Link
-                href="mailto:spotteatw@gmail.com"
-                className="text-amber-400"
-              >
-                spotteatw@gmail.com
+              <Link href={`mailto:${STORE_EMAIL}`} className={linkClassName}>
+                {STORE_EMAIL}
               </Link>
             </p>
           </div>

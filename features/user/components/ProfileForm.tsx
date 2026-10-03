@@ -22,7 +22,7 @@ import { updateProfileSchema } from '@/features/user/schemas/profile';
 import { authClient } from '@/lib/auth-client';
 import { getErrorMessage } from '@/lib/auth-errors';
 /* Nextjs */
-import { useTransition } from 'react';
+import { useTransition, useId } from 'react';
 import { useRouter } from 'next/navigation';
 
 type ProfileFormProps = {
@@ -30,6 +30,9 @@ type ProfileFormProps = {
 };
 
 export default function ProfileForm({ defaultName }: ProfileFormProps) {
+  // label 的 htmlFor 與輸入框的 id，同一頁有多個表單實例也不會撞名
+  const formId = useId();
+
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
 
@@ -83,8 +86,10 @@ export default function ProfileForm({ defaultName }: ProfileFormProps) {
               control={form.control}
               render={({ field, fieldState }) => (
                 <Field>
-                  <FieldLabel>用戶名稱</FieldLabel>
+                  <FieldLabel htmlFor={`${formId}-name`}>用戶名稱</FieldLabel>
                   <Input
+                    id={`${formId}-name`}
+                    autoComplete="name"
                     aria-invalid={fieldState.invalid}
                     placeholder="username"
                     {...field}

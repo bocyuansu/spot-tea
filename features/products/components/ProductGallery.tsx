@@ -23,6 +23,8 @@ export default function ProductGallery({ images, alt }: ProductGalleryProps) {
             alt={alt}
             width={800}
             height={800}
+            // md 以上和購買面板左右並排
+            sizes="(min-width: 1280px) 620px, (min-width: 768px) 50vw, 100vw"
             className="block object-cover"
             priority
           />
@@ -41,9 +43,10 @@ export default function ProductGallery({ images, alt }: ProductGalleryProps) {
               type="button"
               onClick={() => setSelectedIndex(index)}
               aria-label={`檢視第 ${index + 1} 張圖片`}
+              aria-current={index === selectedIndex ? 'true' : undefined}
               className={cn(
                 'relative size-16 shrink-0 overflow-hidden rounded-lg bg-muted ring-1 ring-foreground/10',
-                index === selectedIndex && 'ring-2 ring-primary',
+                index === selectedIndex && 'ring-2 ring-primary-strong',
               )}
             >
               <Image

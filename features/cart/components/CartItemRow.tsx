@@ -60,6 +60,8 @@ const CartItemRow = memo(function CartItemRow({
               variant="ghost"
               size="icon-sm"
               aria-label={`移除 ${item.productName}`}
+              // 28px 的按鈕往外撐 8px，點擊範圍 44px
+              className="relative after:absolute after:-inset-2"
               onClick={() => onRemove(item.variantId)}
             >
               <Trash2 className="size-4" />
@@ -74,7 +76,7 @@ const CartItemRow = memo(function CartItemRow({
                 onQuantityChange(item.variantId, quantity)
               }
             />
-            <span className="font-semibold text-primary">
+            <span className="font-semibold text-primary-strong">
               {formatPriceTWD(item.price * item.quantity)}
             </span>
           </div>

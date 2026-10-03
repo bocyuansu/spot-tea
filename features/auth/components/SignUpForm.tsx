@@ -3,7 +3,7 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { useTransition } from 'react';
+import { useTransition, useId } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { signUpSchema } from '@/features/auth/schemas/signup';
@@ -24,6 +24,9 @@ import { getErrorMessage } from '@/lib/auth-errors';
 import { useRouter } from 'next/navigation';
 
 export default function SignUpForm() {
+  // label 的 htmlFor 與輸入框的 id，同一頁有多個表單實例也不會撞名
+  const formId = useId();
+
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
   // 送出成功後改顯示「請收信」，記下寄到哪個信箱
@@ -91,8 +94,10 @@ export default function SignUpForm() {
               control={form.control}
               render={({ field, fieldState }) => (
                 <Field>
-                  <FieldLabel>用戶名稱</FieldLabel>
+                  <FieldLabel htmlFor={`${formId}-name`}>用戶名稱</FieldLabel>
                   <Input
+                    id={`${formId}-name`}
+                    autoComplete="name"
                     aria-invalid={fieldState.invalid}
                     placeholder="username"
                     {...field}
@@ -108,8 +113,12 @@ export default function SignUpForm() {
               control={form.control}
               render={({ field, fieldState }) => (
                 <Field>
-                  <FieldLabel>電子信箱 (Email)</FieldLabel>
+                  <FieldLabel htmlFor={`${formId}-email`}>
+                    電子信箱 (Email)
+                  </FieldLabel>
                   <Input
+                    id={`${formId}-email`}
+                    autoComplete="email"
                     aria-invalid={fieldState.invalid}
                     placeholder="example@gmail.com"
                     type="email"
@@ -126,8 +135,12 @@ export default function SignUpForm() {
               control={form.control}
               render={({ field, fieldState }) => (
                 <Field>
-                  <FieldLabel>密碼 (Password)</FieldLabel>
+                  <FieldLabel htmlFor={`${formId}-password`}>
+                    密碼 (Password)
+                  </FieldLabel>
                   <Input
+                    id={`${formId}-password`}
+                    autoComplete="new-password"
                     aria-invalid={fieldState.invalid}
                     placeholder="********"
                     type="password"

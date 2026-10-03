@@ -25,7 +25,7 @@ import {
 } from '@/features/orders/schemas/cancel-order';
 import { cancelOrder } from '@/features/orders/actions/orders';
 /* Nextjs */
-import { useState, useTransition } from 'react';
+import { useState, useTransition, useId } from 'react';
 import { useRouter } from 'next/navigation';
 
 type CancelOrderDialogProps = {
@@ -41,6 +41,9 @@ export default function CancelOrderDialog({
   orderId,
   orderNumber,
 }: CancelOrderDialogProps) {
+  // label 的 htmlFor 與輸入框的 id，同一頁有多個表單實例也不會撞名
+  const formId = useId();
+
   const [open, setOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
@@ -99,8 +102,9 @@ export default function CancelOrderDialog({
               control={form.control}
               render={({ field, fieldState }) => (
                 <Field>
-                  <FieldLabel>取消原因</FieldLabel>
+                  <FieldLabel htmlFor={`${formId}-reason`}>取消原因</FieldLabel>
                   <Textarea
+                    id={`${formId}-reason`}
                     aria-invalid={fieldState.invalid}
                     placeholder="例如：重複下單、想更換商品規格"
                     rows={3}

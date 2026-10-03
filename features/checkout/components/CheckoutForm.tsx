@@ -1,20 +1,23 @@
 'use client';
 
-import { useTransition } from 'react';
+import { useTransition, useId } from 'react';
 import { useRouter } from 'next/navigation';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Field,
+  FieldContent,
+  FieldDescription,
   FieldError,
   FieldGroup,
   FieldLabel,
+  FieldTitle,
 } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from '@/components/ui/toast';
-import { cn } from '@/lib/utils';
 import { useCart } from '@/features/cart/components/CartProvider';
 import { calculateShippingFee } from '@/features/orders/shipping';
 import {
@@ -36,6 +39,9 @@ type CheckoutFormProps = {
 export default function CheckoutForm({
   defaultRecipientName,
 }: CheckoutFormProps) {
+  // label 的 htmlFor 與輸入框的 id，同一頁有多個表單實例也不會撞名
+  const formId = useId();
+
   const { items, subtotal, updatePrices } = useCart();
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
@@ -114,8 +120,12 @@ export default function CheckoutForm({
                 control={form.control}
                 render={({ field, fieldState }) => (
                   <Field>
-                    <FieldLabel>收件人姓名</FieldLabel>
+                    <FieldLabel htmlFor={`${formId}-recipientName`}>
+                      收件人姓名
+                    </FieldLabel>
                     <Input
+                      id={`${formId}-recipientName`}
+                      autoComplete="shipping name"
                       aria-invalid={fieldState.invalid}
                       placeholder="王小明"
                       {...field}
@@ -132,8 +142,12 @@ export default function CheckoutForm({
                 control={form.control}
                 render={({ field, fieldState }) => (
                   <Field>
-                    <FieldLabel>手機號碼</FieldLabel>
+                    <FieldLabel htmlFor={`${formId}-phone`}>
+                      手機號碼
+                    </FieldLabel>
                     <Input
+                      id={`${formId}-phone`}
+                      autoComplete="shipping tel"
                       type="tel"
                       inputMode="numeric"
                       aria-invalid={fieldState.invalid}
@@ -153,8 +167,12 @@ export default function CheckoutForm({
                   control={form.control}
                   render={({ field, fieldState }) => (
                     <Field>
-                      <FieldLabel>郵遞區號</FieldLabel>
+                      <FieldLabel htmlFor={`${formId}-postalCode`}>
+                        郵遞區號
+                      </FieldLabel>
                       <Input
+                        id={`${formId}-postalCode`}
+                        autoComplete="shipping postal-code"
                         inputMode="numeric"
                         aria-invalid={fieldState.invalid}
                         placeholder="106"
@@ -172,8 +190,10 @@ export default function CheckoutForm({
                   control={form.control}
                   render={({ field, fieldState }) => (
                     <Field>
-                      <FieldLabel>縣市</FieldLabel>
+                      <FieldLabel htmlFor={`${formId}-city`}>縣市</FieldLabel>
                       <Input
+                        id={`${formId}-city`}
+                        autoComplete="shipping address-level1"
                         aria-invalid={fieldState.invalid}
                         placeholder="台北市"
                         {...field}
@@ -190,8 +210,12 @@ export default function CheckoutForm({
                   control={form.control}
                   render={({ field, fieldState }) => (
                     <Field>
-                      <FieldLabel>鄉鎮市區</FieldLabel>
+                      <FieldLabel htmlFor={`${formId}-district`}>
+                        鄉鎮市區
+                      </FieldLabel>
                       <Input
+                        id={`${formId}-district`}
+                        autoComplete="shipping address-level2"
                         aria-invalid={fieldState.invalid}
                         placeholder="大安區"
                         {...field}
@@ -209,8 +233,12 @@ export default function CheckoutForm({
                 control={form.control}
                 render={({ field, fieldState }) => (
                   <Field>
-                    <FieldLabel>詳細地址</FieldLabel>
+                    <FieldLabel htmlFor={`${formId}-addressLine`}>
+                      詳細地址
+                    </FieldLabel>
                     <Input
+                      id={`${formId}-addressLine`}
+                      autoComplete="shipping address-line1"
                       aria-invalid={fieldState.invalid}
                       placeholder="信義路四段 1 號 8 樓"
                       {...field}
@@ -227,8 +255,9 @@ export default function CheckoutForm({
                 control={form.control}
                 render={({ field, fieldState }) => (
                   <Field>
-                    <FieldLabel>訂單備註</FieldLabel>
+                    <FieldLabel htmlFor={`${formId}-note`}>訂單備註</FieldLabel>
                     <Textarea
+                      id={`${formId}-note`}
                       rows={3}
                       aria-invalid={fieldState.invalid}
                       placeholder="例如：請用禮盒包裝"
@@ -249,38 +278,37 @@ export default function CheckoutForm({
             <CardTitle className="text-xl">付款方式</CardTitle>
           </CardHeader>
           <CardContent>
+            {/* Base UI RadioGroup 提供方向鍵切換與單一 tab 停駐，整張卡片都是 label 可以點 */}
             <Controller
               name="paymentMethod"
               control={form.control}
               render={({ field }) => (
-                <div
-                  role="radiogroup"
+                <RadioGroup
+                  name={field.name}
+                  value={field.value}
+                  onValueChange={field.onChange}
                   aria-label="付款方式"
-                  className="flex flex-col gap-2"
                 >
                   {paymentMethods.map((method) => (
-                    <button
+                    <FieldLabel
                       key={method}
-                      type="button"
-                      role="radio"
-                      aria-checked={field.value === method}
-                      onClick={() => field.onChange(method)}
-                      className={cn(
-                        'rounded-lg border px-3 py-2 text-left transition-colors',
-                        field.value === method
-                          ? 'border-primary bg-primary/5'
-                          : 'border-border hover:bg-muted',
-                      )}
+                      htmlFor={`${formId}-payment-${method}`}
                     >
-                      <span className="font-medium">
-                        {paymentMethodLabels[method]}
-                      </span>
-                      <span className="block text-xs text-muted-foreground">
-                        {paymentMethodDescriptions[method]}
-                      </span>
-                    </button>
+                      <Field orientation="horizontal">
+                        <RadioGroupItem
+                          value={method}
+                          id={`${formId}-payment-${method}`}
+                        />
+                        <FieldContent>
+                          <FieldTitle>{paymentMethodLabels[method]}</FieldTitle>
+                          <FieldDescription>
+                            {paymentMethodDescriptions[method]}
+                          </FieldDescription>
+                        </FieldContent>
+                      </Field>
+                    </FieldLabel>
                   ))}
-                </div>
+                </RadioGroup>
               )}
             />
           </CardContent>

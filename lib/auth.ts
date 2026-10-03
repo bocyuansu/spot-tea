@@ -23,9 +23,11 @@ export async function createAuth() {
       provider: 'pg',
       schema,
     }),
+    // Workers KV 次級快取
     secondaryStorage: kvSecondaryStorage,
     session: {
-      // DB 為主、KV 當快取：KV 查不到會回 DB 查，上線前登入的 session 不會失效
+      // DB 為主、KV 當快取：KV 查不到會回 DB 查。
+      // KV 是最終一致性，剛登入的 session 可能還讀不到，有 DB 連接才不會被當成未登入；
       storeSessionInDatabase: true,
     },
     verification: {

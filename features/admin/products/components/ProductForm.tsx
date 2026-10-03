@@ -41,7 +41,7 @@ import { uploadProductImages } from '@/features/admin/products/upload-product-im
 import { productTableState } from '@/features/admin/products/product-table-state';
 import { productStatusLabels } from '@/features/products/product-status';
 /* Nextjs */
-import { useTransition } from 'react';
+import { useTransition, useId } from 'react';
 import { useRouter } from 'next/navigation';
 import type {
   AdminCategory,
@@ -91,6 +91,9 @@ type ProductFormProps = {
 };
 
 export default function ProductForm({ categories, product }: ProductFormProps) {
+  // label 的 htmlFor 與輸入框的 id，同一頁有多個表單實例也不會撞名
+  const formId = useId();
+
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
 
@@ -165,8 +168,9 @@ export default function ProductForm({ categories, product }: ProductFormProps) {
               control={form.control}
               render={({ field, fieldState }) => (
                 <Field>
-                  <FieldLabel>商品名稱</FieldLabel>
+                  <FieldLabel htmlFor={`${formId}-name`}>商品名稱</FieldLabel>
                   <Input
+                    id={`${formId}-name`}
                     aria-invalid={fieldState.invalid}
                     placeholder="阿里山高山烏龍"
                     {...field}
@@ -183,8 +187,9 @@ export default function ProductForm({ categories, product }: ProductFormProps) {
               control={form.control}
               render={({ field, fieldState }) => (
                 <Field>
-                  <FieldLabel>網址代稱</FieldLabel>
+                  <FieldLabel htmlFor={`${formId}-slug`}>網址代稱</FieldLabel>
                   <Input
+                    id={`${formId}-slug`}
                     aria-invalid={fieldState.invalid}
                     placeholder="alishan-oolong"
                     {...field}
@@ -205,7 +210,9 @@ export default function ProductForm({ categories, product }: ProductFormProps) {
                 control={form.control}
                 render={({ field }) => (
                   <Field>
-                    <FieldLabel>分類</FieldLabel>
+                    <FieldLabel htmlFor={`${formId}-categoryId`}>
+                      分類
+                    </FieldLabel>
                     <Select
                       items={categoryItems}
                       value={field.value}
@@ -213,7 +220,10 @@ export default function ProductForm({ categories, product }: ProductFormProps) {
                         field.onChange(value ?? UNCATEGORIZED)
                       }
                     >
-                      <SelectTrigger className="w-full">
+                      <SelectTrigger
+                        id={`${formId}-categoryId`}
+                        className="w-full"
+                      >
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -233,7 +243,7 @@ export default function ProductForm({ categories, product }: ProductFormProps) {
                 control={form.control}
                 render={({ field }) => (
                   <Field>
-                    <FieldLabel>狀態</FieldLabel>
+                    <FieldLabel htmlFor={`${formId}-status`}>狀態</FieldLabel>
                     <Select
                       items={productStatusLabels}
                       value={field.value}
@@ -241,7 +251,7 @@ export default function ProductForm({ categories, product }: ProductFormProps) {
                         field.onChange(value ?? 'draft')
                       }
                     >
-                      <SelectTrigger className="w-full">
+                      <SelectTrigger id={`${formId}-status`} className="w-full">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -264,8 +274,9 @@ export default function ProductForm({ categories, product }: ProductFormProps) {
               control={form.control}
               render={({ field, fieldState }) => (
                 <Field>
-                  <FieldLabel>產地</FieldLabel>
+                  <FieldLabel htmlFor={`${formId}-origin`}>產地</FieldLabel>
                   <Input
+                    id={`${formId}-origin`}
                     aria-invalid={fieldState.invalid}
                     placeholder="南投鹿谷"
                     {...field}
@@ -282,8 +293,11 @@ export default function ProductForm({ categories, product }: ProductFormProps) {
               control={form.control}
               render={({ field, fieldState }) => (
                 <Field>
-                  <FieldLabel>商品描述</FieldLabel>
+                  <FieldLabel htmlFor={`${formId}-description`}>
+                    商品描述
+                  </FieldLabel>
                   <Textarea
+                    id={`${formId}-description`}
                     aria-invalid={fieldState.invalid}
                     rows={4}
                     {...field}

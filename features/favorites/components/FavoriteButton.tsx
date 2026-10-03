@@ -34,7 +34,7 @@ export default function FavoriteButton({
         prefetch={false}
         className={cn(
           buttonVariants({ variant: 'outline', size: 'lg' }),
-          'w-full gap-2',
+          'h-11 w-full gap-2 text-base',
         )}
       >
         <Heart className="size-4" />
@@ -74,10 +74,13 @@ export default function FavoriteButton({
       aria-pressed={favorited}
       disabled={isPending}
       onClick={handleClick}
-      className="w-full gap-2"
+      className="h-11 w-full gap-2 text-base"
     >
       <Heart
-        className={cn('size-4', favorited && 'fill-red-500 text-red-500')}
+        className={cn(
+          'size-4',
+          favorited && 'fill-destructive text-destructive',
+        )}
       />
       {favorited ? '已收藏' : '加入收藏'}
     </Button>

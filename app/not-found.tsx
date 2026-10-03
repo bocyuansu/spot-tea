@@ -20,7 +20,9 @@ export default function NotFound() {
   return (
     <section className="flex flex-col items-center gap-4 py-16 text-center">
       <div className="space-y-8">
-        <p className="font-heading text-5xl md:text-6xl text-primary">404</p>
+        <p className="font-heading text-5xl md:text-6xl text-primary-strong">
+          404
+        </p>
         <h1 className="font-heading text-2xl md:text-3xl">
           頁面可能已經下架，或是網址輸入有誤。
         </h1>
@@ -41,7 +43,7 @@ export default function NotFound() {
             key={link.label}
             href={link.href}
             prefetch={false}
-            className="hover:text-primary"
+            className="hover:text-primary-strong"
           >
             {link.label}
           </Link>

@@ -64,7 +64,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
           )}
         </div>
 
-        <p className="text-2xl font-semibold text-primary">
+        <p className="text-2xl font-semibold text-primary-strong">
           {minPrice === null
             ? '價格洽詢'
             : minPrice === maxPrice

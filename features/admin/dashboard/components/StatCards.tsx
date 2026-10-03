@@ -36,7 +36,7 @@ export default function StatCards({ overview }: StatCardsProps) {
       {stats.map((stat) => (
         <Card key={stat.label}>
           <CardContent className="flex items-center gap-4">
-            <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+            <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary-strong">
               <stat.icon className="size-5" />
             </div>
             <div className="flex min-w-0 flex-col">

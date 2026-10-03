@@ -34,17 +34,22 @@ export default function QuantityStepper({
         variant="outline"
         size="icon-sm"
         aria-label="減少商品數量"
+        // 28px 的按鈕往外撐 8px，點擊範圍 44px
+        className="relative after:absolute after:-inset-2"
         disabled={disabled || value <= min}
         onClick={() => emitChange(value - 1)}
       >
         <Minus className="size-3.5" />
       </Button>
-      <span className="w-6 text-center text-sm">{value}</span>
+      <span aria-live="polite" className="w-6 text-center text-sm tabular-nums">
+        {value}
+      </span>
       <Button
         type="button"
         variant="outline"
         size="icon-sm"
         aria-label="增加商品數量"
+        className="relative after:absolute after:-inset-2"
         disabled={disabled || value >= max}
         onClick={() => emitChange(value + 1)}
       >

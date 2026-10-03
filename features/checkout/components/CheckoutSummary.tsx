@@ -63,12 +63,18 @@ export default function CheckoutSummary({
 
         <div className="flex items-center justify-between">
           <span className="text-sm text-muted-foreground">合計</span>
-          <span className="text-xl font-semibold text-primary">
+          <span className="text-xl font-semibold text-primary-strong">
             {formatPriceTWD(totalAmount)}
           </span>
         </div>
 
-        <Button type="submit" size="lg" className="w-full" disabled={isPending}>
+        <Button
+          type="submit"
+          size="lg"
+          // 購買流程的主要按鈕撐到 44px 觸控高度
+          className="h-11 w-full text-base"
+          disabled={isPending}
+        >
           {isPending ? (
             <>
               <Loader2 className="size-4 animate-spin" />

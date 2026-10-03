@@ -41,7 +41,7 @@ export default function CartSummary() {
 
         <div className="flex items-center justify-between">
           <span className="text-sm text-muted-foreground">合計</span>
-          <span className="text-xl font-semibold text-primary">
+          <span className="text-xl font-semibold text-primary-strong">
             {formatPriceTWD(subtotal + shippingFee)}
           </span>
         </div>
@@ -53,7 +53,11 @@ export default function CartSummary() {
 
         <Link
           href="/checkout"
-          className={buttonVariants({ size: 'lg', className: 'w-full' })}
+          // 購買流程的主要按鈕撐到 44px 觸控高度
+          className={buttonVariants({
+            size: 'lg',
+            className: 'h-11 w-full text-base',
+          })}
         >
           前往結帳
         </Link>

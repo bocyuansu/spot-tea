@@ -86,7 +86,7 @@ export const columns = columnHelper.columns([
   columnHelper.accessor('totalAmount', {
     header: '金額',
     cell: ({ getValue }) => (
-      <span className="font-medium text-primary">
+      <span className="font-medium text-primary-strong">
         {formatPriceTWD(getValue())}
       </span>
     ),

@@ -80,7 +80,7 @@ export default async function ProductsPage({
           <Link
             href={getProductsHref({ category: activeCategory?.slug })}
             prefetch={false}
-            className="text-primary underline-offset-4 hover:underline"
+            className="text-primary-strong underline-offset-4 hover:underline"
           >
             清除搜尋
           </Link>

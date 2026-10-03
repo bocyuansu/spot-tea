@@ -1,5 +1,7 @@
 'use client';
 
+import { useId } from 'react';
+
 import { Controller, type Control } from 'react-hook-form';
 import {
   Field,
@@ -17,6 +19,9 @@ export default function CategoryFormFields({
 }: {
   control: Control<CategoryFormValues>;
 }) {
+  // label 的 htmlFor 與輸入框的 id，同一頁有多個表單實例也不會撞名
+  const formId = useId();
+
   return (
     <FieldGroup className="gap-y-4">
       <Controller
@@ -24,8 +29,9 @@ export default function CategoryFormFields({
         control={control}
         render={({ field, fieldState }) => (
           <Field>
-            <FieldLabel>分類名稱</FieldLabel>
+            <FieldLabel htmlFor={`${formId}-name`}>分類名稱</FieldLabel>
             <Input
+              id={`${formId}-name`}
               aria-invalid={fieldState.invalid}
               placeholder="烏龍茶"
               {...field}
@@ -40,8 +46,9 @@ export default function CategoryFormFields({
         control={control}
         render={({ field, fieldState }) => (
           <Field>
-            <FieldLabel>網址代稱</FieldLabel>
+            <FieldLabel htmlFor={`${formId}-slug`}>網址代稱</FieldLabel>
             <Input
+              id={`${formId}-slug`}
               aria-invalid={fieldState.invalid}
               placeholder="oolong"
               {...field}

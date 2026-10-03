@@ -41,7 +41,7 @@ export default function MobileMenu({
             <Button
               variant="link"
               aria-label="切換選單"
-              className="border-0 p-2"
+              className="size-11 border-0 p-0 text-foreground"
             >
               <Menu className="size-6" />
             </Button>
@@ -51,13 +51,13 @@ export default function MobileMenu({
           <SheetHeader>
             <SheetTitle>商店導覽</SheetTitle>
           </SheetHeader>
-          <div className="grid flex-1 auto-rows-min gap-6 px-4">
+          <div className="grid flex-1 auto-rows-min gap-2 px-4">
             <SheetClose
               render={
                 <Link
                   href="/products"
                   prefetch={false}
-                  className="flex items-center gap-1 hover:text-primary"
+                  className="flex items-center gap-2 py-2.5 hover:text-primary-strong"
                 >
                   <IconShoppingBag className="size-5" />
                   所有商品
@@ -69,7 +69,7 @@ export default function MobileMenu({
                 <Link
                   href="/store-location"
                   prefetch={false}
-                  className="flex items-center gap-1 hover:text-primary"
+                  className="flex items-center gap-2 py-2.5 hover:text-primary-strong"
                 >
                   <IconMapPin className="size-5" />
                   門市資訊
@@ -81,7 +81,7 @@ export default function MobileMenu({
                 <Link
                   href="/cart"
                   prefetch={false}
-                  className="flex items-center gap-1 hover:text-primary"
+                  className="flex items-center gap-2 py-2.5 hover:text-primary-strong"
                 >
                   <ShoppingCart className="size-5" />
                   購物車
@@ -94,7 +94,7 @@ export default function MobileMenu({
                   <Link
                     href="/user"
                     prefetch={false}
-                    className="flex items-center gap-1 hover:text-primary"
+                    className="flex items-center gap-2 py-2.5 hover:text-primary-strong"
                   >
                     <User className="size-5" />
                     <span>會員中心</span>
@@ -108,7 +108,7 @@ export default function MobileMenu({
                   <Link
                     href="/user/favorites"
                     prefetch={false}
-                    className="flex items-center gap-1 hover:text-primary"
+                    className="flex items-center gap-2 py-2.5 hover:text-primary-strong"
                   >
                     <Heart className="size-5" />
                     <span>商品收藏</span>
@@ -122,7 +122,7 @@ export default function MobileMenu({
                   <Link
                     href="/admin/dashboard"
                     prefetch={false}
-                    className="flex items-center gap-1 hover:text-primary"
+                    className="flex items-center gap-2 py-2.5 hover:text-primary-strong"
                   >
                     <LayoutDashboard className="size-5" />
                     <span>管理員後台</span>

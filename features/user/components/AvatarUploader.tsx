@@ -81,7 +81,7 @@ export default function AvatarUploader({ image }: AvatarUploaderProps) {
         <UserAvatar
           image={preview ?? image}
           className="size-16"
-          fallbackClassName="bg-primary/10 text-primary"
+          fallbackClassName="bg-primary/10 text-primary-strong"
           iconClassName="size-8"
         />
         <Button
@@ -89,7 +89,8 @@ export default function AvatarUploader({ image }: AvatarUploaderProps) {
           variant="outline"
           size="icon-xs"
           aria-label="上傳大頭貼"
-          className="absolute -right-1 -bottom-1 rounded-full"
+          // 24px 的按鈕往外撐 10px，點擊範圍 44px
+          className="absolute -right-1 -bottom-1 rounded-full after:absolute after:-inset-2.5"
           onClick={() => fileInput.current?.click()}
         >
           <Camera />

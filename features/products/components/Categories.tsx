@@ -40,7 +40,7 @@ export default function Categories({
 
   return (
     // 茶區數量由後台決定，用會自動換行的膠囊，幾個都排得下
-    <nav className="flex flex-wrap gap-3">
+    <nav aria-label="茶區分類" className="flex flex-wrap gap-3">
       {chips.map((chip) => {
         const isActive = chip.slug === activeCategorySlug;
 
@@ -50,6 +50,7 @@ export default function Categories({
             key={chip.key}
             href={getProductsHref({ category: chip.slug, query })}
             prefetch={false}
+            aria-current={isActive ? 'page' : undefined}
             className={cn(
               'group flex items-center gap-2 rounded-full py-2 pr-4 pl-2 ring-1 ring-foreground/10 transition-colors hover:bg-primary/10 hover:ring-primary',
               isActive && 'bg-primary/10 ring-primary',

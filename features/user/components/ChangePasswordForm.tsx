@@ -22,9 +22,12 @@ import { changePasswordSchema } from '@/features/user/schemas/password';
 import { authClient } from '@/lib/auth-client';
 import { getErrorMessage } from '@/lib/auth-errors';
 /* Nextjs */
-import { useTransition } from 'react';
+import { useTransition, useId } from 'react';
 
 export default function ChangePasswordForm() {
+  // label 的 htmlFor 與輸入框的 id，同一頁有多個表單實例也不會撞名
+  const formId = useId();
+
   const [isPending, startTransition] = useTransition();
 
   const form = useForm({
@@ -78,8 +81,11 @@ export default function ChangePasswordForm() {
               control={form.control}
               render={({ field, fieldState }) => (
                 <Field>
-                  <FieldLabel>目前的密碼</FieldLabel>
+                  <FieldLabel htmlFor={`${formId}-currentPassword`}>
+                    目前的密碼
+                  </FieldLabel>
                   <Input
+                    id={`${formId}-currentPassword`}
                     aria-invalid={fieldState.invalid}
                     placeholder="********"
                     type="password"
@@ -97,8 +103,11 @@ export default function ChangePasswordForm() {
               control={form.control}
               render={({ field, fieldState }) => (
                 <Field>
-                  <FieldLabel>新密碼</FieldLabel>
+                  <FieldLabel htmlFor={`${formId}-newPassword`}>
+                    新密碼
+                  </FieldLabel>
                   <Input
+                    id={`${formId}-newPassword`}
                     aria-invalid={fieldState.invalid}
                     placeholder="********"
                     type="password"
@@ -116,8 +125,11 @@ export default function ChangePasswordForm() {
               control={form.control}
               render={({ field, fieldState }) => (
                 <Field>
-                  <FieldLabel>確認新密碼</FieldLabel>
+                  <FieldLabel htmlFor={`${formId}-confirmPassword`}>
+                    確認新密碼
+                  </FieldLabel>
                   <Input
+                    id={`${formId}-confirmPassword`}
                     aria-invalid={fieldState.invalid}
                     placeholder="********"
                     type="password"
